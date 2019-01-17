@@ -1,2 +1,2 @@
 PySide2
-cx_Freeze
+pyinstaller
