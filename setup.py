@@ -4,8 +4,8 @@ import os
 if __name__ == '__main__':
     subprocess.run([
         'pyinstaller',
-        'timewire/main.py',
-        '--add-data', f'timewire/res/style{os.pathsep}res/style',
+        './main.py',
+        '--add-data', f'res/style{os.pathsep}res/style',
         '--name', 'timewire',
-        '-y'
+        '-y',
     ])
