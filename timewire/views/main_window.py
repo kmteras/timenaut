@@ -9,9 +9,9 @@ class MainWindow(QApplication):
         QApplication.__init__(self)
         with open(pkg_resources.resource_filename('res.style', 'style.qss')) as style:
             self.setStyleSheet(style.read())
-        self.setApplicationName("Timewire")
+        self.setApplicationName("timewire")
 
-        self.label = QLabel("Timewire")
+        self.label = QLabel("timewire")
         self.label.show()
 
     def start(self):

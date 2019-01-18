@@ -1,4 +1,7 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat|Slabo+13px');
+
 QLabel {
-    color: red;
-    font-size: 40px;
+    font-family: 'Slabo 13px', serif;
+    margin:auto;
+    font-size: 60px;
 }
