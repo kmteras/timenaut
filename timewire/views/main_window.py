@@ -1,6 +1,7 @@
 import sys
 
 import pkg_resources
+from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QApplication, QLabel
 
 
@@ -10,7 +11,7 @@ class MainWindow(QApplication):
         with open(pkg_resources.resource_filename('res.style', 'style.qss')) as style:
             self.setStyleSheet(style.read())
         self.setApplicationName("timewire")
-
+        self.setWindowIcon(QIcon("timewire\\image\\icon.png")) #see vist ple parim viis ikooni kätte saamiseks.
         self.label = QLabel("timewire")
         self.label.show()
 
