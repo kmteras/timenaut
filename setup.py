@@ -7,5 +7,6 @@ if __name__ == '__main__':
         './main.py',
         '--add-data', f'res/style{os.pathsep}res/style',
         '--name', 'timewire',
+        '--window',
         '-y',
     ])
