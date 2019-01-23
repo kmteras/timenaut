@@ -1,4 +1,6 @@
-PySide2
+PySide2 # https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads
 pyinstaller
 pydbus; sys.platform == 'linux' # apt install libcairo2-dev libgirepository1.0-dev gir1.2-gtk-3.0
-psutil; sys.platform == 'linux'
+psutil
+pywin32; sys.platform == 'win32'
+pywin32gui; sys.platform == 'win32'
