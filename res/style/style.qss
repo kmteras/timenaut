@@ -3,5 +3,5 @@
 QLabel {
     font-family: 'Slabo 13px', serif;
     margin:auto;
-    font-size: 60px;
+    font-size: 18px;
 }
