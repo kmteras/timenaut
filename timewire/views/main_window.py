@@ -5,7 +5,7 @@ from PySide2.QtCore import QTimer, SIGNAL
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QApplication, QLabel
 
-import core.tracker as tracker
+import timewire.core.tracker as tracker
 
 
 class MainWindow(QApplication):
