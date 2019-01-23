@@ -5,13 +5,13 @@ from PySide2.QtCore import QTimer, SIGNAL
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QApplication, QLabel
 
-import timewire.tracker as tracker
+import core.tracker as tracker
 
 
 class MainWindow(QApplication):
     def __init__(self):
         QApplication.__init__(self)
-        with open(pkg_resources.resource_filename('res.style', 'style.qss')) as style:
+        with open(pkg_resources.resource_filename('res.style', 'style.qss'), 'r') as style:
             self.setStyleSheet(style.read())
         self.setApplicationName("timewire")
         self.setWindowIcon(QIcon(pkg_resources.resource_filename('res.img', 'icon.png')))
