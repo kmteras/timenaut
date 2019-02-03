@@ -1,6 +1,7 @@
 import json
 import logging
 import sys
+import zlib
 from datetime import datetime
 from typing import Dict
 
@@ -43,8 +44,14 @@ class Tracker(metaclass=Singleton):
         file_location = get_data_file_location()
         logging.info(f"Saving tracking data to {file_location}")
 
-        with open(file_location, 'w') as file:
-            file.write(json.dumps(self.tracking_data, cls=TrackerEncoder))
+        with open(file_location, 'wb') as file:
+            write_data = json.dumps(self.tracking_data, cls=TrackerEncoder)
+            try:
+                compressed_data = zlib.compress(write_data.encode())
+                file.write(compressed_data)
+            except zlib.error as e:
+                logging.error(f"Error compressing data {e}")
+                # TODO: Make backup of last loaded file?
 
         logging.info("Saving finished")
 
@@ -53,12 +60,13 @@ class Tracker(metaclass=Singleton):
         logging.info(f"Loading tracking data from {file_location}")
 
         try:
-            with open(file_location, 'r') as file:
+            with open(file_location, 'rb') as file:
                 file_data = file.read()
-                data = json.loads(file_data, cls=TrackerDecoder)
+                decompressed_data = zlib.decompress(file_data)
+                data = json.loads(decompressed_data, cls=TrackerDecoder)
                 self.tracking_data = data
                 logging.debug(self.tracking_data)
-        except FileNotFoundError as e:
+        except FileNotFoundError:
             logging.info(f"{file_location} does not exist, not loading anything")
         except json.JSONDecodeError as e:
             logging.error(f"Error loading file data: {e}")
