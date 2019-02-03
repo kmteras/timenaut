@@ -20,4 +20,4 @@ def get_data_file_location() -> str:
     if os.environ.get("DEVELOPMENT"):
         return os.path.join(data_folder, data_file_name_development)
 
-    return os.path.join(data_folder, data_file_name_development)
+    return os.path.join(data_folder, data_file_name)
