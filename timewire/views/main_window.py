@@ -42,6 +42,7 @@ class MainWindow(QMainWindow):
         self.hide()
 
     def _quit_action(self):
+        Tracker().save()
         QApplication.quit()
 
     def create_actions(self):
