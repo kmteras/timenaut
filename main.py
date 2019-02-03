@@ -6,6 +6,7 @@ import sys
 import pkg_resources
 from PySide2.QtWidgets import QApplication
 
+from timewire.util.util import is_debug
 from timewire.views.main_window import MainWindow
 
 
@@ -35,7 +36,7 @@ base_dir = os.path.abspath(os.path.dirname(__file__))
 logging_file = os.path.join(base_dir, 'timewire.log')
 
 if __name__ == "__main__":
-    if os.environ.get('DEVELOPMENT'):
+    if is_debug():
         logging.basicConfig(
             level=logging.DEBUG,
             handlers=[

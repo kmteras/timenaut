@@ -1,5 +1,6 @@
-import os
 import logging
+import os
+
 from PySide2.QtCore import QStandardPaths
 
 data_file_name = 'timewire.dat'
@@ -17,7 +18,11 @@ def get_data_file_location() -> str:
         except OSError as e:
             logging.error(e)
 
-    if os.environ.get("DEVELOPMENT"):
+    if is_debug():
         return os.path.join(data_folder, data_file_name_development)
 
     return os.path.join(data_folder, data_file_name)
+
+
+def is_debug() -> bool:
+    return os.environ.get("DEVELOPMENT")

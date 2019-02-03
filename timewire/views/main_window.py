@@ -5,13 +5,18 @@ from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QLabel, QSystemTrayIcon, QMenu, QAction, QMainWindow, QApplication
 
 from timewire.core.tracker import Tracker
+from timewire.util.util import is_debug
 
 
 class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
 
-        self.icon = QIcon(pkg_resources.resource_filename('res.img', 'icon.png'))
+        if is_debug():
+            self.icon = QIcon(pkg_resources.resource_filename('res.img', 'icon_debug.png'))
+        else:
+            self.icon = QIcon(pkg_resources.resource_filename('res.img', 'icon.png'))
+
         self.setWindowIcon(self.icon)
         self.label = QLabel(self)
         self.label.resize(700, 100)
