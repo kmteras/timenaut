@@ -1,3 +1,5 @@
+from typing import Dict
+
 import psutil
 import pydbus
 import logging
@@ -6,7 +8,7 @@ bus = pydbus.SessionBus()
 shell = bus.get('org.gnome.Shell', '/org/gnome/Shell')
 
 
-def get_process_data():
+def get_process_data() -> Dict:
     data = {
         'path': None,
         'title': None

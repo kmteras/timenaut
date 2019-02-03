@@ -4,7 +4,7 @@ from PySide2.QtCore import SIGNAL, QEvent
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QLabel, QSystemTrayIcon, QMenu, QAction, QMainWindow, QApplication
 
-import timewire.core.tracker as tracker
+from timewire.core.tracker import Tracker
 
 
 class MainWindow(QMainWindow):
@@ -28,10 +28,11 @@ class MainWindow(QMainWindow):
 
         self.update_timer = QtCore.QTimer()
         self.connect(self.update_timer, SIGNAL("timeout()"), self.update_text)
+
         self.update_timer.start(1000)
 
     def update_text(self):
-        data = tracker.get_process_data()
+        data = Tracker().get_process_data()
         self.label.setText(str(data))
 
     def show_action(self):

@@ -4,3 +4,4 @@ pydbus; sys.platform == 'linux' # apt install libcairo2-dev libgirepository1.0-d
 psutil
 pywin32; sys.platform == 'win32'
 win32gui; sys.platform == 'win32'
+pygobject; sys.platform == 'linux'
