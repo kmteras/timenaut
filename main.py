@@ -17,8 +17,13 @@ def main():
     with open(pkg_resources.resource_filename('res.style', 'style.qss'), 'r') as style:
         application.setStyleSheet(style.read())
 
-    main_window = MainWindow()
-    main_window.show()
+    try:
+        main_window = MainWindow()
+        main_window.show()
+    except Exception as e:
+        logging.error(e)
+        QApplication.quit()
+        return
 
     # TODO: Maybe not use tracking timer and create a empty timer to process the signal
     signal.signal(signal.SIGINT, quit_signal)

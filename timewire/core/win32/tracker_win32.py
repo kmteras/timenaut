@@ -1,15 +1,13 @@
-from typing import Dict
-
 import psutil
 import win32gui
 import win32process
 
+from timewire.core.models.process import Process
+from timewire.core.models.window import Window
 
-def get_process_data() -> Dict:
-    data = {
-        'path': None,
-        'title': None
-    }
+
+def get_process_data() -> (Process, Window):
+    path: None
 
     window = win32gui.GetForegroundWindow()
 
@@ -18,13 +16,11 @@ def get_process_data() -> Dict:
     if title == '':
         title = None
 
-    data['title'] = title
-
     pid = win32process.GetWindowThreadProcessId(window)
 
     try:
-        data['path'] = psutil.Process(pid[-1]).exe()
+        path = psutil.Process(pid[-1]).exe()
     except psutil.NoSuchProcess as e:
         pass
 
-    return data
+    return Process(path), Window(title)
