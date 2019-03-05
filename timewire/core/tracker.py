@@ -22,7 +22,9 @@ class Tracker(metaclass=Singleton):
             from timewire.core.win32 import tracker_win32
             self.get_process_data_function = tracker_win32.get_process_data
 
-        self.tracking_data = {}
+        self.tracking_data = {
+            'days': {}
+        }
         self.load()
 
     def get_process_data(self) -> Dict:
@@ -32,15 +34,15 @@ class Tracker(metaclass=Singleton):
         logging.debug(f"Process data {heartbeat}")
         return data
 
-    def track(self, data: ProcessHeartbeat):
+    def track(self, data: ProcessHeartbeat) -> None:
         time_string = datetime.today().strftime("%d-%m-%Y")
 
-        if time_string not in self.tracking_data:
-            self.tracking_data[time_string] = []
+        if time_string not in self.tracking_data['days']:
+            self.tracking_data['days'][time_string] = []
 
-        self.tracking_data[time_string].append(data)
+        self.tracking_data['days'][time_string].append(data)
 
-    def save(self):
+    def save(self) -> None:
         file_location = get_data_file_location()
         logging.info(f"Saving tracking data to {file_location}")
 
@@ -55,7 +57,7 @@ class Tracker(metaclass=Singleton):
 
         logging.info("Saving finished")
 
-    def load(self):
+    def load(self) -> None:
         file_location = get_data_file_location()
         logging.info(f"Loading tracking data from {file_location}")
 

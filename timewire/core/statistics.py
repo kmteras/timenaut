@@ -1,0 +1,25 @@
+import logging
+
+from timewire.core.singleton import Singleton
+from timewire.core.tracker import Tracker
+
+
+class Statistics(metaclass=Singleton):
+    def __init__(self):
+        pass
+
+    def get_window_times(self):
+        data = Tracker().tracking_data
+
+        stats = {}
+
+        for day in data['days']:
+            for heartbeat in data['days'][day]:
+                if heartbeat.data["title"] in stats:
+                    stats[heartbeat.data["title"]] += 1
+                else:
+                    stats[heartbeat.data["title"]] = 1
+
+        logging.debug(stats)
+
+        return stats

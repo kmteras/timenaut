@@ -2,10 +2,12 @@ import PySide2.QtCore as QtCore
 import pkg_resources
 from PySide2.QtCore import SIGNAL, QEvent
 from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QLabel, QSystemTrayIcon, QMenu, QAction, QMainWindow, QApplication
+from PySide2.QtWidgets import QLabel, QSystemTrayIcon, QMenu, QAction, QMainWindow, QApplication, QTextEdit
 
+from timewire.core.statistics import Statistics
 from timewire.core.tracker import Tracker
 from timewire.util.util import is_debug
+from timewire.views.bar_chart import BarChart
 
 
 class MainWindow(QMainWindow):
@@ -20,6 +22,12 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(self.icon)
         self.label = QLabel(self)
         self.label.resize(700, 100)
+        # self.label.setVisible(False)
+
+        self.text_area = QTextEdit(self)
+        self.text_area.resize(400, 400)
+        self.text_area.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
+        self.text_area.setVisible(False)
         self.update_text()
 
         self.toggle_show_action = None
@@ -36,9 +44,13 @@ class MainWindow(QMainWindow):
 
         self.update_timer.start(1000)
 
+        self.chart = BarChart(self)
+        self.chart.setFixedSize(100, 100)
+
     def update_text(self):
         data = Tracker().get_process_data()
         self.label.setText(str(data))
+        self.text_area.setText(str(Statistics().get_window_times()))
 
     def show_action(self):
         self.show()
