@@ -4,7 +4,6 @@ from PySide2.QtCore import SIGNAL, QEvent
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QLabel, QSystemTrayIcon, QMenu, QAction, QMainWindow, QApplication, QTextEdit
 
-from timewire.core.statistics import Statistics
 from timewire.core.tracker import Tracker
 from timewire.util.util import is_debug
 from timewire.views.bar_chart import BarChart
@@ -47,10 +46,13 @@ class MainWindow(QMainWindow):
         self.chart = BarChart(self)
         self.chart.setFixedSize(100, 100)
 
+        if Tracker().errors:
+            raise Exception("Tracker initialization had errors")
+
     def update_text(self):
-        data = Tracker().get_process_data()
-        self.label.setText(str(data))
-        self.text_area.setText(str(Statistics().get_window_times()))
+        process, window = Tracker().get_process_data()
+        self.label.setText(f"{str(process)} {str(window)}")
+        # self.text_area.setText(str(Statistics().get_window_times()))
 
     def show_action(self):
         self.show()
