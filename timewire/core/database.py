@@ -1,4 +1,5 @@
 import logging
+from typing import List
 
 import PySide2.QtSql as QtSql
 
@@ -107,3 +108,53 @@ def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
     query.bindValue(":datetime", int(heartbeat.time))
     if not query.exec_():
         raise DatabaseError(query.lastError())
+
+
+def get_window_data() -> List:
+    query = QtSql.QSqlQuery()
+
+    query.prepare(
+        "SELECT path, title, COUNT(title) "
+        "FROM heartbeats "
+        "JOIN windows ON windows.id = window_id "
+        "JOIN processes ON processes.id = heartbeats.process_id "
+        "GROUP BY path, title "
+        "ORDER BY COUNT(title) DESC"
+    )
+
+    results = []
+
+    if not query.exec_():
+        raise DatabaseError(query.lastError())
+    else:
+        while query.next():
+            path = query.value(0)
+            title = query.value(1)
+            count = query.value(2)
+            results.append((path, title, count))
+
+    return results
+
+
+def get_process_data() -> List:
+    query = QtSql.QSqlQuery()
+
+    query.prepare(
+        "SELECT path, COUNT(path) "
+        "FROM heartbeats "
+        "JOIN processes ON processes.id = heartbeats.process_id "
+        "GROUP BY path "
+        "ORDER BY COUNT(path) DESC"
+    )
+
+    results = []
+
+    if not query.exec_():
+        raise DatabaseError(query.lastError())
+    else:
+        while query.next():
+            path = query.value(0)
+            count = query.value(1)
+            results.append((path, count))
+
+    return results

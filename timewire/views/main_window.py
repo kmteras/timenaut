@@ -4,6 +4,7 @@ from PySide2.QtCore import SIGNAL, QEvent
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QLabel, QSystemTrayIcon, QMenu, QAction, QMainWindow, QApplication, QTextEdit
 
+from timewire.core.database import get_window_data, get_process_data
 from timewire.core.tracker import Tracker
 from timewire.util.util import is_debug
 from timewire.views.bar_chart import BarChart
@@ -27,7 +28,6 @@ class MainWindow(QMainWindow):
         self.text_area.resize(400, 400)
         self.text_area.setTextInteractionFlags(QtCore.Qt.NoTextInteraction)
         self.text_area.setVisible(False)
-        self.update_text()
 
         self.toggle_show_action = None
         self.quit_action = None
@@ -44,7 +44,12 @@ class MainWindow(QMainWindow):
         self.update_timer.start(1000)
 
         self.chart = BarChart(self)
-        self.chart.setFixedSize(100, 100)
+        self.chart.move(10, 100)
+        self.chart.set_values([10, 20, 40])
+        self.chart.set_labels(["1", "2", "4"])
+        self.chart.setFixedSize(700, 400)
+
+        self.update_text()
 
         if Tracker().errors:
             raise Exception("Tracker initialization had errors")
@@ -52,7 +57,10 @@ class MainWindow(QMainWindow):
     def update_text(self):
         process, window = Tracker().get_process_data()
         self.label.setText(f"{str(process)} {str(window)}")
-        # self.text_area.setText(str(Statistics().get_window_times()))
+
+        window_data = get_process_data()
+        self.chart.set_values([x[1] for x in window_data])
+        self.chart.set_labels([x[0] for x in window_data])
 
     def show_action(self):
         self.show()
@@ -61,7 +69,6 @@ class MainWindow(QMainWindow):
         self.hide()
 
     def _quit_action(self):
-        Tracker().save()
         QApplication.quit()
 
     def create_actions(self):
@@ -92,5 +99,9 @@ class MainWindow(QMainWindow):
         QMainWindow.changeEvent(self, event)
 
     def closeEvent(self, event: QEvent):
+        if is_debug():
+            event.accept()
+            return
+
         event.ignore()
         self.hide()
