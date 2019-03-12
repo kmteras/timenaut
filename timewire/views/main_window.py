@@ -59,8 +59,11 @@ class MainWindow(QMainWindow):
         self.label.setText(f"{str(process)} {str(window)}")
 
         window_data = get_process_data()
+
         self.chart.set_values([x[1] for x in window_data])
         self.chart.set_labels([x[0] for x in window_data])
+
+        self.chart.update()
 
     def show_action(self):
         self.show()
