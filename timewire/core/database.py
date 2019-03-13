@@ -1,5 +1,5 @@
 import logging
-from typing import List
+from typing import List, Tuple
 
 import PySide2.QtSql as QtSql
 
@@ -110,7 +110,7 @@ def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
         raise DatabaseError(query.lastError())
 
 
-def get_window_data() -> List:
+def get_window_data() -> List[Tuple[Process, Window, int]]:
     query = QtSql.QSqlQuery()
 
     query.prepare(
@@ -128,15 +128,15 @@ def get_window_data() -> List:
         raise DatabaseError(query.lastError())
     else:
         while query.next():
-            path = query.value(0)
-            title = query.value(1)
+            path = Process(query.value(0))
+            title = Window(query.value(1))
             count = query.value(2)
             results.append((path, title, count))
 
     return results
 
 
-def get_process_data() -> List:
+def get_process_data() -> List[Tuple[Process, int]]:
     query = QtSql.QSqlQuery()
 
     query.prepare(
@@ -153,7 +153,7 @@ def get_process_data() -> List:
         raise DatabaseError(query.lastError())
     else:
         while query.next():
-            path = query.value(0)
+            path = Process(query.value(0))
             count = query.value(1)
             results.append((path, count))
 

@@ -8,7 +8,7 @@ from timewire.views.graph_colors import Color
 
 
 class BarChart(QWidget):
-    def __init__(self, parent):
+    def __init__(self, parent, horizontal: bool = False):
         QWidget.__init__(self, parent)
         self.title = None
         self.values = [None]
@@ -19,6 +19,7 @@ class BarChart(QWidget):
         self.max_bar_width = None  # TODO: implement
         self.text_padding = 400
         self.font_size = 12
+        self.horizontal = horizontal
 
     def set_values(self, values: List):
         self.values = values
@@ -27,7 +28,10 @@ class BarChart(QWidget):
         self.labels = labels
 
     def paintEvent(self, event):
-        self.draw_horizontal()
+        if self.horizontal:
+            self.draw_horizontal()
+        else:
+            self.draw_vertical()
 
     def draw_horizontal(self):
         p = QPainter()
@@ -62,7 +66,7 @@ class BarChart(QWidget):
                 bar_rect.height()
             )
 
-            p.drawText(text_rect, Qt.AlignCenter, str(label))
+            p.drawText(text_rect, Qt.AlignVCenter | Qt.AlignRight, str(label))
 
         p.end()
 

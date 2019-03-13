@@ -39,29 +39,35 @@ class MainWindow(QMainWindow):
         self.setFixedSize(800, 600)
 
         self.update_timer = QtCore.QTimer()
-        self.connect(self.update_timer, SIGNAL("timeout()"), self.update_text)
+        self.connect(self.update_timer, SIGNAL("timeout()"), self.heartbeat)
 
         self.update_timer.start(1000)
 
-        self.chart = BarChart(self)
+        self.chart = BarChart(self, horizontal=True)
         self.chart.move(10, 100)
         self.chart.set_values([10, 20, 40])
         self.chart.set_labels(["1", "2", "4"])
         self.chart.setFixedSize(700, 400)
 
-        self.update_text()
+        self.heartbeat()
 
         if Tracker().errors:
             raise Exception("Tracker initialization had errors")
 
-    def update_text(self):
+    def heartbeat(self) -> None:
         process, window = Tracker().get_process_data()
         self.label.setText(f"{str(process)} {str(window)}")
 
-        window_data = get_process_data()
+        window_data = get_window_data()
 
-        self.chart.set_values([x[1] for x in window_data])
-        self.chart.set_labels([x[0] for x in window_data])
+        window_values = [x[2] for x in window_data]
+        window_labels = [x[1].get_name_part(0) for x in window_data]
+
+        window_values = window_values[:5] + [sum(window_values[5:])]
+        window_labels = window_labels[:5] + ["Other"]
+
+        self.chart.set_values(window_values)
+        self.chart.set_labels(window_labels)
 
         self.chart.update()
 

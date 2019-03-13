@@ -2,6 +2,7 @@ class Color:
     # BLUE = (0, 0, 255)
     # RED = (255, 0, 0)
     # GREEN = (0, 255, 0)
+
     BLACK = (0, 0, 0)
     GRAY = (50, 50, 50)
 
@@ -11,4 +12,14 @@ class Color:
     RED = (96, 44, 47)
     BLUE = (40, 68, 86)
 
-    colors = [PURPLE, ORANGE, BLUE, RED, GREEN, GRAY, GRAY, GRAY, GRAY, GRAY, GRAY, GRAY, GRAY]
+    LIGHT_BLUE = (114, 147, 203)
+    LIGHT_ORANGE = (225, 151, 76)
+    LIGHT_GREEN = (132, 186, 91)
+    LIGHT_RED = (211, 94, 96)
+    LIGHT_GARY = (128, 133, 133)
+    LIGHT_PURPLE = (144, 103, 167)
+    LIGHT_DARK_RED = (171, 104, 87)
+    LIGHT_DARK_YELLOW = (204, 194, 16)
+
+    # colors = [PURPLE, ORANGE, BLUE, RED, GREEN, GRAY, GRAY, GRAY, GRAY, GRAY, GRAY, GRAY, GRAY]
+    colors = [LIGHT_PURPLE, LIGHT_ORANGE, LIGHT_BLUE, LIGHT_RED, LIGHT_GREEN, LIGHT_GARY, GRAY, GRAY, GRAY, GRAY, GRAY]
