@@ -24,9 +24,4 @@ MainWindow {
         width: 200
         height: 200
     }
-
-    Button {
-        text: "test"
-        onClicked: main.hide()
-    }
  }

@@ -1,8 +1,6 @@
 import logging
 import sys
 
-from PySide2.QtWidgets import QApplication
-
 import timewire.core.database as database
 from core.models.process_heartbeat import ProcessHeartbeat
 from timewire.core.models.process import Process

@@ -4,7 +4,7 @@ import signal
 import sys
 
 import pkg_resources
-from PySide2.QtCore import QUrl, QByteArray
+from PySide2.QtCore import QByteArray
 from PySide2.QtQml import QQmlApplicationEngine, qmlRegisterType
 from PySide2.QtWidgets import QApplication
 

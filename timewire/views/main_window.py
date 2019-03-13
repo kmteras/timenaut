@@ -1,6 +1,6 @@
 import PySide2.QtCore as QtCore
 import pkg_resources
-from PySide2.QtCore import SIGNAL
+from PySide2.QtCore import SIGNAL, Qt
 from PySide2.QtGui import QIcon, QCloseEvent, QFocusEvent, QWindow
 from PySide2.QtQuick import QQuickView
 from PySide2.QtWidgets import QSystemTrayIcon, QMenu, QAction, QApplication
@@ -70,6 +70,11 @@ class MainWindow(QQuickView):
         self.pie_graph.set_labels(process_labels)
         self.pie_graph.update()
 
+    def showEvent(self, event):
+        self.raise_()
+        self.requestActivate()
+        QQuickView.showEvent(self, event)
+
     def create_actions(self):
         self.toggle_show_action = QAction("Show")
         self.connect(self.toggle_show_action, SIGNAL("triggered()"), self.show)
@@ -96,5 +101,6 @@ class MainWindow(QQuickView):
         elif type(event) == QFocusEvent:
             if self.visibility() == QWindow.Visibility.Minimized:
                 self.hide()
+                event.ignore()
 
         return QQuickView.event(self, event)
