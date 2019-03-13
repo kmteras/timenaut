@@ -75,8 +75,16 @@ class MainWindow(QMainWindow):
         self.chart.set_labels(window_labels)
         self.chart.update()
 
-        self.pie_graph.set_values(window_values)
-        self.pie_graph.set_labels(window_labels)
+        process_data = get_process_data()
+
+        process_values = [x[1] for x in process_data]
+        process_labels = [x[0].path for x in process_data]
+
+        process_values = process_values[:5] + [sum(process_values[5:])]
+        process_labels = process_labels[:5] + ["Other"]
+
+        self.pie_graph.set_values(process_values)
+        self.pie_graph.set_labels(process_labels)
         self.pie_graph.update()
 
     def show_action(self):

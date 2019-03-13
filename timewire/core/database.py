@@ -45,7 +45,8 @@ def create_tables() -> None:
     if not query.exec_("CREATE TABLE IF NOT EXISTS heartbeats("
                        "process_id INTEGER NOT NULL,"
                        "window_id INTEGER NOT NULL,"
-                       "datetime INTEGER NOT NULL,"
+                       "start_time INTEGER NOT NULL,"
+                       "end_time INTEGER NOT NULL,"
                        "FOREIGN KEY (process_id) REFERENCES processes(id), "
                        "FOREIGN KEY (window_id) REFERENCES windows(id));"):
         raise DatabaseError(query.lastError())
@@ -95,31 +96,60 @@ def add_window(window: Window, process_id: int) -> int:
         return query.lastInsertId()
 
 
+# TODO: put into class?
+last_process_id = None
+last_window_id = None
+last_start_time = None
+
+
 def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
+    global last_process_id
+    global last_window_id
+    global last_start_time
     process_id = add_process(heartbeat.process)
     window_id = add_window(heartbeat.window, process_id)
 
-    query = QtSql.QSqlQuery()
+    if process_id == last_process_id and window_id == last_window_id:
+        query = QtSql.QSqlQuery()
+        query.prepare(
+            "UPDATE heartbeats "
+            "SET end_time=:end_time "
+            "WHERE start_time=:last_start_time")
+        query.bindValue(":last_start_time", last_start_time)
+        query.bindValue(":end_time", int(heartbeat.time))
+        if not query.exec_():
+            raise DatabaseError(query.lastError())
+    else:
+        query = QtSql.QSqlQuery()
+        query.prepare(
+            "INSERT INTO heartbeats (process_id, window_id, start_time, end_time) "
+            "VALUES (:process_id, :window_id, :datetime, :datetime)")
+        query.bindValue(":process_id", process_id)
+        query.bindValue(":window_id", window_id)
+        query.bindValue(":datetime", int(heartbeat.time))
+        if not query.exec_():
+            raise DatabaseError(query.lastError())
 
-    query.prepare(
-        "INSERT INTO heartbeats (process_id, window_id, datetime) VALUES (:process_id, :window_id, :datetime)")
-    query.bindValue(":process_id", process_id)
-    query.bindValue(":window_id", window_id)
-    query.bindValue(":datetime", int(heartbeat.time))
-    if not query.exec_():
-        raise DatabaseError(query.lastError())
+        last_process_id = process_id
+        last_window_id = window_id
+        last_start_time = int(heartbeat.time)
 
 
 def get_window_data() -> List[Tuple[Process, Window, int]]:
     query = QtSql.QSqlQuery()
 
     query.prepare(
-        "SELECT path, title, COUNT(title) "
-        "FROM heartbeats "
-        "JOIN windows ON windows.id = window_id "
-        "JOIN processes ON processes.id = heartbeats.process_id "
-        "GROUP BY path, title "
-        "ORDER BY COUNT(title) DESC"
+        """
+        SELECT path, title, SUM(difference)
+        FROM heartbeats
+        JOIN 
+            (SELECT start_time, end_time - start_time AS difference FROM heartbeats) d 
+        ON d.start_time=heartbeats.start_time
+        JOIN processes p on heartbeats.process_id = p.id
+        JOIN windows w on heartbeats.window_id = w.id
+        GROUP BY heartbeats.process_id, window_id
+        ORDER BY SUM(difference) DESC
+        """
     )
 
     results = []
@@ -140,11 +170,16 @@ def get_process_data() -> List[Tuple[Process, int]]:
     query = QtSql.QSqlQuery()
 
     query.prepare(
-        "SELECT path, COUNT(path) "
-        "FROM heartbeats "
-        "JOIN processes ON processes.id = heartbeats.process_id "
-        "GROUP BY path "
-        "ORDER BY COUNT(path) DESC"
+        """
+        SELECT path, SUM(difference)
+        FROM heartbeats
+        JOIN 
+            (SELECT start_time, end_time - start_time AS difference FROM heartbeats) d 
+        ON d.start_time=heartbeats.start_time
+        JOIN processes p on heartbeats.process_id = p.id
+        GROUP BY process_id
+        ORDER BY SUM(difference) DESC
+        """
     )
 
     results = []
