@@ -2,7 +2,7 @@ import logging
 import sys
 
 import timewire.core.database as database
-from core.models.process_heartbeat import ProcessHeartbeat
+from timewire.core.models.process_heartbeat import ProcessHeartbeat
 from timewire.core.models.process import Process
 from timewire.core.models.window import Window
 from timewire.core.singleton import Singleton
