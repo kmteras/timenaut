@@ -21,14 +21,6 @@ class Tracker(metaclass=Singleton):
             from timewire.core.win32 import tracker_win32
             self.get_process_data_function = tracker_win32.get_process_data
 
-        try:
-            database.connect()
-        except Exception as e:
-            logging.error(e)
-            QApplication.quit()
-            self.errors = True
-            return
-
     def get_process_data(self) -> (Process, Window):
         process, window = self.get_process_data_function()
         heartbeat = ProcessHeartbeat(process, window)

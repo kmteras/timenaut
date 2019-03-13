@@ -1,15 +1,15 @@
 from typing import List
 
-from PySide2.QtCore import Qt, QRectF
+from PySide2.QtCore import QRectF
 from PySide2.QtGui import QPainter, QColor, QPen, QBrush
-from PySide2.QtWidgets import QWidget
+from PySide2.QtQuick import QQuickPaintedItem
 
 from timewire.views.graph_colors import Color
 
 
-class PieGraph(QWidget):
-    def __init__(self, parent, draw_border: bool = False):
-        QWidget.__init__(self, parent)
+class PieGraph(QQuickPaintedItem):
+    def __init__(self, parent=None, draw_border: bool = False):
+        QQuickPaintedItem.__init__(self, parent)
         self.title = None
         self.values: List[float] = [1]
         self.labels: List[str] = ["Default"]
@@ -25,15 +25,8 @@ class PieGraph(QWidget):
     def set_labels(self, labels: List[str]):
         self.labels = labels
 
-    def paintEvent(self, event):
-        self.draw()
-
-    def draw(self):
-        p = QPainter()
-
+    def paint(self, p):
         values_total = sum(self.values)
-
-        p.begin(self)
 
         pen = QPen(QColor(*Color.GRAY))
         p.setPen(pen)
@@ -58,5 +51,3 @@ class PieGraph(QWidget):
 
             p.drawPie(circle_rect, total_drawn_angles, angle)
             total_drawn_angles += angle
-
-        p.end()

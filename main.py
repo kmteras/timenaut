@@ -4,11 +4,15 @@ import signal
 import sys
 
 import pkg_resources
-from PySide2.QtCore import QByteArray
+from PySide2.QtCore import QUrl, QByteArray
+from PySide2.QtQml import QQmlApplicationEngine, qmlRegisterType
 from PySide2.QtWidgets import QApplication
-from PySide2.QtQml import QQmlApplicationEngine
+
+import timewire.core.database as database
 from timewire.util.util import is_debug
+from timewire.views.bar_graph import BarGraph
 from timewire.views.main_window import MainWindow
+from timewire.views.pie_graph import PieGraph
 
 
 def main():
@@ -16,14 +20,17 @@ def main():
     application.setApplicationName("Timewire")
 
     try:
+        database.connect()
+        qmlRegisterType(PieGraph, "Graphs", 1, 0, "PieGraph")
+        qmlRegisterType(BarGraph, "Graphs", 1, 0, "BarGraph")
+        qmlRegisterType(MainWindow, "Views", 1, 0, "MainWindow")
+
         qml = QQmlApplicationEngine()
         with open(pkg_resources.resource_filename('res.qml', 'main_view.qml'), 'r') as style:
             qml.loadData(QByteArray(bytes(style.read(), "utf-8")))
         win = qml.rootObjects()[0]
         win.show()
-
-        # main_window = MainWindow()
-        # main_window.show()
+        win.init()
     except Exception as e:
         logging.error(e)
         QApplication.quit()

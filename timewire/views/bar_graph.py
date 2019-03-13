@@ -3,16 +3,17 @@ from typing import List
 from PySide2.QtCore import Qt, QRectF
 from PySide2.QtGui import QPainter, QColor, QPen
 from PySide2.QtWidgets import QWidget
+from PySide2.QtQuick import QQuickPaintedItem
 
 from timewire.views.graph_colors import Color
 
 
-class BarGraph(QWidget):
-    def __init__(self, parent, horizontal: bool = False, draw_border: bool = False):
-        QWidget.__init__(self, parent)
+class BarGraph(QQuickPaintedItem):
+    def __init__(self, parent=None, horizontal: bool = False, draw_border: bool = False):
+        QQuickPaintedItem.__init__(self, parent)
         self.title = None
-        self.values = [None]
-        self.labels = [None]
+        self.values = [1]
+        self.labels = ["1"]
         self.x_padding = 12
         self.y_padding = 12
         self.bar_padding_percentage = 0.2
@@ -28,24 +29,21 @@ class BarGraph(QWidget):
     def set_labels(self, labels: List[str]):
         self.labels = labels
 
-    def paintEvent(self, event):
+    def paint(self, painter):
         if self.horizontal:
-            self.draw_horizontal()
+            self.draw_horizontal(painter)
         else:
-            self.draw_vertical()
+            self.draw_vertical(painter)
 
-    def draw_horizontal(self):
-        p = QPainter()
-
+    def draw_horizontal(self, p):
         rect_size = (self.height() - 3 * self.x_padding) / len(self.values)
         bar_height = int(rect_size * (1 - self.bar_padding_percentage))
-
-        p.begin(self)
 
         pen = QPen(QColor(*Color.BLACK))
         p.setPen(pen)
 
         max_value = max(self.values)
+
 
         if self.draw_border:
             p.drawRect(0, 0, self.width() - 1, self.height() - 1)
@@ -72,15 +70,9 @@ class BarGraph(QWidget):
 
             p.drawText(text_rect, Qt.AlignVCenter | Qt.AlignRight, str(label))
 
-        p.end()
-
-    def draw_vertical(self):
-        p = QPainter()
-
+    def draw_vertical(self, p):
         rect_size = (self.width() - 3 * self.x_padding) / len(self.values)
         bar_width = int(rect_size * (1 - self.bar_padding_percentage))
-
-        p.begin(self)
 
         pen = QPen(QColor(*Color.BLACK))
         p.setPen(pen)
@@ -108,5 +100,3 @@ class BarGraph(QWidget):
             )
 
             p.drawText(text_rect, Qt.AlignCenter, str(label))
-
-        p.end()

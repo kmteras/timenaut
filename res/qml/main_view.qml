@@ -1,9 +1,32 @@
 import QtQuick 2.2
 import QtQuick.Controls 1.0
+import Graphs 1.0
+import Views 1.0
 
-ApplicationWindow {
+MainWindow {
     id: main
+    objectName: "mainWindow"
     width: 800
     height: 600
     color: "grey"
+
+    PieGraph {
+        id: pieGraph
+        objectName: "pieGraph"
+        width: 200
+        height: 200
+    }
+
+    BarGraph {
+        id: barGraph
+        objectName: "barGraph"
+        x: 200
+        width: 200
+        height: 200
+    }
+
+    Button {
+        text: "test"
+        onClicked: main.hide()
+    }
  }
