@@ -4,8 +4,9 @@ import signal
 import sys
 
 import pkg_resources
+from PySide2.QtCore import QByteArray
 from PySide2.QtWidgets import QApplication
-
+from PySide2.QtQml import QQmlApplicationEngine
 from timewire.util.util import is_debug
 from timewire.views.main_window import MainWindow
 
@@ -14,12 +15,15 @@ def main():
     application = QApplication()
     application.setApplicationName("Timewire")
 
-    with open(pkg_resources.resource_filename('res.style', 'style.qss'), 'r') as style:
-        application.setStyleSheet(style.read())
-
     try:
-        main_window = MainWindow()
-        main_window.show()
+        qml = QQmlApplicationEngine()
+        with open(pkg_resources.resource_filename('res.qml', 'main_view.qml'), 'r') as style:
+            qml.loadData(QByteArray(bytes(style.read(), "utf-8")))
+        win = qml.rootObjects()[0]
+        win.show()
+
+        # main_window = MainWindow()
+        # main_window.show()
     except Exception as e:
         logging.error(e)
         QApplication.quit()

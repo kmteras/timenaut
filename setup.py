@@ -8,6 +8,7 @@ if __name__ == '__main__':
         './main.py',
         '--add-data', f'res/style{os.pathsep}res/style',
         '--add-data', f'res/img{os.pathsep}res/img',
+        '--add-data', f'res/qml{os.pathsep}res/qml',
         '--name', 'timewire',
         '--window',
         '-y',
