@@ -4,6 +4,7 @@ class Color:
     # GREEN = (0, 255, 0)
 
     BLACK = (0, 0, 0)
+    WHITE = (255, 255, 255)
     GRAY = (50, 50, 50)
 
     PURPLE = (68, 47, 68)

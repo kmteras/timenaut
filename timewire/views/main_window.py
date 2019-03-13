@@ -7,7 +7,8 @@ from PySide2.QtWidgets import QLabel, QSystemTrayIcon, QMenu, QAction, QMainWind
 from timewire.core.database import get_window_data, get_process_data
 from timewire.core.tracker import Tracker
 from timewire.util.util import is_debug
-from timewire.views.bar_chart import BarChart
+from timewire.views.bar_graph import BarGraph
+from timewire.views.pie_graph import PieGraph
 
 
 class MainWindow(QMainWindow):
@@ -43,11 +44,15 @@ class MainWindow(QMainWindow):
 
         self.update_timer.start(1000)
 
-        self.chart = BarChart(self, horizontal=True)
-        self.chart.move(10, 100)
+        self.chart = BarGraph(self, horizontal=True, draw_border=True)
+        self.chart.move(350, 100)
         self.chart.set_values([10, 20, 40])
         self.chart.set_labels(["1", "2", "4"])
-        self.chart.setFixedSize(700, 400)
+        self.chart.setFixedSize(350, 350)
+
+        self.pie_graph = PieGraph(self, draw_border=True)
+        self.pie_graph.move(10, 100)
+        self.pie_graph.setFixedSize(300, 300)
 
         self.heartbeat()
 
@@ -68,8 +73,11 @@ class MainWindow(QMainWindow):
 
         self.chart.set_values(window_values)
         self.chart.set_labels(window_labels)
-
         self.chart.update()
+
+        self.pie_graph.set_values(window_values)
+        self.pie_graph.set_labels(window_labels)
+        self.pie_graph.update()
 
     def show_action(self):
         self.show()

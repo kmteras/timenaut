@@ -7,8 +7,8 @@ from PySide2.QtWidgets import QWidget
 from timewire.views.graph_colors import Color
 
 
-class BarChart(QWidget):
-    def __init__(self, parent, horizontal: bool = False):
+class BarGraph(QWidget):
+    def __init__(self, parent, horizontal: bool = False, draw_border: bool = False):
         QWidget.__init__(self, parent)
         self.title = None
         self.values = [None]
@@ -17,14 +17,15 @@ class BarChart(QWidget):
         self.y_padding = 12
         self.bar_padding_percentage = 0.2
         self.max_bar_width = None  # TODO: implement
-        self.text_padding = 400
+        self.text_padding = 10
         self.font_size = 12
         self.horizontal = horizontal
+        self.draw_border = draw_border
 
-    def set_values(self, values: List):
+    def set_values(self, values: List[float]):
         self.values = values
 
-    def set_labels(self, labels: List):
+    def set_labels(self, labels: List[str]):
         self.labels = labels
 
     def paintEvent(self, event):
@@ -45,6 +46,9 @@ class BarChart(QWidget):
         p.setPen(pen)
 
         max_value = max(self.values)
+
+        if self.draw_border:
+            p.drawRect(0, 0, self.width() - 1, self.height() - 1)
 
         for i, (value, label) in enumerate(zip(self.values, self.labels)):
             p.setBrush(QColor(*Color.colors[i]))
