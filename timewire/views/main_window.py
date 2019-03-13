@@ -46,6 +46,8 @@ class MainWindow(QQuickView):
         self.heartbeat()
 
     def heartbeat(self) -> None:
+        Tracker().get_process_data()
+
         window_data = get_window_data()
 
         window_values = [x[2] for x in window_data]
