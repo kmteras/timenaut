@@ -3,7 +3,7 @@ from typing import List, Tuple
 
 import PySide2.QtSql as QtSql
 
-from core.models.process_heartbeat import ProcessHeartbeat
+from timewire.core.models.process_heartbeat import ProcessHeartbeat
 from timewire.core.models.process import Process
 from timewire.core.models.window import Window
 from timewire.util.database_error import DatabaseError
