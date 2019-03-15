@@ -12,3 +12,6 @@ class ProcessHeartbeat:
 
     def __str__(self):
         return f"{str(self.process)} {str(self.window)} {str(self.time)}"
+
+    def is_valid(self) -> bool:
+        return self.window.title is not None and self.window.title != ""

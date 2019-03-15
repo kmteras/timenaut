@@ -32,7 +32,7 @@ def create_tables() -> None:
 
     if not query.exec_("CREATE TABLE IF NOT EXISTS processes("
                        "id INTEGER PRIMARY KEY, "
-                       "path TEXT NOT NULL);"):
+                       "path TEXT);"):  # text may be NULL because of Wayland sloppy support
         raise DatabaseError(query.lastError())
 
     if not query.exec_("CREATE TABLE IF NOT EXISTS windows("
@@ -106,6 +106,10 @@ def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
     global last_process_id
     global last_window_id
     global last_start_time
+
+    if not heartbeat.is_valid():
+        return
+
     process_id = add_process(heartbeat.process)
     window_id = add_window(heartbeat.window, process_id)
 

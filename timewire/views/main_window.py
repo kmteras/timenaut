@@ -1,6 +1,6 @@
 import PySide2.QtCore as QtCore
 import pkg_resources
-from PySide2.QtCore import SIGNAL, Qt
+from PySide2.QtCore import SIGNAL
 from PySide2.QtGui import QIcon, QCloseEvent, QFocusEvent, QWindow
 from PySide2.QtQuick import QQuickView
 from PySide2.QtWidgets import QSystemTrayIcon, QMenu, QAction, QApplication
@@ -40,14 +40,19 @@ class MainWindow(QQuickView):
             raise Exception("Tracker initialization had errors")
 
     def init(self):
-        self.bar_graph = self.findChild(BarGraph, "barGraph")
-        self.pie_graph = self.findChild(PieGraph, "pieGraph")
+        self.bar_graph: BarGraph = self.findChild(BarGraph, "barGraph")
+        self.bar_graph.horizontal = True
+        self.pie_graph: PieGraph = self.findChild(PieGraph, "pieGraph")
 
         self.heartbeat()
 
     def heartbeat(self) -> None:
         Tracker().get_process_data()
 
+        self.update_window_graph(self.pie_graph)
+        self.update_process_graph(self.bar_graph)
+
+    def update_window_graph(self, graph):
         window_data = get_window_data()
 
         window_values = [x[2] for x in window_data]
@@ -56,21 +61,22 @@ class MainWindow(QQuickView):
         window_values = window_values[:5] + [sum(window_values[5:])]
         window_labels = window_labels[:5] + ["Other"]
 
-        self.bar_graph.set_values(window_values)
-        self.bar_graph.set_labels(window_labels)
-        self.bar_graph.update()
+        graph.set_values(window_values)
+        graph.set_labels(window_labels)
+        graph.update()
 
+    def update_process_graph(self, graph):
         process_data = get_process_data()
 
         process_values = [x[1] for x in process_data]
-        process_labels = [x[0].path for x in process_data]
+        process_labels = [x[0].get_process_title() for x in process_data]
 
         process_values = process_values[:5] + [sum(process_values[5:])]
         process_labels = process_labels[:5] + ["Other"]
 
-        self.pie_graph.set_values(process_values)
-        self.pie_graph.set_labels(process_labels)
-        self.pie_graph.update()
+        graph.set_values(process_values)
+        graph.set_labels(process_labels)
+        graph.update()
 
     def showEvent(self, event):
         self.raise_()

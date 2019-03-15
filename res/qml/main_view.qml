@@ -21,7 +21,7 @@ MainWindow {
         id: barGraph
         objectName: "barGraph"
         x: 200
-        width: 200
+        width: 400
         height: 200
     }
  }
