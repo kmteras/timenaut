@@ -10,6 +10,7 @@ if __name__ == '__main__':
         '--add-data', f'res/img{os.pathsep}res/img',
         '--add-data', f'res/qml{os.pathsep}res/qml',
         '--name', 'timewire',
+        '--icon', 'res/img/icon.ico',
         '--window',
         '-y',
     ]
