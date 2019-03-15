@@ -3,8 +3,6 @@ import os
 import signal
 import sys
 
-import pkg_resources
-from PySide2.QtCore import QByteArray
 from PySide2.QtQml import QQmlApplicationEngine, qmlRegisterType
 from PySide2.QtWidgets import QApplication
 
@@ -26,8 +24,12 @@ def main():
         qmlRegisterType(MainWindow, "Views", 1, 0, "MainWindow")
 
         qml = QQmlApplicationEngine()
-        with open(pkg_resources.resource_filename('res.qml', 'main_view.qml'), 'r') as style:
-            qml.loadData(QByteArray(bytes(style.read(), "utf-8")))
+        import resources as res
+
+        res.qInitResources()
+
+        qml.load(":/qml/main_view.qml")
+
         win = qml.rootObjects()[0]
         win.show()
         win.init()
@@ -69,5 +71,31 @@ if __name__ == "__main__":
             format=logging_format)
 
     logging.info(os.path.abspath(os.path.dirname(__file__)))
+
+    res = None
+
+    if is_debug():
+        import subprocess
+
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+
+        build_resources_command = [
+            'pyside2-rcc',
+            f'{os.path.join(os.path.dirname(os.path.realpath(__file__)), "res", "resources.qrc")}',
+            '-o', 'resources.py'
+        ]
+
+        # To disable qml caching and not being able to update qml files without removing cache files every time
+        os.putenv("QML_DISABLE_DISK_CACHE", "true")
+
+        subprocess.run(build_resources_command)
+        import resources as res
+    else:
+        import timewire.resources as res
+
+    if not res:
+        logging.error("Resources file could not be opened")
+    else:
+        logging.info("Resources loaded")
 
     main()

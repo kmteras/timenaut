@@ -3,12 +3,17 @@ import subprocess
 import sys
 
 if __name__ == '__main__':
+    build_resources_command = [
+        'pyside2-rcc',
+        'res/resources.qrc',
+        '-o', 'timewire/resources.py'
+    ]
+
+    subprocess.run(build_resources_command)
+
     command = [
         'pyinstaller',
         './main.py',
-        '--add-data', f'res/style{os.pathsep}res/style',
-        '--add-data', f'res/img{os.pathsep}res/img',
-        '--add-data', f'res/qml{os.pathsep}res/qml',
         '--name', 'timewire',
         '--icon', 'res/img/icon.ico',
         '--window',

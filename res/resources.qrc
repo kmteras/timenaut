@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>img/icon.png</file>
+    <file>img/icon_debug.png</file>
+    <file>qml/main_view.qml</file>
+</qresource>
+</RCC>

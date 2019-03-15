@@ -1,5 +1,4 @@
 import PySide2.QtCore as QtCore
-import pkg_resources
 from PySide2.QtCore import SIGNAL
 from PySide2.QtGui import QIcon, QCloseEvent, QFocusEvent, QWindow
 from PySide2.QtQuick import QQuickView
@@ -21,9 +20,9 @@ class MainWindow(QQuickView):
         self.tray_icon = None
 
         if is_debug():
-            self.icon = QIcon(pkg_resources.resource_filename('res.img', 'icon_debug.png'))
+            self.icon = QIcon(":/img/icon_debug.png")
         else:
-            self.icon = QIcon(pkg_resources.resource_filename('res.img', 'icon.png'))
+            self.icon = QIcon(":/img/icon.png")
 
         self.setIcon(self.icon)
         self.create_tray()
