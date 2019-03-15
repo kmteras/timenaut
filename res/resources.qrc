@@ -3,5 +3,7 @@
     <file>img/icon.png</file>
     <file>img/icon_debug.png</file>
     <file>qml/main_view.qml</file>
+    <file>font/Slabo13px-Regular.ttf</file>
+    <file>font/Montserrat-Regular.ttf</file>
 </qresource>
 </RCC>

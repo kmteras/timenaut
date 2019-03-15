@@ -10,6 +10,11 @@ MainWindow {
     height: 480
     color: "grey"
 
+    FontLoader {
+        id: logoFont
+        source: "qrc:/font/Slabo13px-Regular.ttf"
+    }
+
     Rectangle {
         id: panel
         x: 100
@@ -39,9 +44,10 @@ MainWindow {
 
         width: 80
         height: main.height
-        color: "green"
+        color: "#2C363F"
 
         Image {
+            id: logo
             x: 8
             y: 8
             width: 64
@@ -49,16 +55,38 @@ MainWindow {
             source: "qrc:/img/icon.png"
         }
 
+        Text {
+            id: logoName
+            x: 8
+            y: 8
+            visible: false
+
+            color: "white"
+
+            font {
+                family: logoFont.name
+                pixelSize: 40
+            }
+
+            text: "timewire"
+        }
+
         Button {
             y: 80
-            text: "test"
+            text: "Home"
+            onClicked: panel.visible = true
+        }
+
+        Button {
+            y: 160
+            text: "Overview"
             onClicked: panel.visible = false
         }
 
         Button {
-            y: 100
-            text: "test2"
-            onClicked: panel.visible = true
+            y: 120
+            text: "Settings"
+            onClicked: panel.visible = false
         }
 
         MouseArea {
@@ -74,10 +102,14 @@ MainWindow {
             onPressAndHold: mouse.accepted = false;
 
             onEntered: {
+                logo.visible = false;
+                logoName.visible = true;
                 nav.width = 200;
             }
 
             onExited: {
+                logo.visible = true;
+                logoName.visible = false;
                 nav.width = 80;
             }
         }
