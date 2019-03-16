@@ -1,3 +1,4 @@
+import logging
 import re
 import sys
 
@@ -21,5 +22,9 @@ class Process:
         else:
             regex = "\\/(?:.+\\/\\/)*(.+)\\/(.*)"
 
-        m = re.match(regex, self.path)
-        return m.group(2)
+        m = re.search(regex, self.path)
+        if m is None:
+            logging.error(f"Error regexing: {self.path} with {regex}")
+            return self.path
+        else:
+            return m.group(2)

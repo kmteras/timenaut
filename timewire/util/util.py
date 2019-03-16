@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 
 from PySide2.QtCore import QStandardPaths
 
@@ -25,4 +26,4 @@ def get_data_file_location() -> str:
 
 
 def is_debug() -> bool:
-    return os.environ.get("DEVELOPMENT")
+	return not getattr(sys, 'frozen', False)
