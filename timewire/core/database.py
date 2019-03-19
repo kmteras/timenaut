@@ -3,8 +3,8 @@ from typing import List, Tuple
 
 import PySide2.QtSql as QtSql
 
-from timewire.core.models.process_heartbeat import ProcessHeartbeat
 from timewire.core.models.process import Process
+from timewire.core.models.process_heartbeat import ProcessHeartbeat
 from timewire.core.models.window import Window
 from timewire.util.database_error import DatabaseError
 from timewire.util.util import get_data_file_location
@@ -49,6 +49,12 @@ def create_tables() -> None:
                        "end_time INTEGER NOT NULL,"
                        "FOREIGN KEY (process_id) REFERENCES processes(id), "
                        "FOREIGN KEY (window_id) REFERENCES windows(id));"):
+        raise DatabaseError(query.lastError())
+
+    if not query.exec_("CREATE TABLE IF NOT EXISTS productivity_type("
+                       "name TEXT NOT NULL, "
+                       "color TEXT NOT NULL,"
+                       "removable BOOLEAN DEFAULT TRUE);"):
         raise DatabaseError(query.lastError())
     logging.info("Created database tables")
 
@@ -197,3 +203,22 @@ def get_process_data() -> List[Tuple[Process, int]]:
             results.append((path, count))
 
     return results
+
+
+def get_timeline_data() -> List:
+    query = QtSql.QSqlQuery()
+
+    # SELECT process_id, window_id, datetime(ROUND(start_time / (60 * 10), 0) * (60 * 10), 'unixepoch') FROM heartbeats GROUP BY ROUND(start_time / (60 * 10), 0) * (60 * 10)
+
+    query.prepare(
+        """
+        SELECT path, SUM(difference)
+        FROM heartbeats
+        JOIN 
+            (SELECT start_time, end_time - start_time AS difference FROM heartbeats) d 
+        ON d.start_time=heartbeats.start_time
+        JOIN processes p on heartbeats.process_id = p.id
+        GROUP BY process_id
+        ORDER BY SUM(difference) DESC
+        """
+    )

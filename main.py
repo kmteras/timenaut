@@ -3,33 +3,35 @@ import os
 import signal
 import sys
 
+from PySide2.QtGui import QFont
 from PySide2.QtQml import QQmlApplicationEngine, qmlRegisterType
 from PySide2.QtWidgets import QApplication
-from PySide2.QtGui import QFont
 
 import timewire.core.database as database
 from timewire.util.util import is_debug
 from timewire.views.bar_graph import BarGraph
 from timewire.views.main_window import MainWindow
 from timewire.views.pie_graph import PieGraph
+from timewire.views.timeline_graph import TimelineGraph
 
 
 def main():
     application = QApplication()
     application.setApplicationName("Timewire")
 
-    montserrat = QFont(":/font/Montserrat-Regular.ttf")
+    montserrat = QFont("qrc:/font/Montserrat-Regular.ttf")
     application.setFont(montserrat)
 
     try:
         database.connect()
         qmlRegisterType(PieGraph, "Graphs", 1, 0, "PieGraph")
         qmlRegisterType(BarGraph, "Graphs", 1, 0, "BarGraph")
+        qmlRegisterType(TimelineGraph, "Graphs", 1, 0, "TimelineGraph")
         qmlRegisterType(MainWindow, "Views", 1, 0, "MainWindow")
 
         qml = QQmlApplicationEngine()
 
-        qml.load(":/qml/main_view.qml")
+        qml.load("qrc:/qml/main_view.qml")
 
         win = qml.rootObjects()[0]
         win.show()

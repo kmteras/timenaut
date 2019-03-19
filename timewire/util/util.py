@@ -26,4 +26,4 @@ def get_data_file_location() -> str:
 
 
 def is_debug() -> bool:
-	return not getattr(sys, 'frozen', False)
+    return not getattr(sys, 'frozen', False)

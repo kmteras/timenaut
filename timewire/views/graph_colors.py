@@ -3,6 +3,12 @@ class Color:
     # RED = (255, 0, 0)
     # GREEN = (0, 255, 0)
 
+    PRIMARY = ()
+    SECONDARY = ()
+    TERTIARY = ()
+    DARK = (44, 53, 63)
+    LIGHT = ()
+
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
     GRAY = (50, 50, 50)
