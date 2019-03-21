@@ -3,10 +3,12 @@
     <file>img/icon.png</file>
     <file>img/icon_debug.png</file>
     <file alias="img/dashboard.svg">img/baseline-dashboard-24px.svg</file>
+    <file alias="img/list.svg">img/baseline-view_list-24px.svg</file>
     <file alias="img/settings.svg">img/baseline-settings-20px.svg</file>
 
     <file>qml/main_view.qml</file>
     <file>qml/views/DashboardView.qml</file>
+    <file>qml/views/ActivityView.qml</file>
     <file>qml/views/SettingsView.qml</file>
 
     <file>qml/fragments/Navigation.qml</file>

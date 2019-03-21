@@ -51,6 +51,13 @@ Rectangle {
             }
 
             NavigationItem {
+                id: activity
+                connectedView: activityView
+                text: "Activity"
+                source: "qrc:/img/list.svg"
+            }
+
+            NavigationItem {
                 id: settings
                 connectedView: settingsView
                 text: "Settings"

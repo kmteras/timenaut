@@ -17,6 +17,8 @@ MainWindow {
 
     color: "#D9D9D9"
 
+    Component.onCompleted: main.ready()
+
     FontLoader {
         id: logoFont
         source: "qrc:/font/Slabo13px-Regular.ttf"
@@ -34,6 +36,11 @@ MainWindow {
 
         DashboardView {
             id: dashboardView
+            visible: false
+        }
+
+        ActivityView {
+            id: activityView
         }
 
         SettingsView {

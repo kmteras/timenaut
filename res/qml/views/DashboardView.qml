@@ -1,8 +1,9 @@
 import QtQuick 2.2
 import QtQuick.Controls 1.0
 import Graphs 1.0
+import Views 1.0
 
-Rectangle {
+DashboardViewBase {
     Rectangle {
         id: panel2
         radius: 10

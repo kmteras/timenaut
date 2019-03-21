@@ -5,19 +5,26 @@ import sys
 
 from PySide2.QtGui import QFont
 from PySide2.QtQml import QQmlApplicationEngine, qmlRegisterType
+from PySide2.QtQuick import QQuickWindow
 from PySide2.QtWidgets import QApplication
 
 import timewire.core.database as database
 from timewire.util.util import is_debug
+from timewire.views.activity_view import ActivityView
 from timewire.views.bar_graph import BarGraph
+from timewire.views.dashboard_view import DashboardView
 from timewire.views.main_window import MainWindow
 from timewire.views.pie_graph import PieGraph
+from timewire.views.settings_view import SettingsView
 from timewire.views.timeline_graph import TimelineGraph
+from timewire.core.models.process_table_model import ProcessTableModel, process_table_model_singleton
 
 
 def main():
     application = QApplication()
     application.setApplicationName("Timewire")
+
+    logging.info(f"Screne graph backend: {QQuickWindow.sceneGraphBackend()}")
 
     montserrat = QFont("qrc:/font/Montserrat-Regular.ttf")
     application.setFont(montserrat)
@@ -27,15 +34,21 @@ def main():
         qmlRegisterType(PieGraph, "Graphs", 1, 0, "PieGraph")
         qmlRegisterType(BarGraph, "Graphs", 1, 0, "BarGraph")
         qmlRegisterType(TimelineGraph, "Graphs", 1, 0, "TimelineGraph")
+
         qmlRegisterType(MainWindow, "Views", 1, 0, "MainWindow")
+        qmlRegisterType(DashboardView, "Views", 1, 0, "DashboardViewBase")
+        qmlRegisterType(ActivityView, "Views", 1, 0, "ActivityView")
+        qmlRegisterType(SettingsView, "Views", 1, 0, "SettingsView")
 
         qml = QQmlApplicationEngine()
+
+        m = ProcessTableModel()
+        qml.rootContext().setContextProperty("processTableModel", m)
 
         qml.load("qrc:/qml/main_view.qml")
 
         win = qml.rootObjects()[0]
         win.show()
-        win.init()
     except Exception as e:
         logging.error(e)
         QApplication.quit()
