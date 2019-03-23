@@ -9,6 +9,8 @@ from PySide2.QtQuick import QQuickWindow
 from PySide2.QtWidgets import QApplication
 
 import timewire.core.database as database
+from timewire.core.models.process_table_model import process_table_model_singleton
+from timewire.core.models.window_table_model import window_table_model_singleton
 from timewire.util.util import is_debug
 from timewire.views.activity_view import ActivityView
 from timewire.views.bar_graph import BarGraph
@@ -17,7 +19,6 @@ from timewire.views.main_window import MainWindow
 from timewire.views.pie_graph import PieGraph
 from timewire.views.settings_view import SettingsView
 from timewire.views.timeline_graph import TimelineGraph
-from timewire.core.models.process_table_model import ProcessTableModel, process_table_model_singleton
 
 
 def main():
@@ -42,8 +43,8 @@ def main():
 
         qml = QQmlApplicationEngine()
 
-        m = ProcessTableModel()
-        qml.rootContext().setContextProperty("processTableModel", m)
+        qml.rootContext().setContextProperty("processTableModel", process_table_model_singleton())
+        qml.rootContext().setContextProperty("windowTableModel", window_table_model_singleton())
 
         qml.load("qrc:/qml/main_view.qml")
 

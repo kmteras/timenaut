@@ -1,5 +1,6 @@
 class Window:
-    def __init__(self, title: str):
+    def __init__(self, title: str, window_id: int = None):
+        self.id = window_id
         self.title = title
 
     def get_name_part(self, index: int = -1) -> str:

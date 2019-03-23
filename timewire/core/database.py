@@ -168,10 +168,42 @@ def get_window_data() -> List[Tuple[Process, Window, int]]:
         raise DatabaseError(query.lastError())
     else:
         while query.next():
-            path = Process(query.value(0))
-            title = Window(query.value(1))
+            process = Process(query.value(0))
+            window = Window(query.value(1))
             count = query.value(2)
-            results.append((path, title, count))
+            results.append((process, window, count))
+
+    return results
+
+
+def get_window_data_by_process(process_id: int) -> List[Tuple[Window, int]]:
+    query = QtSql.QSqlQuery()
+
+    query.prepare(
+        """
+        SELECT window_id, title, SUM(difference)
+        FROM heartbeats
+        JOIN 
+            (SELECT start_time, end_time - start_time AS difference FROM heartbeats) d 
+        ON d.start_time=heartbeats.start_time
+        JOIN windows w on heartbeats.window_id = w.id
+        WHERE w.process_id=:process_id
+        GROUP BY heartbeats.process_id, window_id
+        ORDER BY SUM(difference) DESC
+        """
+    )
+
+    query.bindValue(":process_id", process_id)
+
+    results = []
+
+    if not query.exec_():
+        raise DatabaseError(query.lastError())
+    else:
+        while query.next():
+            window = Window(query.value(1), window_id=query.value(0))
+            count = query.value(2)
+            results.append((window, count))
 
     return results
 
@@ -181,7 +213,7 @@ def get_process_data() -> List[Tuple[Process, int]]:
 
     query.prepare(
         """
-        SELECT path, SUM(difference)
+        SELECT path, SUM(difference), process_id
         FROM heartbeats
         JOIN 
             (SELECT start_time, end_time - start_time AS difference FROM heartbeats) d 
@@ -198,9 +230,9 @@ def get_process_data() -> List[Tuple[Process, int]]:
         raise DatabaseError(query.lastError())
     else:
         while query.next():
-            path = Process(query.value(0))
+            process = Process(query.value(0), process_id=query.value(2))
             count = query.value(1)
-            results.append((path, count))
+            results.append((process, count))
 
     return results
 

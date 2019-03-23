@@ -27,8 +27,10 @@ MainWindow {
     Rectangle {
         id: viewArea
 
-        x: 90
-        y: 10
+        // 720 (700) x 600 (580)
+
+        x: 80
+        y: 0
 
         width: main.width - 100
         height: main.height - 20

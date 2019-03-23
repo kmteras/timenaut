@@ -4,7 +4,9 @@ import sys
 
 
 class Process:
-    def __init__(self, path: str):
+    def __init__(self, path: str, process_id: int = None):
+        self.id = process_id
+
         if path == "":
             self.path = None
         else:

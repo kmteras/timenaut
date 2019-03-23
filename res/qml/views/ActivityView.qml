@@ -11,14 +11,15 @@ ActivityView {
         color: "white"
 
         signal  processSelected(int row)
+        signal  windowSelected(int row)
 
         TableView {
             id: processTable
             objectName: "processTable"
             x: 10
-            y: 110
-            width: 300
-            height: 400
+            y: 150
+            width: parent.width / 2 - 40
+            height: parent.height - 160
 
             horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
             verticalScrollBarPolicy: Qt.ScrollBarAsNeeded
@@ -28,7 +29,7 @@ ActivityView {
             TableViewColumn {
                 role: "process"
                 title: "Process"
-                width: 200
+                width: processTable.width - 100
             }
 
             TableViewColumn {
@@ -88,7 +89,6 @@ ActivityView {
             }
 
             onClicked: {
-                console.log(row)
                 processSelected(row)
             }
         }
@@ -96,16 +96,20 @@ ActivityView {
         TableView {
             id: windowTable
             objectName: "windowTable"
-            x: 320
-            y: 110
-            selectionMode: 1
-            width: 300
-            height: 400
+            x: parent.width / 2 - 20
+            y: 150
+            width: parent.width / 2 + 10
+            height: parent.height - 160
+
+            horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
+            verticalScrollBarPolicy: Qt.ScrollBarAsNeeded
+
+            model: windowTableModel
 
             TableViewColumn {
                 role: "window"
                 title: "Window"
-                width: 200
+                width: windowTable.width - 100
             }
 
             TableViewColumn {
@@ -114,12 +118,58 @@ ActivityView {
                 width: 100
             }
 
-            model: ListModel {
-                ListElement { window: "ghdjbf"; time: "0" }
-                ListElement { window: "sgkjdnf" }
-                ListElement { window: "sgkjdnf" }
-                ListElement { window: "sgkjdnf" }
-                ListElement { window: "sgkjdnf" }
+            headerDelegate: Rectangle {
+                height: textItem.implicitHeight * 1.2
+                width: textItem.implicitWidth
+                color: "white"
+
+                Text {
+                    id: textItem
+                    anchors.fill: parent
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                    text: styleData.value
+                    elide: Text.ElideRight
+                    renderType: Text.NativeRendering
+                }
+                Rectangle {
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 1
+                    anchors.topMargin: 1
+                    width: 1
+                    color: "#ccc"
+                }
+            }
+
+            itemDelegate: Rectangle {
+                color: {
+                    if (styleData.selected) {
+                        "#ccc"
+                    }
+                    else {
+                        "white"
+                    }
+                }
+
+                Text {
+                    text: styleData.value
+                }
+            }
+
+            rowDelegate: Rectangle {
+                color: {
+                    "white"
+                }
+            }
+
+            onRowCountChanged: {
+
+            }
+
+            onClicked: {
+                windowSelected(row)
             }
         }
     }

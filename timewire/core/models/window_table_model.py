@@ -2,35 +2,35 @@ from typing import List
 
 from PySide2.QtCore import QAbstractTableModel, QModelIndex, Qt
 
-from timewire.core.models.process import Process
+from timewire.core.models.window import Window
 
 table = None
 
 
-class ProcessTableModel(QAbstractTableModel):
+class WindowTableModel(QAbstractTableModel):
     def __init__(self):
         global table
         QAbstractTableModel.__init__(self)
         if table is None:
             table = self
 
-        self.processes: List[List[Process, int]] = [["process", "time"], ["process", "time"]]
+        self.windows: List[List[Window, int]] = []
 
-        self.processRole = Qt.DisplayRole
+        self.windowRole = Qt.DisplayRole
         self.timeRole = Qt.DisplayRole + 1
 
     def rowCount(self, index=QModelIndex()):
-        return len(self.processes)
+        return len(self.windows)
 
     def columnCount(self, index=QModelIndex()):
-        return len(self.processes[0])
+        return len(self.windows[0])
 
     def headerData(self, section: int, orientation: Qt.Orientation, role=Qt.DisplayRole):
         if role != Qt.DisplayRole or orientation != Qt.Horizontal:
             return None
 
         if section == 0:
-            return "Process"
+            return "Window"
         elif section == 1:
             return "Time"
 
@@ -40,17 +40,17 @@ class ProcessTableModel(QAbstractTableModel):
         if not index.isValid():
             return None
 
-        if not 0 <= index.row() < len(self.processes):
+        if not 0 <= index.row() < len(self.windows):
             return None
 
         # index.column() usually 0 (WHY?) but for getting data with it, fit it
         if index.column() != 0:
             role = index.column()
 
-        if role == self.processRole:
-            return self.processes[index.row()][self.processRole].get_process_title()
+        if role == self.windowRole:
+            return self.windows[index.row()][self.windowRole].title
         elif role == self.timeRole:
-            return self.processes[index.row()][self.timeRole]
+            return self.windows[index.row()][self.timeRole]
 
         return None
 
@@ -58,8 +58,8 @@ class ProcessTableModel(QAbstractTableModel):
         if role != Qt.EditRole:
             return False
 
-        if index.isValid() and 0 <= index.row() < len(self.processes):
-            self.processes[index.row()][index.column()] = value
+        if index.isValid() and 0 <= index.row() < len(self.windows):
+            self.windows[index.row()][index.column()] = value
             self.dataChanged.emit(index, value)
             return True
 
@@ -81,17 +81,17 @@ class ProcessTableModel(QAbstractTableModel):
         return Qt.ItemFrags(QAbstractTableModel.flags(self, index) | Qt.ItemIsEditable)
 
     def roleNames(self):
-        return {self.processRole: b"process", self.timeRole: b"time"}
+        return {self.windowRole: b"window", self.timeRole: b"time"}
 
     def update_data(self, data):
         # TODO: Reset ei not good, change in future
         self.beginResetModel()
-        self.processes = data
+        self.windows = data
         self.endResetModel()
 
 
-def process_table_model_singleton() -> ProcessTableModel:
+def window_table_model_singleton() -> WindowTableModel:
     global table
     if table is None:
-        table = ProcessTableModel()
+        table = WindowTableModel()
     return table
