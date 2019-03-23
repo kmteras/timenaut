@@ -3,6 +3,7 @@ from typing import List
 from PySide2.QtCore import QAbstractTableModel, QModelIndex, Qt
 
 from timewire.core.models.process import Process
+from timewire.util.util import get_formatted_time
 
 table = None
 
@@ -50,7 +51,8 @@ class ProcessTableModel(QAbstractTableModel):
         if role == self.processRole:
             return self.processes[index.row()][self.processRole].get_process_title()
         elif role == self.timeRole:
-            return self.processes[index.row()][self.timeRole]
+            time = self.processes[index.row()][self.timeRole]
+            return get_formatted_time(time)
 
         return None
 

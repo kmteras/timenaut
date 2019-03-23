@@ -3,7 +3,38 @@ import QtQuick.Controls 1.0
 import Views 1.0
 
 ActivityView {
+    id: activityView
+
     Rectangle {
+
+        Rectangle {
+            visible: activityView.processInfoVisible
+
+            Text {
+                x: 10
+                y: 10
+                text: "Path:"
+            }
+
+            Text {
+                x: 10
+                y: 30
+                text: activityView.processPath
+            }
+
+            Text {
+                x: 10
+                y: 70
+                text: "Process:"
+            }
+
+            Text {
+                x: 10
+                y: 90
+                text: activityView.processTitle
+            }
+        }
+
         id: panel2
         radius: 10
         width: viewArea.width
@@ -30,12 +61,47 @@ ActivityView {
                 role: "process"
                 title: "Process"
                 width: processTable.width - 100
+
+                delegate: Rectangle {
+                    color: {
+                        if (styleData.selected) {
+                            "#ccc"
+                        }
+                        else {
+                            "white"
+                        }
+                    }
+
+                    Text {
+                        text: styleData.value
+                        color: "red"
+                        horizontalAlignment: Text.AlignRight
+                        verticalAlignment: Text.AlignRight
+                    }
+                }
             }
 
             TableViewColumn {
                 role: "time"
                 title: "Time"
                 width: 100
+
+                delegate: Rectangle {
+                    color: {
+                        if (styleData.selected) {
+                            "#ccc"
+                        }
+                        else {
+                            "white"
+                        }
+                    }
+
+                    Text {
+                        text: styleData.value
+                        horizontalAlignment: Text.AlignRight
+                        verticalAlignment: Text.AlignRight
+                    }
+                }
             }
 
             headerDelegate: Rectangle {
@@ -63,21 +129,6 @@ ActivityView {
                 }
             }
 
-            itemDelegate: Rectangle {
-                color: {
-                    if (styleData.selected) {
-                        "#ccc"
-                    }
-                    else {
-                        "white"
-                    }
-                }
-
-                Text {
-                    text: styleData.value
-                }
-            }
-
             rowDelegate: Rectangle {
                 color: {
                     "white"
@@ -89,7 +140,9 @@ ActivityView {
             }
 
             onClicked: {
+                windowTable.selection.clear()
                 processSelected(row)
+                windowSelected(-1)
             }
         }
 

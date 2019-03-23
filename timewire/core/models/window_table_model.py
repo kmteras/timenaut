@@ -3,6 +3,7 @@ from typing import List
 from PySide2.QtCore import QAbstractTableModel, QModelIndex, Qt
 
 from timewire.core.models.window import Window
+from timewire.util.util import get_formatted_time
 
 table = None
 
@@ -50,7 +51,7 @@ class WindowTableModel(QAbstractTableModel):
         if role == self.windowRole:
             return self.windows[index.row()][self.windowRole].title
         elif role == self.timeRole:
-            return self.windows[index.row()][self.timeRole]
+            return get_formatted_time(self.windows[index.row()][self.timeRole])
 
         return None
 

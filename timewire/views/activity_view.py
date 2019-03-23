@@ -12,40 +12,84 @@ class ActivityView(BaseView):
         BaseView.__init__(self)
         self.process_table: QTableView = None
         self.window_table: QTableView = None
+        self.selected_process_id: int = None
+        self.selected_window_id: int = None
+
+        self.process_info_visible = True
+
+        self.process_path = None
+        self.process_title = None
 
     def componentComplete(self):
         BaseView.componentComplete(self)
-        # self.process_table: QTableView = QTableView(self.findChild(QObject, "processTable"))
-        # print(self.process_table)
-        # self.window_table: QTableView = self.findChild(QQuickItem, "windowTable")
 
     def update(self):
         BaseView.update(self)
-        model = process_table_model_singleton()
+        process_model = process_table_model_singleton()
         data = list(map(lambda x: [*x], get_process_data()))
-        model.update_data(data)
+        process_model.update_data(data)
+
+        if self.selected_process_id is not None:
+            self.update_window_model()
+
+    def update_window_model(self):
+        window_data = get_window_data_by_process(self.selected_process_id)
+
+        window_model = window_table_model_singleton()
+        window_model.update_data(window_data)
+
+    def get_process_info_visible(self):
+        return self.process_info_visible
+
+    def set_process_info_visible(self, visible: bool):
+        self.process_info_visible = visible
+        self.on_process_info_visible.emit()
+
+    def get_process_path(self):
+        return self.process_path
+
+    def set_process_path(self, text: str):
+        self.process_path = text
+        self.on_process_path.emit()
+
+    def get_process_title(self):
+        return self.process_title
+
+    def set_process_title(self, text: str):
+        self.process_title = text
+        self.on_process_title.emit()
 
     @QtCore.Slot(int)
     def processSelected(self, row: int):
         process_model = process_table_model_singleton()
         process = process_model.processes[row][0]
-        print(process)
-        window_data = get_window_data_by_process(process.id)
 
-        window_model = window_table_model_singleton()
-        window_model.update_data(window_data)
+        self.set_process_path(process.path)
+        self.set_process_title(process.get_process_title())
 
+        self.set_process_info_visible(True)
+
+        self.selected_process_id = process.id
+        self.update_window_model()
 
     @QtCore.Slot(int)
     def windowSelected(self, row: int):
-        process_model = process_table_model_singleton()
+        if row == -1:
+            self.selected_window_id = None
+            return
 
-        model = window_table_model_singleton()
+        self.set_process_info_visible(False)
 
-        process = process_model.processes[row][0]
+        window_model = window_table_model_singleton()
+        window = window_model.windows[row][0]
 
-        print(process)
+        self.selected_window_id = window.id
 
-        data = get_window_data_by_process(process.id)
+    on_process_info_visible = QtCore.Signal()
 
-        model.setData(model.index(0, 0), row)
+    on_process_path = QtCore.Signal()
+    on_process_title = QtCore.Signal()
+
+    processInfoVisible = QtCore.Property(bool, get_process_info_visible, notify=on_process_info_visible)
+    processPath = QtCore.Property(str, get_process_path, notify=on_process_path)
+    processTitle = QtCore.Property(str, get_process_title, notify=on_process_title)
