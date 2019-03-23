@@ -1,4 +1,4 @@
-import QtQuick 2.2
+import QtQuick 2.12
 import QtQuick.Controls 1.0
 import Views 1.0
 
@@ -74,9 +74,7 @@ ActivityView {
 
                     Text {
                         text: styleData.value
-                        color: "red"
-                        horizontalAlignment: Text.AlignRight
-                        verticalAlignment: Text.AlignRight
+                        leftPadding: 16
                     }
                 }
             }
@@ -98,8 +96,9 @@ ActivityView {
 
                     Text {
                         text: styleData.value
+                        width: parent.width
                         horizontalAlignment: Text.AlignRight
-                        verticalAlignment: Text.AlignRight
+                        rightPadding: 16
                     }
                 }
             }
@@ -163,12 +162,46 @@ ActivityView {
                 role: "window"
                 title: "Window"
                 width: windowTable.width - 100
+
+                delegate: Rectangle {
+                    color: {
+                        if (styleData.selected) {
+                            "#ccc"
+                        }
+                        else {
+                            "white"
+                        }
+                    }
+
+                    Text {
+                        text: styleData.value
+                        leftPadding: 16
+                    }
+                }
             }
 
             TableViewColumn {
                 role: "time"
                 title: "Time"
                 width: 100
+
+                delegate: Rectangle {
+                    color: {
+                        if (styleData.selected) {
+                            "#ccc"
+                        }
+                        else {
+                            "white"
+                        }
+                    }
+
+                    Text {
+                        text: styleData.value
+                        width: parent.width
+                        horizontalAlignment: Text.AlignRight
+                        rightPadding: 18
+                    }
+                }
             }
 
             headerDelegate: Rectangle {
@@ -193,21 +226,6 @@ ActivityView {
                     anchors.topMargin: 1
                     width: 1
                     color: "#ccc"
-                }
-            }
-
-            itemDelegate: Rectangle {
-                color: {
-                    if (styleData.selected) {
-                        "#ccc"
-                    }
-                    else {
-                        "white"
-                    }
-                }
-
-                Text {
-                    text: styleData.value
                 }
             }
 
