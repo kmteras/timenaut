@@ -1,29 +1,27 @@
 import PySide2.QtCore as QtCore
-import pkg_resources
-from PySide2.QtCore import SIGNAL, Qt
+from PySide2.QtCore import SIGNAL
 from PySide2.QtGui import QIcon, QCloseEvent, QFocusEvent, QWindow
 from PySide2.QtQuick import QQuickView
 from PySide2.QtWidgets import QSystemTrayIcon, QMenu, QAction, QApplication
 
-from timewire.core.database import get_window_data, get_process_data
 from timewire.core.tracker import Tracker
 from timewire.util.util import is_debug
-from timewire.views.bar_graph import BarGraph
-from timewire.views.pie_graph import PieGraph
+from timewire.views.base_view import BaseView
 
 
 class MainWindow(QQuickView):
     def __init__(self):
         QQuickView.__init__(self)
+
         self.toggle_show_action = None
         self.quit_action = None
         self.tray_menu = None
         self.tray_icon = None
 
         if is_debug():
-            self.icon = QIcon(pkg_resources.resource_filename('res.img', 'icon_debug.png'))
+            self.icon = QIcon(":/img/icon_debug.png")
         else:
-            self.icon = QIcon(pkg_resources.resource_filename('res.img', 'icon.png'))
+            self.icon = QIcon(":/img/icon.png")
 
         self.setIcon(self.icon)
         self.create_tray()
@@ -33,44 +31,25 @@ class MainWindow(QQuickView):
 
         self.update_timer.start(1000)
 
-        self.bar_graph: BarGraph = None
-        self.pie_graph: PieGraph = None
-
         if Tracker().errors:
             raise Exception("Tracker initialization had errors")
 
-    def init(self):
-        self.bar_graph = self.findChild(BarGraph, "barGraph")
-        self.pie_graph = self.findChild(PieGraph, "pieGraph")
-
-        self.heartbeat()
-
     def heartbeat(self) -> None:
         Tracker().get_process_data()
+        active_view = self.get_active_window()
+        if active_view is not None:
+            active_view.update()
 
-        window_data = get_window_data()
+    def get_active_window(self) -> BaseView:
+        children = self.findChildren(BaseView)
+        for child in children:
+            if child.isVisible():
+                return child
+        return None
 
-        window_values = [x[2] for x in window_data]
-        window_labels = [x[1].get_name_part(0) for x in window_data]
-
-        window_values = window_values[:5] + [sum(window_values[5:])]
-        window_labels = window_labels[:5] + ["Other"]
-
-        self.bar_graph.set_values(window_values)
-        self.bar_graph.set_labels(window_labels)
-        self.bar_graph.update()
-
-        process_data = get_process_data()
-
-        process_values = [x[1] for x in process_data]
-        process_labels = [x[0].path for x in process_data]
-
-        process_values = process_values[:5] + [sum(process_values[5:])]
-        process_labels = process_labels[:5] + ["Other"]
-
-        self.pie_graph.set_values(process_values)
-        self.pie_graph.set_labels(process_labels)
-        self.pie_graph.update()
+    @QtCore.Slot()
+    def ready(self):
+        self.heartbeat()
 
     def showEvent(self, event):
         self.raise_()

@@ -1,8 +1,7 @@
 from typing import List
 
 from PySide2.QtCore import Qt, QRectF
-from PySide2.QtGui import QPainter, QColor, QPen
-from PySide2.QtWidgets import QWidget
+from PySide2.QtGui import QColor, QPen
 from PySide2.QtQuick import QQuickPaintedItem
 
 from timewire.views.graph_colors import Color
@@ -18,7 +17,7 @@ class BarGraph(QQuickPaintedItem):
         self.y_padding = 12
         self.bar_padding_percentage = 0.2
         self.max_bar_width = None  # TODO: implement
-        self.text_padding = 10
+        self.text_padding = 100
         self.font_size = 12
         self.horizontal = horizontal
         self.draw_border = draw_border
@@ -43,7 +42,6 @@ class BarGraph(QQuickPaintedItem):
         p.setPen(pen)
 
         max_value = max(self.values)
-
 
         if self.draw_border:
             p.drawRect(0, 0, self.width() - 1, self.height() - 1)

@@ -3,8 +3,8 @@ from typing import List, Tuple
 
 import PySide2.QtSql as QtSql
 
-from timewire.core.models.process_heartbeat import ProcessHeartbeat
 from timewire.core.models.process import Process
+from timewire.core.models.process_heartbeat import ProcessHeartbeat
 from timewire.core.models.window import Window
 from timewire.util.database_error import DatabaseError
 from timewire.util.util import get_data_file_location
@@ -32,7 +32,7 @@ def create_tables() -> None:
 
     if not query.exec_("CREATE TABLE IF NOT EXISTS processes("
                        "id INTEGER PRIMARY KEY, "
-                       "path TEXT NOT NULL);"):
+                       "path TEXT);"):  # text may be NULL because of Wayland sloppy support
         raise DatabaseError(query.lastError())
 
     if not query.exec_("CREATE TABLE IF NOT EXISTS windows("
@@ -49,6 +49,12 @@ def create_tables() -> None:
                        "end_time INTEGER NOT NULL,"
                        "FOREIGN KEY (process_id) REFERENCES processes(id), "
                        "FOREIGN KEY (window_id) REFERENCES windows(id));"):
+        raise DatabaseError(query.lastError())
+
+    if not query.exec_("CREATE TABLE IF NOT EXISTS productivity_type("
+                       "name TEXT NOT NULL, "
+                       "color TEXT NOT NULL,"
+                       "removable BOOLEAN DEFAULT TRUE);"):
         raise DatabaseError(query.lastError())
     logging.info("Created database tables")
 
@@ -106,6 +112,10 @@ def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
     global last_process_id
     global last_window_id
     global last_start_time
+
+    if not heartbeat.is_valid():
+        return
+
     process_id = add_process(heartbeat.process)
     window_id = add_window(heartbeat.window, process_id)
 
@@ -158,10 +168,42 @@ def get_window_data() -> List[Tuple[Process, Window, int]]:
         raise DatabaseError(query.lastError())
     else:
         while query.next():
-            path = Process(query.value(0))
-            title = Window(query.value(1))
+            process = Process(query.value(0))
+            window = Window(query.value(1))
             count = query.value(2)
-            results.append((path, title, count))
+            results.append((process, window, count))
+
+    return results
+
+
+def get_window_data_by_process(process_id: int) -> List[Tuple[Window, int]]:
+    query = QtSql.QSqlQuery()
+
+    query.prepare(
+        """
+        SELECT window_id, title, SUM(difference)
+        FROM heartbeats
+        JOIN 
+            (SELECT start_time, end_time - start_time AS difference FROM heartbeats) d 
+        ON d.start_time=heartbeats.start_time
+        JOIN windows w on heartbeats.window_id = w.id
+        WHERE w.process_id=:process_id
+        GROUP BY heartbeats.process_id, window_id
+        ORDER BY SUM(difference) DESC
+        """
+    )
+
+    query.bindValue(":process_id", process_id)
+
+    results = []
+
+    if not query.exec_():
+        raise DatabaseError(query.lastError())
+    else:
+        while query.next():
+            window = Window(query.value(1), window_id=query.value(0))
+            count = query.value(2)
+            results.append((window, count))
 
     return results
 
@@ -171,7 +213,7 @@ def get_process_data() -> List[Tuple[Process, int]]:
 
     query.prepare(
         """
-        SELECT path, SUM(difference)
+        SELECT path, SUM(difference), process_id
         FROM heartbeats
         JOIN 
             (SELECT start_time, end_time - start_time AS difference FROM heartbeats) d 
@@ -188,8 +230,27 @@ def get_process_data() -> List[Tuple[Process, int]]:
         raise DatabaseError(query.lastError())
     else:
         while query.next():
-            path = Process(query.value(0))
+            process = Process(query.value(0), process_id=query.value(2))
             count = query.value(1)
-            results.append((path, count))
+            results.append((process, count))
 
     return results
+
+
+def get_timeline_data() -> List:
+    query = QtSql.QSqlQuery()
+
+    # SELECT process_id, window_id, datetime(ROUND(start_time / (60 * 10), 0) * (60 * 10), 'unixepoch') FROM heartbeats GROUP BY ROUND(start_time / (60 * 10), 0) * (60 * 10)
+
+    query.prepare(
+        """
+        SELECT path, SUM(difference)
+        FROM heartbeats
+        JOIN 
+            (SELECT start_time, end_time - start_time AS difference FROM heartbeats) d 
+        ON d.start_time=heartbeats.start_time
+        JOIN processes p on heartbeats.process_id = p.id
+        GROUP BY process_id
+        ORDER BY SUM(difference) DESC
+        """
+    )
