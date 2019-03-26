@@ -13,6 +13,7 @@ ActivityView {
             Text {
                 x: 10
                 y: 10
+                font.bold: true
                 text: "Path:"
             }
 
@@ -25,6 +26,7 @@ ActivityView {
             Text {
                 x: 10
                 y: 70
+                font.bold: true
                 text: "Process:"
             }
 
@@ -32,6 +34,62 @@ ActivityView {
                 x: 10
                 y: 90
                 text: activityView.processTitle
+            }
+
+            Text {
+                x: 310
+                y: 70
+                font.bold: true
+                text: "Time:"
+            }
+
+            Text {
+                x: 310
+                y: 90
+                text: activityView.viewTime
+            }
+        }
+
+        Rectangle {
+            visible: activityView.windowInfoVisible
+
+            Text {
+                x: 10
+                y: 10
+                font.bold: true
+                text: "Window:"
+            }
+
+            Text {
+                x: 10
+                y: 30
+                text: activityView.windowName
+            }
+
+            Text {
+                x: 10
+                y: 70
+                font.bold: true
+                text: "Process:"
+            }
+
+            Text {
+                x: 10
+                y: 90
+                text: activityView.processTitle
+            }
+
+            Text {
+                x: 310
+                y: 70
+                font.bold: true
+                text: "Time:"
+            }
+
+            Text {
+                x: 310
+                y: 90
+                text: activityView.viewTime
             }
         }
 
@@ -62,6 +120,9 @@ ActivityView {
                 title: "Process"
                 width: processTable.width - 100
 
+                movable: false
+                resizable: false
+
                 delegate: Rectangle {
                     color: {
                         if (styleData.selected) {
@@ -83,6 +144,9 @@ ActivityView {
                 role: "time"
                 title: "Time"
                 width: 100
+
+                movable: false
+                resizable: false
 
                 delegate: Rectangle {
                     color: {
@@ -163,6 +227,9 @@ ActivityView {
                 title: "Window"
                 width: windowTable.width - 100
 
+                movable: false
+                resizable: false
+
                 delegate: Rectangle {
                     color: {
                         if (styleData.selected) {
@@ -184,6 +251,9 @@ ActivityView {
                 role: "time"
                 title: "Time"
                 width: 100
+
+                movable: false
+                resizable: false
 
                 delegate: Rectangle {
                     color: {
