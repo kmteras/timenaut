@@ -67,6 +67,16 @@ class TypeListModel(QAbstractListModel):
     def getColor(self, row: int) -> QColor:
         return self.types[row][1]
 
+    def find(self, type_str: str) -> int:
+        if type_str is None:
+            return -1
+
+        for index, type_el in enumerate(self.types):
+            if type_el[0] == type_str:
+                return index
+
+        return -1
+
 
 def type_list_model_singleton() -> TypeListModel:
     global model

@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12 as NewControls
 import QtQuick.Controls 1.0
 import Views 1.0
+import "qrc:/qml/fragments"
 
 ActivityView {
     id: activityView
@@ -10,6 +11,8 @@ ActivityView {
 
         Rectangle {
             visible: activityView.processInfoVisible
+
+            signal processTypeSelected(int index)
 
             Text {
                 x: 10
@@ -57,34 +60,28 @@ ActivityView {
                 text: "Type:"
             }
 
-            NewControls.ComboBox {
-                id: comboBox
+            TypeComboBox {
                 x: 400
                 y: 90
-                textRole: "type"
-                model: typeListModel
-                delegate: NewControls.ItemDelegate {
-                    contentItem: Text {
-                        font.bold: true
-                        text: type
-                        color: itemColor
-                        elide: Text.ElideRight
-                        verticalAlignment: Text.AlignVCenter
-                    }
+                objectName: "processComboBox"
+
+                signal setProcessType(int index)
+
+                Component.onCompleted: set_process_type.connect(setProcessType)
+
+                onActivated: {
+                    processTypeSelected(index);
                 }
 
-                contentItem: Text {
-                    font.bold: true
-                    leftPadding: 8
-                    text: comboBox.displayText
-                    color: typeListModel.getColor(comboBox.currentIndex)
-                    verticalAlignment: Text.AlignVCenter
+                onSetProcessType: {
+                    currentIndex = index
                 }
             }
         }
 
         Rectangle {
             visible: activityView.windowInfoVisible
+            signal windowTypeSelected(int index)
 
             Text {
                 x: 10
@@ -124,6 +121,30 @@ ActivityView {
                 y: 90
                 text: activityView.viewTime
             }
+
+            Text {
+                x: 400
+                y: 70
+                font.bold: true
+                text: "Type:"
+            }
+
+            TypeComboBox {
+                x: 400
+                y: 90
+
+                signal setWindowType(int index)
+
+                onActivated: {
+                    windowTypeSelected(index);
+                }
+
+                Component.onCompleted: set_window_type.connect(setWindowType)
+
+                onSetWindowType: {
+                    currentIndex = index
+                }
+            }
         }
 
         id: panel2
@@ -132,8 +153,8 @@ ActivityView {
         height: viewArea.height
         color: "white"
 
-        signal  processSelected(int row)
-        signal  windowSelected(int row)
+        signal processSelected(int row)
+        signal windowSelected(int row)
 
         TableView {
             id: processTable
@@ -168,6 +189,7 @@ ActivityView {
 
                     Text {
                         text: styleData.value
+                        color: processTableModel.getColor(styleData.row)
                         leftPadding: 16
                     }
                 }
@@ -275,6 +297,7 @@ ActivityView {
 
                     Text {
                         text: styleData.value
+                        color: windowTableModel.getColor(styleData.row)
                         leftPadding: 16
                     }
                 }

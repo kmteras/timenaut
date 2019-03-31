@@ -4,8 +4,10 @@ import sys
 
 
 class Process:
-    def __init__(self, path: str, process_id: int = None):
+    def __init__(self, path: str, process_id: int = None, type_str: str = None, type_color: str = None):
         self.id = process_id
+        self.type_str = type_str
+        self.type_color = type_color
 
         if path == "":
             self.path = None

@@ -1,9 +1,11 @@
 import PySide2.QtCore as QtCore
 from PySide2.QtWidgets import QTableView
 
+import timewire.core.database as database
 from timewire.core.database import get_process_data, get_window_data_by_process
 from timewire.core.models.process import Process
 from timewire.core.models.process_table_model import process_table_model_singleton
+from timewire.core.models.type_list_model import type_list_model_singleton
 from timewire.core.models.window import Window
 from timewire.core.models.window_table_model import window_table_model_singleton
 from timewire.util.util import get_formatted_time
@@ -114,6 +116,9 @@ class ActivityView(BaseView):
 
         self.set_view_time(get_formatted_time(process_model.processes[row][1]))
 
+        type_model = type_list_model_singleton()
+        self.set_process_type.emit(type_model.find(process.type_str))
+
     @QtCore.Slot(int)
     def windowSelected(self, row: int):
         if row == -1:
@@ -135,6 +140,21 @@ class ActivityView(BaseView):
         window_time = window_model.windows[row][1]
         self.set_view_time(get_formatted_time(window_time))
 
+        type_model = type_list_model_singleton()
+        self.set_window_type.emit(type_model.find(window.type_str))
+
+    @QtCore.Slot(int)
+    def processTypeSelected(self, row: int):
+        type_model = type_list_model_singleton()
+        database.set_process_type(self.selected_process.id, type_model.types[row][0])
+        self.update()
+
+    @QtCore.Slot(int)
+    def windowTypeSelected(self, row: int):
+        type_model = type_list_model_singleton()
+        database.set_window_type(self.selected_window.id, type_model.types[row][0])
+        self.update()
+
     on_process_info_visible = QtCore.Signal()
     on_window_info_visible = QtCore.Signal()
 
@@ -142,6 +162,9 @@ class ActivityView(BaseView):
     on_window_name = QtCore.Signal()
     on_process_path = QtCore.Signal()
     on_process_title = QtCore.Signal()
+
+    set_process_type = QtCore.Signal(int)
+    set_window_type = QtCore.Signal(int)
 
     processInfoVisible = QtCore.Property(bool, get_process_info_visible, notify=on_process_info_visible)
     windowInfoVisible = QtCore.Property(bool, get_window_info_visible, notify=on_window_info_visible)
