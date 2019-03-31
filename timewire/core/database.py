@@ -54,8 +54,25 @@ def create_tables() -> None:
     if not query.exec_("CREATE TABLE IF NOT EXISTS productivity_type("
                        "name TEXT NOT NULL, "
                        "color TEXT NOT NULL,"
-                       "removable BOOLEAN DEFAULT TRUE);"):
+                       "removable BOOLEAN DEFAULT TRUE,"
+                       "UNIQUE(name));"):
         raise DatabaseError(query.lastError())
+
+    if not query.exec_("INSERT OR REPLACE INTO productivity_type VALUES ('unknown', '#808585', 'false')"):
+        raise DatabaseError(query.lastError())
+
+    if not query.exec_("INSERT OR REPLACE INTO productivity_type VALUES ('work', '#84ba5b', 'false')"):
+        raise DatabaseError(query.lastError())
+
+    if not query.exec_("INSERT OR REPLACE INTO productivity_type VALUES ('unproductive', '#d35e60', 'false')"):
+        raise DatabaseError(query.lastError())
+
+    if not query.exec_("INSERT OR REPLACE INTO productivity_type VALUES ('games', '#9067a7', 'false')"):
+        raise DatabaseError(query.lastError())
+
+    if not query.exec_("INSERT OR REPLACE INTO productivity_type VALUES ('social', '#7293cb', 'false')"):
+        raise DatabaseError(query.lastError())
+
     logging.info("Created database tables")
 
 
@@ -213,14 +230,25 @@ def get_process_data() -> List[Tuple[Process, int]]:
 
     query.prepare(
         """
-        SELECT path, SUM(difference), process_id
+        SELECT 
+            path, 
+            SUM(difference), 
+            process_id
         FROM heartbeats
         JOIN 
-            (SELECT start_time, end_time - start_time AS difference FROM heartbeats) d 
-        ON d.start_time=heartbeats.start_time
-        JOIN processes p on heartbeats.process_id = p.id
-        GROUP BY process_id
-        ORDER BY SUM(difference) DESC
+            (SELECT 
+                start_time, 
+                end_time - start_time AS difference 
+            FROM 
+                heartbeats) d 
+        ON 
+            d.start_time=heartbeats.start_time
+        JOIN 
+            processes p on heartbeats.process_id = p.id
+        GROUP BY 
+            process_id
+        ORDER BY 
+            SUM(difference) DESC
         """
     )
 
@@ -235,6 +263,31 @@ def get_process_data() -> List[Tuple[Process, int]]:
             results.append((process, count))
 
     return results
+
+
+def get_types() -> List:
+    query = QtSql.QSqlQuery()
+
+    query.prepare(
+        """
+        SELECT
+            name,
+            color
+        FROM productivity_type
+        """
+    )
+
+    types = []
+
+    if not query.exec_():
+        raise DatabaseError(query.lastError())
+    else:
+        while query.next():
+            type_name = query.value(0)
+            color = query.value(1)
+            types.append((type_name, color))
+
+    return types
 
 
 def get_timeline_data() -> List:

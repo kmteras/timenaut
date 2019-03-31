@@ -10,6 +10,7 @@ from PySide2.QtWidgets import QApplication
 
 import timewire.core.database as database
 from timewire.core.models.process_table_model import process_table_model_singleton
+from timewire.core.models.type_list_model import type_list_model_singleton
 from timewire.core.models.window_table_model import window_table_model_singleton
 from timewire.util.util import is_debug
 from timewire.views.activity_view import ActivityView
@@ -45,6 +46,7 @@ def main():
 
         qml.rootContext().setContextProperty("processTableModel", process_table_model_singleton())
         qml.rootContext().setContextProperty("windowTableModel", window_table_model_singleton())
+        qml.rootContext().setContextProperty("typeListModel", type_list_model_singleton())
 
         qml.load("qrc:/qml/main_view.qml")
 
