@@ -14,6 +14,7 @@
     <file>qml/fragments/Navigation.qml</file>
     <file>qml/fragments/NavigationLogo.qml</file>
     <file>qml/fragments/NavigationItem.qml</file>
+    <file>qml/fragments/TypeComboBox.qml</file>
 
     <file>font/Slabo13px-Regular.ttf</file>
     <file>font/Montserrat-Regular.ttf</file>

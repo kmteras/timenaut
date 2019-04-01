@@ -1,6 +1,8 @@
 from typing import List
 
+import PySide2.QtCore as QtCore
 from PySide2.QtCore import QAbstractTableModel, QModelIndex, Qt
+from PySide2.QtGui import QColor
 
 from timewire.core.models.window import Window
 from timewire.util.util import get_formatted_time
@@ -27,13 +29,16 @@ class WindowTableModel(QAbstractTableModel):
         return len(self.windows[0])
 
     def headerData(self, section: int, orientation: Qt.Orientation, role=Qt.DisplayRole):
-        if role != Qt.DisplayRole or orientation != Qt.Horizontal:
+        if not (role == self.windowRole or role == self.timeRole):
+            return None
+
+        if orientation != Qt.Horizontal:
             return None
 
         if section == 0:
-            return "Window"
+            return "window"
         elif section == 1:
-            return "Time"
+            return "time"
 
         return None
 
@@ -89,6 +94,13 @@ class WindowTableModel(QAbstractTableModel):
         self.beginResetModel()
         self.windows = data
         self.endResetModel()
+
+    @QtCore.Slot(int, result=QColor)
+    def getColor(self, row: int) -> QColor:
+        if row < len(self.windows):
+            return QColor(self.windows[row][0].type_color)
+        else:
+            return QColor("black")
 
 
 def window_table_model_singleton() -> WindowTableModel:

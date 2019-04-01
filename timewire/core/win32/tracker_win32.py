@@ -7,7 +7,7 @@ from timewire.core.models.window import Window
 
 
 def get_process_data() -> (Process, Window):
-    path: None
+    path = None
 
     window = win32gui.GetForegroundWindow()
 

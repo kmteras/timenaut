@@ -1,6 +1,8 @@
 from typing import List
 
+import PySide2.QtCore as QtCore
 from PySide2.QtCore import QAbstractTableModel, QModelIndex, Qt
+from PySide2.QtGui import QColor
 
 from timewire.core.models.process import Process
 from timewire.util.util import get_formatted_time
@@ -90,6 +92,13 @@ class ProcessTableModel(QAbstractTableModel):
         self.beginResetModel()
         self.processes = data
         self.endResetModel()
+
+    @QtCore.Slot(int, result=QColor)
+    def getColor(self, row: int) -> QColor:
+        if row < len(self.processes):
+            return QColor(self.processes[row][0].type_color)
+        else:
+            return QColor("black")
 
 
 def process_table_model_singleton() -> ProcessTableModel:

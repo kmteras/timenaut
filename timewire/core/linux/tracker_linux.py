@@ -13,13 +13,23 @@ shell = bus.get('org.gnome.Shell', '/org/gnome/Shell')
 def get_process_data() -> (Process, Window):
     path = None
 
-    title = shell.Eval("global.screen.get_display().get_focus_window().title;")[1][1:-1]
+    title_eval = shell.Eval("global.screen.get_display().get_focus_window().title;")
+
+    title = None
+
+    if title_eval[0]:
+        title = title_eval[1][1:-1]
 
     # TODO: if title == ...
 
     # wm = method("global.screen.get_display().get_focus_window().get_wm_class();")[1][1:-1]
     try:
-        pid = int(shell.Eval("global.screen.get_display().get_focus_window().get_pid();")[1])
+        pid_eval = shell.Eval("global.screen.get_display().get_focus_window().get_pid();")
+
+        pid = None
+
+        if pid_eval:
+            pid = int(pid_eval[1])
     except ValueError as e:
         pid = None
         pass

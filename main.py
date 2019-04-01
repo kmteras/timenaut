@@ -10,6 +10,7 @@ from PySide2.QtWidgets import QApplication
 
 import timewire.core.database as database
 from timewire.core.models.process_table_model import process_table_model_singleton
+from timewire.core.models.type_list_model import type_list_model_singleton
 from timewire.core.models.window_table_model import window_table_model_singleton
 from timewire.util.util import is_debug
 from timewire.views.activity_view import ActivityView
@@ -30,8 +31,15 @@ def main():
     montserrat = QFont("qrc:/font/Montserrat-Regular.ttf")
     application.setFont(montserrat)
 
+    # Database setup
     try:
         database.connect()
+    except Exception as e:
+        logging.error(e)
+        QApplication.quit()
+        return
+
+    try:
         qmlRegisterType(PieGraph, "Graphs", 1, 0, "PieGraph")
         qmlRegisterType(BarGraph, "Graphs", 1, 0, "BarGraph")
         qmlRegisterType(TimelineGraph, "Graphs", 1, 0, "TimelineGraph")
@@ -45,6 +53,7 @@ def main():
 
         qml.rootContext().setContextProperty("processTableModel", process_table_model_singleton())
         qml.rootContext().setContextProperty("windowTableModel", window_table_model_singleton())
+        qml.rootContext().setContextProperty("typeListModel", type_list_model_singleton())
 
         qml.load("qrc:/qml/main_view.qml")
 
@@ -65,8 +74,8 @@ def quit_signal(signum, frame):
     QApplication.quit()
 
 
-logging_format = '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
-
+logging_format = '%(asctime)s %(levelname)s %(name)s: %(message)s'
+debugging_logging_format = '%(asctime)s %(levelname)s [%(filename)s:%(lineno)d] %(name)s: %(message)s'
 base_dir = os.path.abspath(os.path.dirname(__file__))
 logging_file = os.path.join(base_dir, 'timewire.log')
 
@@ -75,10 +84,9 @@ if __name__ == "__main__":
         logging.basicConfig(
             level=logging.DEBUG,
             handlers=[
-                logging.FileHandler(logging_file),
                 logging.StreamHandler()
             ],
-            format=logging_format)
+            format=debugging_logging_format)
     else:
         logging.basicConfig(
             level=logging.INFO,

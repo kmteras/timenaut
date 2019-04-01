@@ -32,14 +32,18 @@ def create_tables() -> None:
 
     if not query.exec_("CREATE TABLE IF NOT EXISTS processes("
                        "id INTEGER PRIMARY KEY, "
-                       "path TEXT);"):  # text may be NULL because of Wayland sloppy support
+                       "path TEXT,"  # text may be NULL because of Wayland sloppy support
+                       "type_str TEXT,"
+                       "FOREIGN KEY (type_str) REFERENCES productivity_type(type));"):
         raise DatabaseError(query.lastError())
 
     if not query.exec_("CREATE TABLE IF NOT EXISTS windows("
                        "id INTEGER PRIMARY KEY, "
                        "process_id INTEGER NOT NULL, "
                        "title TEXT NOT NULL,"
-                       "FOREIGN KEY (process_id) REFERENCES processes(id));"):
+                       "type_str TEXT NOT NULL,"
+                       "FOREIGN KEY (process_id) REFERENCES processes(id),"
+                       "FOREIGN KEY (type_str) REFERENCES productivity_type(type));"):
         raise DatabaseError(query.lastError())
 
     if not query.exec_("CREATE TABLE IF NOT EXISTS heartbeats("
@@ -52,10 +56,27 @@ def create_tables() -> None:
         raise DatabaseError(query.lastError())
 
     if not query.exec_("CREATE TABLE IF NOT EXISTS productivity_type("
-                       "name TEXT NOT NULL, "
+                       "type TEXT NOT NULL, "
                        "color TEXT NOT NULL,"
-                       "removable BOOLEAN DEFAULT TRUE);"):
+                       "removable BOOLEAN DEFAULT TRUE,"
+                       "UNIQUE(type));"):
         raise DatabaseError(query.lastError())
+
+    if not query.exec_("INSERT OR REPLACE INTO productivity_type VALUES ('unknown', '#808585', 'false')"):
+        raise DatabaseError(query.lastError())
+
+    if not query.exec_("INSERT OR REPLACE INTO productivity_type VALUES ('work', '#84ba5b', 'false')"):
+        raise DatabaseError(query.lastError())
+
+    if not query.exec_("INSERT OR REPLACE INTO productivity_type VALUES ('unproductive', '#d35e60', 'false')"):
+        raise DatabaseError(query.lastError())
+
+    if not query.exec_("INSERT OR REPLACE INTO productivity_type VALUES ('games', '#9067a7', 'false')"):
+        raise DatabaseError(query.lastError())
+
+    if not query.exec_("INSERT OR REPLACE INTO productivity_type VALUES ('social', '#7293cb', 'false')"):
+        raise DatabaseError(query.lastError())
+
     logging.info("Created database tables")
 
 
@@ -72,8 +93,9 @@ def add_process(process: Process) -> int:
         if query.next():
             return query.value(0)
 
-    query.prepare("INSERT INTO processes (path) VALUES (:path)")
+    query.prepare("INSERT INTO processes (path, type_str) VALUES (:path, :type)")
     query.bindValue(":path", process.path)
+    query.bindValue(":type", 'unknown')
     if not query.exec_():
         raise DatabaseError(query.lastError())
     else:
@@ -150,14 +172,31 @@ def get_window_data() -> List[Tuple[Process, Window, int]]:
 
     query.prepare(
         """
-        SELECT path, title, SUM(difference)
+        SELECT
+            path,
+            title,
+            SUM(difference) AS total_time,
+            CASE
+                WHEN w.type_str IS NULL
+                    THEN p.type_str
+                ELSE w.type_str
+            END,
+            CASE
+                WHEN w.type_str IS NULL
+                    THEN pt.color
+                ELSE wt.color
+            END
         FROM heartbeats
-        JOIN 
-            (SELECT start_time, end_time - start_time AS difference FROM heartbeats) d 
+        JOIN
+            (SELECT start_time, end_time - start_time AS difference FROM heartbeats) d
         ON d.start_time=heartbeats.start_time
-        JOIN processes p on heartbeats.process_id = p.id
-        JOIN windows w on heartbeats.window_id = w.id
+        LEFT JOIN processes p on heartbeats.process_id = p.id
+        LEFT JOIN windows w on heartbeats.window_id = w.id
+        LEFT JOIN productivity_type pt on p.type_str = pt.type
+        LEFT JOIN productivity_type wt on w.type_str = wt.type
         GROUP BY heartbeats.process_id, window_id
+        HAVING
+            total_time > 0
         ORDER BY SUM(difference) DESC
         """
     )
@@ -169,7 +208,7 @@ def get_window_data() -> List[Tuple[Process, Window, int]]:
     else:
         while query.next():
             process = Process(query.value(0))
-            window = Window(query.value(1))
+            window = Window(query.value(1), type_str=query.value(3), type_color=query.value(4))
             count = query.value(2)
             results.append((process, window, count))
 
@@ -181,14 +220,32 @@ def get_window_data_by_process(process_id: int) -> List[Tuple[Window, int]]:
 
     query.prepare(
         """
-        SELECT window_id, title, SUM(difference)
+        SELECT 
+            window_id, 
+            title, 
+            SUM(difference) AS total_time,
+            CASE
+                WHEN w.type_str IS NULL
+                    THEN p.type_str
+                ELSE w.type_str
+            END,
+            CASE
+                WHEN w.type_str IS NULL
+                    THEN pt.color
+                ELSE wt.color
+            END
         FROM heartbeats
         JOIN 
             (SELECT start_time, end_time - start_time AS difference FROM heartbeats) d 
         ON d.start_time=heartbeats.start_time
-        JOIN windows w on heartbeats.window_id = w.id
+        LEFT JOIN windows w ON heartbeats.window_id = w.id
+        LEFT JOIN processes p ON p.id = w.process_id
+        LEFT JOIN productivity_type pt on p.type_str = pt.type
+        LEFT JOIN productivity_type wt on w.type_str = wt.type
         WHERE w.process_id=:process_id
         GROUP BY heartbeats.process_id, window_id
+        HAVING 
+            total_time > 0
         ORDER BY SUM(difference) DESC
         """
     )
@@ -201,7 +258,11 @@ def get_window_data_by_process(process_id: int) -> List[Tuple[Window, int]]:
         raise DatabaseError(query.lastError())
     else:
         while query.next():
-            window = Window(query.value(1), window_id=query.value(0))
+            window = Window(
+                query.value(1),
+                window_id=query.value(0),
+                type_str=query.value(3),
+                type_color=query.value(4))
             count = query.value(2)
             results.append((window, count))
 
@@ -213,14 +274,29 @@ def get_process_data() -> List[Tuple[Process, int]]:
 
     query.prepare(
         """
-        SELECT path, SUM(difference), process_id
+        SELECT 
+            path, 
+            SUM(difference), 
+            process_id,
+            pt.type,
+            pt.color
         FROM heartbeats
         JOIN 
-            (SELECT start_time, end_time - start_time AS difference FROM heartbeats) d 
-        ON d.start_time=heartbeats.start_time
-        JOIN processes p on heartbeats.process_id = p.id
-        GROUP BY process_id
-        ORDER BY SUM(difference) DESC
+            (SELECT 
+                start_time, 
+                end_time - start_time AS difference 
+            FROM 
+                heartbeats) d 
+        ON 
+            d.start_time=heartbeats.start_time
+        LEFT JOIN 
+            processes p on heartbeats.process_id = p.id
+        LEFT JOIN 
+            productivity_type pt on p.type_str = pt.type
+        GROUP BY 
+            process_id
+        ORDER BY 
+            SUM(difference) DESC
         """
     )
 
@@ -230,11 +306,83 @@ def get_process_data() -> List[Tuple[Process, int]]:
         raise DatabaseError(query.lastError())
     else:
         while query.next():
-            process = Process(query.value(0), process_id=query.value(2))
+            process = Process(
+                query.value(0),
+                process_id=query.value(2),
+                type_str=query.value(3),
+                type_color=query.value(4))
             count = query.value(1)
             results.append((process, count))
 
     return results
+
+
+def get_types() -> List:
+    query = QtSql.QSqlQuery()
+
+    query.prepare(
+        """
+        SELECT
+            type,
+            color
+        FROM productivity_type
+        """
+    )
+
+    types = []
+
+    if not query.exec_():
+        raise DatabaseError(query.lastError())
+    else:
+        while query.next():
+            type_name = query.value(0)
+            color = query.value(1)
+            types.append((type_name, color))
+
+    return types
+
+
+def set_window_type(window_id: int, type_str: str) -> None:
+    query = QtSql.QSqlQuery()
+
+    query.prepare(
+        """
+        UPDATE
+            windows
+        SET
+            type_str=:type_str
+        WHERE windows.id = :window_id
+        """
+    )
+
+    if type_str == "unknown":
+        type_str = None
+
+    query.bindValue(":type_str", type_str)
+    query.bindValue(":window_id", window_id)
+
+    if not query.exec_():
+        raise DatabaseError(query.lastError())
+
+
+def set_process_type(process_id: int, type_str: str) -> None:
+    query = QtSql.QSqlQuery()
+
+    query.prepare(
+        """
+        UPDATE
+            processes
+        SET
+            type_str=:type_str
+        WHERE processes.id = :process_id
+        """
+    )
+
+    query.bindValue(":type_str", type_str)
+    query.bindValue(":process_id", process_id)
+
+    if not query.exec_():
+        raise DatabaseError(query.lastError())
 
 
 def get_timeline_data() -> List:
