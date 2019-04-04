@@ -97,7 +97,7 @@ class WindowTableModel(QAbstractTableModel):
 
     @QtCore.Slot(int, result=QColor)
     def getColor(self, row: int) -> QColor:
-        if row < len(self.windows):
+        if 0 <= row < len(self.windows):
             return QColor(self.windows[row][0].type_color)
         else:
             return QColor("black")

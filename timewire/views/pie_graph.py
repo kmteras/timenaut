@@ -25,8 +25,11 @@ class PieGraph(QQuickPaintedItem):
     def set_labels(self, labels: List[str]):
         self.labels = labels
 
-    def paint(self, p):
+    def paint(self, p) -> None:
         values_total = sum(self.values)
+
+        if len(self.values) == 0 or values_total == 0:
+            return
 
         pen = QPen(QColor(*Color.GRAY))
         p.setPen(pen)

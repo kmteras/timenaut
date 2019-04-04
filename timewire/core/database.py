@@ -41,7 +41,7 @@ def create_tables() -> None:
                        "id INTEGER PRIMARY KEY, "
                        "process_id INTEGER NOT NULL, "
                        "title TEXT NOT NULL,"
-                       "type_str TEXT NOT NULL,"
+                       "type_str TEXT DEFAULT NULL,"
                        "FOREIGN KEY (process_id) REFERENCES processes(id),"
                        "FOREIGN KEY (type_str) REFERENCES productivity_type(type));"):
         raise DatabaseError(query.lastError())
@@ -51,6 +51,7 @@ def create_tables() -> None:
                        "window_id INTEGER NOT NULL,"
                        "start_time INTEGER NOT NULL,"
                        "end_time INTEGER NOT NULL,"
+                       "idle BOOLEAN DEFAULT FALSE NOT NULL,"
                        "FOREIGN KEY (process_id) REFERENCES processes(id), "
                        "FOREIGN KEY (window_id) REFERENCES windows(id));"):
         raise DatabaseError(query.lastError())

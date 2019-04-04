@@ -29,6 +29,9 @@ class BarGraph(QQuickPaintedItem):
         self.labels = labels
 
     def paint(self, painter):
+        if len(self.values) == 0 or len(self.labels) == 0:
+            return
+
         if self.horizontal:
             self.draw_horizontal(painter)
         else:
@@ -42,6 +45,9 @@ class BarGraph(QQuickPaintedItem):
         p.setPen(pen)
 
         max_value = max(self.values)
+
+        if max_value == 0:
+            return
 
         if self.draw_border:
             p.drawRect(0, 0, self.width() - 1, self.height() - 1)
@@ -76,6 +82,9 @@ class BarGraph(QQuickPaintedItem):
         p.setPen(pen)
 
         max_value = max(self.values)
+
+        if max_value == 0:
+            return
 
         for i, (value, label) in enumerate(zip(self.values, self.labels)):
             p.setBrush(QColor(*Color.colors[i]))
