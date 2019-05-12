@@ -13,7 +13,7 @@ shell = bus.get('org.gnome.Shell', '/org/gnome/Shell')
 def get_process_data() -> (Process, Window):
     path = None
 
-    title_eval = shell.Eval("global.screen.get_display().get_focus_window().title;")
+    title_eval = shell.Eval("global.get_display().get_focus_window().title;")
 
     title = None
 
@@ -24,7 +24,7 @@ def get_process_data() -> (Process, Window):
 
     # wm = method("global.screen.get_display().get_focus_window().get_wm_class();")[1][1:-1]
     try:
-        pid_eval = shell.Eval("global.screen.get_display().get_focus_window().get_pid();")
+        pid_eval = shell.Eval("global.get_display().get_focus_window().get_pid();")
 
         pid = None
 
@@ -35,12 +35,12 @@ def get_process_data() -> (Process, Window):
         pass
 
     if pid == -1:
-        path = shell.Eval("global.screen.get_display().get_focus_window().get_gtk_application_object_path();")
-        logging.debug(shell.Eval("global.screen.get_display().get_focus_window().get_gtk_unique_bus_name();"))
-        logging.debug(shell.Eval("global.screen.get_display().get_focus_window().get_gtk_window_object_path();"))
-        logging.debug(shell.Eval("global.screen.get_display().get_focus_window().get_gtk_application_id();"))
-        logging.debug(shell.Eval("global.screen.get_display().get_focus_window().get_gtk_app_menu_object_path();"))
-        logging.debug(shell.Eval("global.screen.get_display().get_focus_window().get_gtk_menubar_object_path();"))
+        path = shell.Eval("global.get_display().get_focus_window().get_gtk_application_object_path();")
+        logging.debug(shell.Eval("global.get_display().get_focus_window().get_gtk_unique_bus_name();"))
+        logging.debug(shell.Eval("global.get_display().get_focus_window().get_gtk_window_object_path();"))
+        logging.debug(shell.Eval("global.get_display().get_focus_window().get_gtk_application_id();"))
+        logging.debug(shell.Eval("global.get_display().get_focus_window().get_gtk_app_menu_object_path();"))
+        logging.debug(shell.Eval("global.get_display().get_focus_window().get_gtk_menubar_object_path();"))
     elif pid in psutil.pids():
         path = psutil.Process(pid).exe()
 
