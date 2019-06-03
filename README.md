@@ -10,7 +10,7 @@
 `pip3 install -r requirements.txt`  
 
 For python 3.7+  
-`cd venv/srv/bootloader`  
+`cd venv/src/pyinstaller/bootloader`  
 `python3 ./waf distclean all`  
 
 ## Running for development
