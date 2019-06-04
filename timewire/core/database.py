@@ -130,7 +130,6 @@ def add_window(window: Window, process_id: int) -> int:
 last_process_id = None
 last_window_id = None
 last_start_time = time()
-RECORDING_INTERVAL = 1
 
 
 def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
@@ -143,10 +142,7 @@ def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
 
     process_id = add_process(heartbeat.process)
     window_id = add_window(heartbeat.window, process_id)
-    if int(last_start_time) + RECORDING_INTERVAL < int(heartbeat.time):
-        end_time = int(last_start_time) + RECORDING_INTERVAL
-    else:
-        end_time = int(heartbeat.time)
+    end_time = int(heartbeat.time)
 
     if process_id == last_process_id and window_id == last_window_id:
         query = QtSql.QSqlQuery()
