@@ -154,7 +154,9 @@ def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
             "SET end_time=:end_time "
             "WHERE start_time=:last_start_time")
 
-        end_time = min(end_time, int(last_end_time) + TIME_INTERVAL)
+        end_time = min(int(last_end_time) + TIME_INTERVAL, end_time)
+
+        logging.debug(f"{end_time} {int(last_end_time)} {TIME_INTERVAL}")
 
         query.bindValue(":last_start_time", last_start_time)
         query.bindValue(":end_time", end_time)
@@ -175,6 +177,7 @@ def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
         last_process_id = process_id
         last_window_id = window_id
         last_start_time = int(heartbeat.time)
+        last_end_time = heartbeat.time
 
 
 def get_window_data() -> List[Tuple[Process, Window, int]]:
