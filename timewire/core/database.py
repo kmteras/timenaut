@@ -1,4 +1,5 @@
 import logging
+from time import time
 from typing import List, Tuple
 
 import PySide2.QtSql as QtSql
@@ -128,7 +129,8 @@ def add_window(window: Window, process_id: int) -> int:
 # TODO: put into class?
 last_process_id = None
 last_window_id = None
-last_start_time = None
+last_start_time = time()
+RECORDING_INTERVAL = 1
 
 
 def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
@@ -141,6 +143,10 @@ def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
 
     process_id = add_process(heartbeat.process)
     window_id = add_window(heartbeat.window, process_id)
+    if int(last_start_time) + RECORDING_INTERVAL < int(heartbeat.time):
+        end_time = int(last_start_time) + RECORDING_INTERVAL
+    else:
+        end_time = int(heartbeat.time)
 
     if process_id == last_process_id and window_id == last_window_id:
         query = QtSql.QSqlQuery()
@@ -149,7 +155,7 @@ def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
             "SET end_time=:end_time "
             "WHERE start_time=:last_start_time")
         query.bindValue(":last_start_time", last_start_time)
-        query.bindValue(":end_time", int(heartbeat.time))
+        query.bindValue(":end_time", end_time)
         if not query.exec_():
             raise DatabaseError(query.lastError())
     else:
@@ -159,7 +165,7 @@ def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
             "VALUES (:process_id, :window_id, :datetime, :datetime)")
         query.bindValue(":process_id", process_id)
         query.bindValue(":window_id", window_id)
-        query.bindValue(":datetime", int(heartbeat.time))
+        query.bindValue(":datetime", end_time)
         if not query.exec_():
             raise DatabaseError(query.lastError())
 
