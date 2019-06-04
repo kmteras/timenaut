@@ -130,12 +130,15 @@ def add_window(window: Window, process_id: int) -> int:
 last_process_id = None
 last_window_id = None
 last_start_time = time()
+last_end_time = time()
+TIME_INTERVAL = 1
 
 
 def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
     global last_process_id
     global last_window_id
     global last_start_time
+    global last_end_time
 
     if not heartbeat.is_valid():
         return
@@ -150,8 +153,12 @@ def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
             "UPDATE heartbeats "
             "SET end_time=:end_time "
             "WHERE start_time=:last_start_time")
+
+        end_time = min(end_time, int(last_end_time) + TIME_INTERVAL)
+
         query.bindValue(":last_start_time", last_start_time)
         query.bindValue(":end_time", end_time)
+        last_end_time = end_time
         if not query.exec_():
             raise DatabaseError(query.lastError())
     else:
