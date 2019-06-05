@@ -23,23 +23,23 @@ DashboardViewBase {
         id: panel
         y: 220
         radius: 10
-        width: 500
-        height: 600
+        width: main.width / 2 + 100
+        height: main.height - 240
         color: "white"
 
         PieGraph {
             id: pieGraph
             objectName: "pieGraph"
-            width: 200
-            height: 200
+            width: Math.min(parent.height, parent.width / 2)
+            height: Math.min(parent.height, parent.width / 2)
         }
 
         BarGraph {
             id: barGraph
             objectName: "barGraph"
-            x: 200
-            width: 400
-            height: 200
+            x: parent.width / 2
+            width: parent.width / 2 - 10
+            height: parent.width / 2
         }
     }
 }
