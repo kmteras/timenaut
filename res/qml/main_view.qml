@@ -10,10 +10,10 @@ MainWindow {
     id: main
     objectName: "mainWindow"
     width: 800
-    height: 600
+    height: 480
 
     minimumWidth: 800
-    minimumHeight: 600
+    minimumHeight: 480
 
     color: "#D9D9D9"
 
