@@ -17,6 +17,7 @@ class TimelineGraph(QQuickPaintedItem):
         self.values: collections.OrderedDict = []
         self.x_padding = 16
         self.y_padding = 16
+        self.text_padding = 50
         self.font_size = 12
         self.draw_border = draw_border
         self.max_width = 10
@@ -34,7 +35,7 @@ class TimelineGraph(QQuickPaintedItem):
         p.setPen(pen)
 
         real_width = int(self.width() - 2 * self.x_padding)
-        real_height = int(self.height() - 2 * self.y_padding)
+        real_height = int(self.height() - 2 * self.y_padding - self.text_padding)
 
         p.drawRect(self.x_padding, self.y_padding, real_width, real_height)
 
@@ -53,6 +54,16 @@ class TimelineGraph(QQuickPaintedItem):
                                self.y_padding + real_height - bar_height - height_shift,
                                bar_width, bar_height)
                     height_shift += bar_height
+
+            if i % 6 == 0:
+                p.translate(self.x_padding + self.axis_width + self.bar_gap + i * (bar_width + self.bar_gap),
+                            self.y_padding + real_height + 10)
+                p.rotate(45)
+                p.setPen(QPen(QColor(*Color.BLACK)))
+                p.drawText(0, 0, time[11:])
+                p.setPen(QPen(QColor(*Color.WHITE)))
+                p.rotate(-45)
+                p.resetTransform()
 
         # Draw lines
         p.setBrush(QColor(*Color.DARK))
