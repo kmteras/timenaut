@@ -399,20 +399,49 @@ def set_process_type(process_id: int, type_str: str) -> None:
 def get_timeline_data() -> List:
     query = QtSql.QSqlQuery()
 
-    # SELECT process_id, window_id, datetime(ROUND(start_time / (60 * 10), 0) * (60 * 10), 'unixepoch') FROM heartbeats GROUP BY ROUND(start_time / (60 * 10), 0) * (60 * 10)
-
     query.prepare(
         """
-        SELECT path, SUM(difference)
-        FROM heartbeats
-        JOIN 
-            (SELECT start_time, end_time - start_time AS difference FROM heartbeats) d 
-        ON d.start_time=heartbeats.start_time
-        JOIN processes p on heartbeats.process_id = p.id
-        GROUP BY process_id
-        ORDER BY SUM(difference) DESC
+SELECT
+    CASE
+        WHEN w.type_str IS NULL
+            THEN p.type_str
+        ELSE w.type_str
+    END AS type_,
+    SUM(hb.end_time - hb.start_time) AS spent_time,
+    datetime(ROUND(hb.start_time / (60 * 10), 0) * (60 * 10), 'unixepoch', 'localtime') AS timeframe,
+    CASE
+        WHEN w.type_str IS NULL
+            THEN pt.color
+        ELSE wt.color
+    END AS type_color
+FROM
+    heartbeats AS hb
+LEFT JOIN
+    windows w ON hb.window_id = w.id
+LEFT JOIN
+    processes p ON p.id = w.process_id
+LEFT JOIN
+    productivity_type pt on p.type_str = pt.type
+LEFT JOIN
+    productivity_type wt on w.type_str = wt.type
+GROUP BY
+    ROUND(hb.start_time / (60 * 10), 0) * (60 * 10),
+    type_
         """
     )
+
+    results = []
+
+    if not query.exec_():
+        raise DatabaseError(query.lastError())
+    else:
+        while query.next():
+            type_ = query.value(0)
+            spent_time = query.value(1)
+            timeframe = query.value(2)
+            type_color = query.value(3)
+            results.append((type_, spent_time, timeframe, type_color))
+    return results
 
 
 def get_type_data() -> List[Tuple[str, int, str]]:

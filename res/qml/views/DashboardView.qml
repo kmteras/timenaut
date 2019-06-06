@@ -30,8 +30,8 @@ DashboardViewBase {
         PieGraph {
             id: pieGraph
             objectName: "pieGraph"
-            width: Math.min(parent.height, parent.width / 2)
-            height: Math.min(parent.height, parent.width / 2)
+            width: Math.min(parent.height, parent.width)
+            height: Math.min(parent.height, parent.width)
         }
     }
 
@@ -48,8 +48,8 @@ DashboardViewBase {
             id: barGraph
             objectName: "barGraph"
             x: 10
-            width: panel3.width - 20
-            height: parent.width
+            width: parent.width - 20
+            height: parent.height
         }
     }
 }

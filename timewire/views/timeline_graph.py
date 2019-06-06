@@ -1,9 +1,11 @@
+import collections
 from typing import List
 
-from PySide2.QtCore import QRectF, Qt
-from PySide2.QtGui import QPainter, QColor, QPen, QBrush
-from PySide2.QtQuick import QQuickPaintedItem
 import math
+from PySide2.QtCore import Qt
+from PySide2.QtGui import QPainter, QColor, QPen
+from PySide2.QtQuick import QQuickPaintedItem
+
 from timewire.views.graph_colors import Color
 
 
@@ -12,6 +14,7 @@ class TimelineGraph(QQuickPaintedItem):
         QQuickPaintedItem.__init__(self, parent)
         self.title = None
         self.labels: List[str] = ["Default"]
+        self.values: collections.OrderedDict = []
         self.x_padding = 16
         self.y_padding = 16
         self.font_size = 12
@@ -23,6 +26,9 @@ class TimelineGraph(QQuickPaintedItem):
     def set_labels(self, labels: List[str]):
         self.labels = labels
 
+    def set_values(self, values):
+        self.values = values
+
     def paint(self, p: QPainter):
         pen = QPen(QColor(*Color.WHITE))
         p.setPen(pen)
@@ -32,13 +38,21 @@ class TimelineGraph(QQuickPaintedItem):
 
         p.drawRect(self.x_padding, self.y_padding, real_width, real_height)
 
-        bar_amount = 12 * 6  # One bar every 10 minutes
+        bar_amount = 24 * 6  # One bar every 10 minutes
 
         bar_width = min(math.floor(real_width / bar_amount - self.bar_gap), self.max_width)
 
         p.setBrush(QColor(*Color.GREEN))
-        for i in range(bar_amount):
-            p.drawRect(self.x_padding + self.axis_width + self.bar_gap + i * (bar_width + self.bar_gap), self.y_padding, bar_width, real_height)
+        for i, time in enumerate(self.values.keys()):
+            height_shift = 0
+            for type in self.values[time]:
+                if self.values[time][type]["time"] > 0:
+                    p.setBrush(QColor(self.values[time][type]["color"]))
+                    bar_height = int(real_height * (self.values[time][type]["time"] / 600))
+                    p.drawRect(self.x_padding + self.axis_width + self.bar_gap + i * (bar_width + self.bar_gap),
+                               self.y_padding + real_height - bar_height - height_shift,
+                               bar_width, bar_height)
+                    height_shift += bar_height
 
         # Draw lines
         p.setBrush(QColor(*Color.DARK))
