@@ -23,7 +23,7 @@ DashboardViewBase {
         id: panel
         y: 220
         radius: 10
-        width: main.width / 2 + 100
+        width: main.width / 2
         height: main.height - 240
         color: "white"
 
@@ -33,13 +33,23 @@ DashboardViewBase {
             width: Math.min(parent.height, parent.width / 2)
             height: Math.min(parent.height, parent.width / 2)
         }
+    }
+
+    Rectangle {
+        id: panel3
+        x: panel.width + 10
+        y: 220
+        radius: 10
+        width: main.width - panel.width - 110
+        height: main.height - 240
+        color: "white"
 
         BarGraph {
             id: barGraph
             objectName: "barGraph"
-            x: parent.width / 2
-            width: parent.width / 2 - 10
-            height: parent.width / 2
+            x: 10
+            width: panel3.width - 20
+            height: parent.width
         }
     }
 }
