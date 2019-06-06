@@ -1,4 +1,4 @@
-from timewire.core.database import get_window_data, get_process_data
+from timewire.core.database import get_process_data, get_type_data
 from timewire.views.bar_graph import BarGraph
 from timewire.views.base_view import BaseView
 from timewire.views.pie_graph import PieGraph
@@ -21,21 +21,16 @@ class DashboardView(BaseView):
 
     def update(self):
         BaseView.update(self)
-        update_window_graph(self.pie_graph)
+        update_type_graph(self.pie_graph)
         update_process_graph(self.bar_graph)
 
 
-def update_window_graph(graph):
-    window_data = get_window_data()
+def update_type_graph(graph):
+    type_data = get_type_data()
 
-    window_values = [x[2] for x in window_data]
-    window_labels = [x[1].get_name_part(0) for x in window_data]
-
-    window_values = window_values[:5] + [sum(window_values[5:])]
-    window_labels = window_labels[:5] + ["Other"]
-
-    graph.set_values(window_values)
-    graph.set_labels(window_labels)
+    graph.set_values([x[1] for x in type_data])
+    graph.set_labels([x[0] for x in type_data])
+    graph.set_colors([x[2] for x in type_data])
     graph.update()
 
 

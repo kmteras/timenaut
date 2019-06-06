@@ -18,12 +18,16 @@ class PieGraph(QQuickPaintedItem):
         self.text_padding = 400
         self.font_size = 12
         self.draw_border = draw_border
+        self.colors = None
 
     def set_values(self, values: List[float]):
         self.values = values
 
     def set_labels(self, labels: List[str]):
         self.labels = labels
+
+    def set_colors(self, colors: List[str]):
+        self.colors = colors
 
     def paint(self, p) -> None:
         values_total = sum(self.values)
@@ -50,7 +54,10 @@ class PieGraph(QQuickPaintedItem):
         for i, value in enumerate(self.values):
             angle = int(16 * 360 * value / values_total)
 
-            p.setBrush(QBrush(QColor(*Color.colors[i])))
+            if self.colors is None:
+                p.setBrush(QBrush(QColor(*Color.colors[i])))
+            else:
+                p.setBrush(QBrush(QColor(self.colors[i])))
 
             p.drawPie(circle_rect, total_drawn_angles, angle)
             total_drawn_angles += angle

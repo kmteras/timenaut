@@ -38,11 +38,11 @@ MainWindow {
 
         DashboardView {
             id: dashboardView
-            visible: false
         }
 
         ActivityView {
             id: activityView
+            visible: false
         }
 
         SettingsView {

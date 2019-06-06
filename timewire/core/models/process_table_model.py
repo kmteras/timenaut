@@ -17,7 +17,7 @@ class ProcessTableModel(QAbstractTableModel):
         if table is None:
             table = self
 
-        self.processes: List[List[Process, int]] = [["process", "time"], ["process", "time"]]
+        self.processes: List[List[Process, int]] = []
 
         self.processRole = Qt.DisplayRole
         self.timeRole = Qt.DisplayRole + 1

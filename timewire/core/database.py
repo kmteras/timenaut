@@ -156,8 +156,6 @@ def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
 
         end_time = min(int(last_end_time) + TIME_INTERVAL, end_time)
 
-        logging.debug(f"{end_time} {int(last_end_time)} {TIME_INTERVAL}")
-
         query.bindValue(":last_start_time", last_start_time)
         query.bindValue(":end_time", end_time)
         last_end_time = end_time
@@ -415,3 +413,46 @@ def get_timeline_data() -> List:
         ORDER BY SUM(difference) DESC
         """
     )
+
+
+def get_type_data() -> List[Tuple[str, int, str]]:
+    query = QtSql.QSqlQuery()
+
+    query.prepare(
+        """
+        SELECT
+            pt.type,
+            SUM(difference),
+            pt.color
+        FROM heartbeats
+        JOIN
+            (SELECT
+                start_time,
+                end_time - start_time AS difference
+            FROM
+                heartbeats) d
+        ON
+            d.start_time=heartbeats.start_time
+        LEFT JOIN
+            processes p on heartbeats.process_id = p.id
+        LEFT JOIN
+            productivity_type pt on p.type_str = pt.type
+        GROUP BY
+            type
+        ORDER BY
+            SUM(difference) DESC
+        """
+    )
+
+    results = []
+
+    if not query.exec_():
+        raise DatabaseError(query.lastError())
+    else:
+        while query.next():
+            type_ = query.value(0)
+            count = query.value(1)
+            color = query.value(2)
+            results.append((type_, count, color))
+
+    return results
