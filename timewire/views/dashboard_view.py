@@ -1,4 +1,5 @@
 import collections
+import datetime
 
 from timewire.core.database import get_process_data, get_type_data, get_timeline_data
 from timewire.views.bar_graph import BarGraph
@@ -59,14 +60,16 @@ def update_timeline(graph):
 
     d = collections.OrderedDict()
 
+    current_date = datetime.datetime.now().isoformat()[:10]
+
     for v in range(24):
         for m in range(6):
-            d[f'2019-06-05 {v:02d}:{m * 10:02d}:00'] = {}
+            d[f'{current_date} {v:02d}:{m * 10:02d}:00'] = {}
 
     leftover_time = {}
 
     for v in data:
-        if v[2][:10] == '2019-06-05':
+        if v[2][:10] == current_date:
             time = v[1]
 
             if v[3] in leftover_time:
