@@ -1,12 +1,14 @@
 from time import time
 
+import math
+
 from timewire.core.models.process import Process
 from timewire.core.models.window import Window
 
 
 class ProcessHeartbeat:
     def __init__(self, process: Process, window: Window):
-        self.time = time()
+        self.time = math.floor(time())
         self.process = process
         self.window = window
 

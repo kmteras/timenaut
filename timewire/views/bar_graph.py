@@ -13,11 +13,13 @@ class BarGraph(QQuickPaintedItem):
         self.title = None
         self.values = [1]
         self.labels = ["1"]
+        self.colors = []
         self.x_padding = 12
         self.y_padding = 12
         self.bar_padding_percentage = 0.2
         self.max_bar_width = None  # TODO: implement
         self.text_padding = 100
+        self.bar_padding = 10
         self.font_size = 12
         self.horizontal = horizontal
         self.draw_border = draw_border
@@ -27,6 +29,9 @@ class BarGraph(QQuickPaintedItem):
 
     def set_labels(self, labels: List[str]):
         self.labels = labels
+
+    def set_colors(self, colors):
+        self.colors = colors
 
     def paint(self, painter):
         if len(self.values) == 0 or len(self.labels) == 0:
@@ -38,13 +43,18 @@ class BarGraph(QQuickPaintedItem):
             self.draw_vertical(painter)
 
     def draw_horizontal(self, p):
-        rect_size = (self.height() - 3 * self.x_padding) / len(self.values)
+        rect_size = (self.height() - 3 * self.x_padding) / len(list(self.values.keys())[:5])
         bar_height = int(rect_size * (1 - self.bar_padding_percentage))
 
         pen = QPen(QColor(*Color.BLACK))
         p.setPen(pen)
 
-        max_value = max(self.values)
+        max_value = 0
+
+        if len(self.values) > 0:
+            proc = list(self.values.keys())[0]
+            for type_ in self.values[proc]:
+                max_value += self.values[proc][type_]["time"]
 
         if max_value == 0:
             return
@@ -52,24 +62,33 @@ class BarGraph(QQuickPaintedItem):
         if self.draw_border:
             p.drawRect(0, 0, self.width() - 1, self.height() - 1)
 
-        for i, (value, label) in enumerate(zip(self.values, self.labels)):
-            p.setBrush(QColor(*Color.colors[i]))
-            bar_width = (value / max_value) * (self.height() - 2 * self.y_padding)
+        for i, v in enumerate(list(self.values.keys())[:5]):
+            label = ""
+            offset = 0
+            for type_ in self.values[v].keys():
+                value = self.values[v][type_]["time"]
 
-            bar_rect = QRectF(
-                self.x_padding + self.text_padding,
-                rect_size * i + 2 * self.y_padding,
-                bar_width,
-                bar_height
-            )
+                p.setBrush(QColor(self.values[v][type_]["color"]))
 
-            p.drawRect(bar_rect)
+                bar_width = (value / max_value) * (self.height() - 2 * self.y_padding - 30)
+
+                bar_rect = QRectF(
+                    self.x_padding + self.text_padding + self.bar_padding + offset,
+                    rect_size * i + 2 * self.y_padding,
+                    bar_width,
+                    bar_height
+                )
+
+                p.drawRect(bar_rect)
+
+                offset += bar_width
+                label = self.values[v][type_]["title"]
 
             text_rect = QRectF(
                 self.x_padding,
-                bar_rect.y(),
+                rect_size * i + 2 * self.y_padding,
                 self.text_padding,
-                bar_rect.height()
+                bar_height
             )
 
             p.drawText(text_rect, Qt.AlignVCenter | Qt.AlignRight, str(label))

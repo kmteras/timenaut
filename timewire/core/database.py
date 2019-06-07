@@ -485,3 +485,55 @@ def get_type_data() -> List[Tuple[str, int, str]]:
             results.append((type_, count, color))
 
     return results
+
+
+def get_process_data_type() -> List[Tuple[Process, int]]:
+    query = QtSql.QSqlQuery()
+
+    query.prepare(
+        """
+SELECT
+    path,
+    SUM(hb.end_time - hb.start_time),
+    hb.process_id,
+    CASE
+        WHEN w.type_str IS NULL
+            THEN p.type_str
+        ELSE w.type_str
+    END AS type_,
+    CASE
+        WHEN w.type_str IS NULL
+            THEN pt.color
+        ELSE wt.color
+    END AS type_color
+FROM heartbeats AS hb
+LEFT JOIN
+    processes p on hb.process_id = p.id
+LEFT JOIN
+    windows w ON hb.window_id = w.id
+LEFT JOIN
+    productivity_type pt on p.type_str = pt.type
+LEFT JOIN
+    productivity_type wt on w.type_str = wt.type
+GROUP BY
+    type_, hb.process_id
+ORDER BY
+    SUM(hb.end_time - hb.start_time) DESC
+        """
+    )
+
+    results = []
+
+    if not query.exec_():
+        raise DatabaseError(query.lastError())
+    else:
+        while query.next():
+            process = Process(
+                query.value(0),
+                process_id=query.value(2),
+                type_str=query.value(3),
+                type_color=query.value(4))
+            count = query.value(1)
+            results.append((process, count))
+
+    return results
