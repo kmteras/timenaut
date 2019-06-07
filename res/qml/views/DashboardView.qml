@@ -24,7 +24,7 @@ DashboardViewBase {
             height: 30
             width: 40
             text: "<"
-            onClicked: dashboard.prev_day()
+            onClicked: dashboard.prevDay()
         }
 
         Button {
@@ -32,7 +32,7 @@ DashboardViewBase {
             height: 30
             width: 40
             text: ">"
-            onClicked: dashboard.next_day()
+            onClicked: dashboard.nextDay()
         }
     }
 

@@ -42,15 +42,21 @@ class DashboardView(BaseView):
     def get_date(self):
         return str(self.date_)
 
-    @QtCore.Slot()
     def next_day(self):
         self.set_date(self.date_ + datetime.timedelta(days=1))
         update_timeline(self.timeline_graph, str(self.date_))
 
-    @QtCore.Slot()
     def prev_day(self):
         self.set_date(self.date_ + datetime.timedelta(days=-1))
         update_timeline(self.timeline_graph, str(self.date_))
+
+    @QtCore.Slot()
+    def prevDay(self):
+        self.prev_day()
+
+    @QtCore.Slot()
+    def nextDay(self):
+        self.next_day()
 
     on_date = QtCore.Signal()
 
