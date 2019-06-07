@@ -4,12 +4,45 @@ import Graphs 1.0
 import Views 1.0
 
 DashboardViewBase {
+    id: dashboard
+    Rectangle {
+        id: timePanel
+        width: parent.width
+        height: 40
+        x: 0
+        y: 0
+
+        Text {
+            x: 5
+            y: 5
+
+            text: dashboard.date
+        }
+
+        Button {
+            x: main.width - 200
+            height: 30
+            width: 40
+            text: "<"
+            onClicked: dashboard.prev_day()
+        }
+
+        Button {
+            x: main.width - 150
+            height: 30
+            width: 40
+            text: ">"
+            onClicked: dashboard.next_day()
+        }
+    }
+
     Rectangle {
         id: panel2
         radius: 10
         width: viewArea.width
-        height: 200
+        height: 210
         color: "white"
+        y: 40
 
         TimelineGraph {
             id: timelineGraph
@@ -21,10 +54,10 @@ DashboardViewBase {
 
     Rectangle {
         id: panel
-        y: 220
+        y: 260
         radius: 10
         width: main.width / 2
-        height: main.height - 240
+        height: main.height - 280
         color: "white"
 
         PieGraph {
@@ -38,10 +71,10 @@ DashboardViewBase {
     Rectangle {
         id: panel3
         x: panel.width + 10
-        y: 220
+        y: 260
         radius: 10
         width: main.width - panel.width - 110
-        height: main.height - 240
+        height: main.height - 280
         color: "white"
 
         BarGraph {

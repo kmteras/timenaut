@@ -1,6 +1,8 @@
 import collections
 import datetime
 
+import PySide2.QtCore as QtCore
+
 from timewire.core.database import get_process_data, get_type_data, get_timeline_data
 from timewire.views.bar_graph import BarGraph
 from timewire.views.base_view import BaseView
@@ -15,6 +17,8 @@ class DashboardView(BaseView):
         self.bar_graph = None
         self.pie_graph = None
         self.timeline_graph = None
+        self.date_ = None
+        self.set_date(datetime.date.today())
 
     def componentComplete(self):
         BaseView.componentComplete(self)
@@ -29,7 +33,28 @@ class DashboardView(BaseView):
         BaseView.update(self)
         update_type_graph(self.pie_graph)
         update_process_graph(self.bar_graph)
-        update_timeline(self.timeline_graph)
+        update_timeline(self.timeline_graph, str(self.date_))
+
+    def set_date(self, d):
+        self.date_ = d
+        self.on_date.emit()
+
+    def get_date(self):
+        return str(self.date_)
+
+    @QtCore.Slot()
+    def next_day(self):
+        self.set_date(self.date_ + datetime.timedelta(days=1))
+        update_timeline(self.timeline_graph, str(self.date_))
+
+    @QtCore.Slot()
+    def prev_day(self):
+        self.set_date(self.date_ + datetime.timedelta(days=-1))
+        update_timeline(self.timeline_graph, str(self.date_))
+
+    on_date = QtCore.Signal()
+
+    date = QtCore.Property(str, get_date, notify=on_date)
 
 
 def update_type_graph(graph):
@@ -55,12 +80,12 @@ def update_process_graph(graph):
     graph.update()
 
 
-def update_timeline(graph):
+def update_timeline(graph, date=datetime.datetime.now().isoformat()[:10]):
     data = get_timeline_data()
 
     d = collections.OrderedDict()
 
-    current_date = datetime.datetime.now().isoformat()[:10]
+    current_date = date
 
     for v in range(24):
         for m in range(6):
