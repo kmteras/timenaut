@@ -31,8 +31,8 @@ class DashboardView(BaseView):
 
     def update(self):
         BaseView.update(self)
-        update_type_graph(self.pie_graph)
-        update_process_graph(self.bar_graph)
+        update_type_graph(self.pie_graph, date=self.date_)
+        update_process_graph(self.bar_graph, date=self.date_)
         update_timeline(self.timeline_graph, str(self.date_))
 
     def set_date(self, d):
@@ -44,11 +44,11 @@ class DashboardView(BaseView):
 
     def next_day(self):
         self.set_date(self.date_ + datetime.timedelta(days=1))
-        update_timeline(self.timeline_graph, str(self.date_))
+        self.update()
 
     def prev_day(self):
         self.set_date(self.date_ + datetime.timedelta(days=-1))
-        update_timeline(self.timeline_graph, str(self.date_))
+        self.update()
 
     @QtCore.Slot()
     def prevDay(self):
@@ -63,8 +63,8 @@ class DashboardView(BaseView):
     date = QtCore.Property(str, get_date, notify=on_date)
 
 
-def update_type_graph(graph):
-    type_data = get_type_data()
+def update_type_graph(graph, date=None):
+    type_data = get_type_data(date_=date)
 
     graph.set_values([x[1] for x in type_data])
     graph.set_labels([x[0] for x in type_data])
@@ -72,17 +72,19 @@ def update_type_graph(graph):
     graph.update()
 
 
-def update_process_graph(graph):
-    process_data = get_process_data_type()
+def update_process_graph(graph, date=None):
+    process_data = get_process_data_type(date_=date)
 
     p = collections.OrderedDict()
 
     for process in process_data:
         if process[0].id not in p:
             p[process[0].id] = {}
-            p[process[0].id][process[0].type_str] = {"title": process[0].get_process_title(), "time": process[1], "color": process[0].type_color}
+            p[process[0].id][process[0].type_str] = {"title": process[0].get_process_title(), "time": process[1],
+                                                     "color": process[0].type_color}
         else:
-            p[process[0].id][process[0].type_str] = {"title": process[0].get_process_title(), "time": process[1], "color": process[0].type_color}
+            p[process[0].id][process[0].type_str] = {"title": process[0].get_process_title(), "time": process[1],
+                                                     "color": process[0].type_color}
 
     graph.set_values(p)
     graph.update()

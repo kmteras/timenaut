@@ -1,6 +1,8 @@
 import logging
+from datetime import date, datetime, timedelta
 from time import time
 from typing import List, Tuple
+from datetime import time as timetime
 
 import PySide2.QtSql as QtSql
 
@@ -444,7 +446,7 @@ GROUP BY
     return results
 
 
-def get_type_data() -> List[Tuple[str, int, str]]:
+def get_type_data(date_=None) -> List[Tuple[str, int, str]]:
     query = QtSql.QSqlQuery()
 
     query.prepare(
@@ -466,12 +468,20 @@ def get_type_data() -> List[Tuple[str, int, str]]:
             processes p on heartbeats.process_id = p.id
         LEFT JOIN
             productivity_type pt on p.type_str = pt.type
+        WHERE d.start_time > :startDate AND d.start_time < :endDate
         GROUP BY
             type
         ORDER BY
             SUM(difference) DESC
         """
     )
+
+    if date is not None:
+        query.bindValue(":startDate", int(datetime.combine(date=date_, time=timetime.min).timestamp()))
+        query.bindValue(":endDate", int(datetime.combine(date=date_ + timedelta(days=1), time=timetime.min).timestamp()))
+    else:
+        query.bindValue(":startDate", 0)
+        query.bindValue(":endDate", 2 ** 32)
 
     results = []
 
@@ -487,7 +497,7 @@ def get_type_data() -> List[Tuple[str, int, str]]:
     return results
 
 
-def get_process_data_type() -> List[Tuple[Process, int]]:
+def get_process_data_type(date_=None) -> List[Tuple[Process, int]]:
     query = QtSql.QSqlQuery()
 
     query.prepare(
@@ -515,12 +525,20 @@ LEFT JOIN
     productivity_type pt on p.type_str = pt.type
 LEFT JOIN
     productivity_type wt on w.type_str = wt.type
+WHERE hb.start_time > :startDate AND hb.start_time < :endDate
 GROUP BY
     type_, hb.process_id
 ORDER BY
     SUM(hb.end_time - hb.start_time) DESC
         """
     )
+
+    if date is not None:
+        query.bindValue(":startDate", int(datetime.combine(date=date_, time=timetime.min).timestamp()))
+        query.bindValue(":endDate", int(datetime.combine(date=date_ + timedelta(days=1), time=timetime.min).timestamp()))
+    else:
+        query.bindValue(":startDate", 0)
+        query.bindValue(":endDate", 2 ** 32)
 
     results = []
 
