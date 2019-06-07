@@ -30,8 +30,8 @@ DashboardViewBase {
         PieGraph {
             id: pieGraph
             objectName: "pieGraph"
-            width: Math.min(parent.height, parent.width)
-            height: Math.min(parent.height, parent.width)
+            width: parent.width
+            height: Math.min(parent.height, parent.width / 1.7)
         }
     }
 
