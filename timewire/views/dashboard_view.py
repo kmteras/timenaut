@@ -3,7 +3,7 @@ import datetime
 
 import PySide2.QtCore as QtCore
 
-from timewire.core.database import get_process_data, get_type_data, get_timeline_data
+from timewire.core.database import get_process_data_type, get_type_data, get_timeline_data
 from timewire.views.bar_graph import BarGraph
 from timewire.views.base_view import BaseView
 from timewire.views.pie_graph import PieGraph
@@ -73,16 +73,18 @@ def update_type_graph(graph):
 
 
 def update_process_graph(graph):
-    process_data = get_process_data()
+    process_data = get_process_data_type()
 
-    process_values = [x[1] for x in process_data]
-    process_labels = [x[0].get_process_title() for x in process_data]
+    p = collections.OrderedDict()
 
-    process_values = process_values[:5]
-    process_labels = process_labels[:5]
+    for process in process_data:
+        if process[0].id not in p:
+            p[process[0].id] = {}
+            p[process[0].id][process[0].type_str] = {"title": process[0].get_process_title(), "time": process[1], "color": process[0].type_color}
+        else:
+            p[process[0].id][process[0].type_str] = {"title": process[0].get_process_title(), "time": process[1], "color": process[0].type_color}
 
-    graph.set_values(process_values)
-    graph.set_labels(process_labels)
+    graph.set_values(p)
     graph.update()
 
 

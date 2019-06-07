@@ -21,7 +21,7 @@ class TimelineGraph(QQuickPaintedItem):
         self.font_size = 12
         self.draw_border = draw_border
         self.max_width = 10
-        self.bar_gap = 2
+        self.bar_gap = 1
         self.axis_width = 6
 
     def set_labels(self, labels: List[str]):
@@ -46,6 +46,7 @@ class TimelineGraph(QQuickPaintedItem):
         p.setBrush(QColor(*Color.GREEN))
         for i, time in enumerate(self.values.keys()):
             height_shift = 0
+            # Draw bars
             for type in self.values[time]:
                 if self.values[time][type]["time"] > 0:
                     p.setBrush(QColor(self.values[time][type]["color"]))
@@ -55,6 +56,7 @@ class TimelineGraph(QQuickPaintedItem):
                                bar_width, bar_height)
                     height_shift += bar_height
 
+            # Draw time
             if i % 6 == 0:
                 p.translate(self.x_padding + self.axis_width + self.bar_gap + i * (bar_width + self.bar_gap),
                             self.y_padding + real_height + 10)
