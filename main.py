@@ -29,8 +29,6 @@ def main():
     application = QApplication()
     application.setApplicationName("Timewire")
 
-    os.putenv("QT_AUTO_SCREEN_SCALE_FACTOR", "1")
-
     logging.info(f"Screne graph backend: {QQuickWindow.sceneGraphBackend()}")
 
     montserrat = QFont("qrc:/font/Montserrat-Regular.ttf")
@@ -86,6 +84,8 @@ base_dir = os.path.abspath(os.path.dirname(__file__))
 logging_file = os.path.join(base_dir, 'timewire.log')
 
 if __name__ == "__main__":
+    os.putenv("QT_SCALE_FACTOR", "1")
+
     if is_debug():
         logging.basicConfig(
             level=logging.DEBUG,
