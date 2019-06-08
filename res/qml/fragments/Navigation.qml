@@ -13,7 +13,7 @@ Rectangle {
 
     width: closedSize
     height: main.height
-    color: "#2C363F"
+    color: "#3D4A63"
 
     MouseArea {
         anchors.fill: parent
