@@ -3,7 +3,7 @@ import os
 import signal
 import sys
 
-from PySide2.QtCore import Qt
+from PySide2.QtCore import Qt, QCoreApplication
 from PySide2.QtGui import QFont
 from PySide2.QtQml import QQmlApplicationEngine, qmlRegisterType
 from PySide2.QtQuick import QQuickWindow
@@ -25,8 +25,11 @@ from timewire.views.timeline_graph import TimelineGraph
 
 def main():
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
+    QCoreApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
     application = QApplication()
     application.setApplicationName("Timewire")
+
+    os.putenv("QT_AUTO_SCREEN_SCALE_FACTOR", "1")
 
     logging.info(f"Screne graph backend: {QQuickWindow.sceneGraphBackend()}")
 
