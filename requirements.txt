@@ -1,5 +1,5 @@
 PySide2==5.12.0 # https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads
--e git+git@github.com:Teras23/pyinstaller.git#egg=PyInstaller
+-e git+https://github.com/Teras23/pyinstaller.git#egg=PyInstaller
 pydbus; sys.platform == 'linux' # apt install libcairo2-dev libgirepository1.0-dev gir1.2-gtk-3.0
 psutil
 pywin32; sys.platform == 'win32'
