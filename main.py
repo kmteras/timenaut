@@ -29,7 +29,7 @@ def main():
     application = QApplication()
     application.setApplicationName("Timewire")
 
-    logging.info(f"Screne graph backend: {QQuickWindow.sceneGraphBackend()}")
+    logging.info(f"Scene graph backend: {QQuickWindow.sceneGraphBackend()}")
 
     montserrat = QFont("qrc:/font/Montserrat-Regular.ttf")
     montserrat.setPointSizeF(12)
