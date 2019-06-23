@@ -1,4 +1,4 @@
-from timewire.views.base_view import BaseView
+from timechart.views.base_view import BaseView
 
 
 class SettingsView(BaseView):

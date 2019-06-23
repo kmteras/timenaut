@@ -1,7 +1,7 @@
 import logging
 
-from timewire.core.singleton import Singleton
-from timewire.core.tracker import Tracker
+from timechart.core.singleton import Singleton
+from timechart.core.tracker import Tracker
 
 
 class Statistics(metaclass=Singleton):

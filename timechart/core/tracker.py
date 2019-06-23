@@ -1,11 +1,11 @@
 import logging
 import sys
 
-import timewire.core.database as database
-from timewire.core.models.process_heartbeat import ProcessHeartbeat
-from timewire.core.models.process import Process
-from timewire.core.models.window import Window
-from timewire.core.singleton import Singleton
+import timechart.core.database as database
+from timechart.core.models.process_heartbeat import ProcessHeartbeat
+from timechart.core.models.process import Process
+from timechart.core.models.window import Window
+from timechart.core.singleton import Singleton
 
 
 class Tracker(metaclass=Singleton):
@@ -13,10 +13,10 @@ class Tracker(metaclass=Singleton):
         self.errors = False
         logging.info("Created tracker singleton")
         if sys.platform == 'linux':
-            from timewire.core.linux import tracker_linux
+            from timechart.core.linux import tracker_linux
             self.get_process_data_function = tracker_linux.get_process_data
         elif sys.platform == 'win32':
-            from timewire.core.win32 import tracker_win32
+            from timechart.core.win32 import tracker_win32
             self.get_process_data_function = tracker_win32.get_process_data
 
     def get_process_data(self) -> (Process, Window):

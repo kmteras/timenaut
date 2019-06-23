@@ -6,7 +6,7 @@ if __name__ == '__main__':
     build_resources_command = [
         'pyside2-rcc',
         'res/resources.qrc',
-        '-o', 'timewire/resources.py'
+        '-o', 'timechart/resources.py'
     ]
 
     subprocess.run(build_resources_command)
@@ -14,7 +14,7 @@ if __name__ == '__main__':
     command = [
         'pyinstaller',
         './main.py',
-        '--name', 'timewire',
+        '--name', 'timechart',
         '--icon', 'res/img/icon.ico',
         '--window',
         '-y',
@@ -22,11 +22,11 @@ if __name__ == '__main__':
 
     if sys.platform == 'linux':
         command += [
-            '--hidden-import', 'timewire.core.linux',
+            '--hidden-import', 'timechart.core.linux',
         ]
     elif sys.platform == 'win32':
         command += [
-            '--hidden-import', 'timewire.core.win32',
+            '--hidden-import', 'timechart.core.win32',
         ]
 
     subprocess.run(command)

@@ -5,8 +5,8 @@ import sys
 
 from PySide2.QtCore import QStandardPaths
 
-data_file_name = 'timewire.dat'
-data_file_name_development = 'timewire_dev.dat'
+data_file_name = 'timechart.dat'
+data_file_name_development = 'timechart_dev.dat'
 
 
 def get_data_file_location() -> str:

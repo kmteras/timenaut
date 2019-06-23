@@ -4,7 +4,7 @@ import PySide2.QtCore as QtCore
 from PySide2.QtCore import QAbstractListModel, QModelIndex, Qt
 from PySide2.QtGui import QColor
 
-from timewire.core.database import get_types
+from timechart.core.database import get_types
 
 model = None
 

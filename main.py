@@ -9,25 +9,25 @@ from PySide2.QtQml import QQmlApplicationEngine, qmlRegisterType
 from PySide2.QtQuick import QQuickWindow
 from PySide2.QtWidgets import QApplication
 
-import timewire.core.database as database
-from timewire.core.models.process_table_model import process_table_model_singleton
-from timewire.core.models.type_list_model import type_list_model_singleton
-from timewire.core.models.window_table_model import window_table_model_singleton
-from timewire.util.util import is_debug
-from timewire.views.activity_view import ActivityView
-from timewire.views.bar_graph import BarGraph
-from timewire.views.dashboard_view import DashboardView
-from timewire.views.main_window import MainWindow
-from timewire.views.pie_graph import PieGraph
-from timewire.views.settings_view import SettingsView
-from timewire.views.timeline_graph import TimelineGraph
+import timechart.core.database as database
+from timechart.core.models.process_table_model import process_table_model_singleton
+from timechart.core.models.type_list_model import type_list_model_singleton
+from timechart.core.models.window_table_model import window_table_model_singleton
+from timechart.util.util import is_debug
+from timechart.views.activity_view import ActivityView
+from timechart.views.bar_graph import BarGraph
+from timechart.views.dashboard_view import DashboardView
+from timechart.views.main_window import MainWindow
+from timechart.views.pie_graph import PieGraph
+from timechart.views.settings_view import SettingsView
+from timechart.views.timeline_graph import TimelineGraph
 
 
 def main():
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
     QCoreApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
     application = QApplication()
-    application.setApplicationName("Timewire")
+    application.setApplicationName("Timechart")
 
     logging.info(f"Scene graph backend: {QQuickWindow.sceneGraphBackend()}")
 
@@ -81,7 +81,7 @@ def quit_signal(signum, frame):
 logging_format = '%(asctime)s %(levelname)s %(name)s: %(message)s'
 debugging_logging_format = '%(asctime)s %(levelname)s [%(filename)s:%(lineno)d] %(name)s: %(message)s'
 base_dir = os.path.abspath(os.path.dirname(__file__))
-logging_file = os.path.join(base_dir, 'timewire.log')
+logging_file = os.path.join(base_dir, 'timechart.log')
 
 if __name__ == "__main__":
     os.putenv("QT_SCALE_FACTOR", "1")
@@ -122,7 +122,7 @@ if __name__ == "__main__":
         subprocess.run(build_resources_command)
         import resources as res
     else:
-        import timewire.resources as res
+        import timechart.resources as res
 
     if not res:
         logging.error("Resources file could not be opened")

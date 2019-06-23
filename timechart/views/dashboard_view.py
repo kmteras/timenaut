@@ -3,11 +3,11 @@ import datetime
 
 import PySide2.QtCore as QtCore
 
-from timewire.core.database import get_process_data_type, get_type_data, get_timeline_data
-from timewire.views.bar_graph import BarGraph
-from timewire.views.base_view import BaseView
-from timewire.views.pie_graph import PieGraph
-from timewire.views.timeline_graph import TimelineGraph
+from timechart.core.database import get_process_data_type, get_type_data, get_timeline_data
+from timechart.views.bar_graph import BarGraph
+from timechart.views.base_view import BaseView
+from timechart.views.pie_graph import PieGraph
+from timechart.views.timeline_graph import TimelineGraph
 
 
 # TODO: make a base class

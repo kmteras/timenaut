@@ -4,8 +4,8 @@ import PySide2.QtCore as QtCore
 from PySide2.QtCore import QAbstractTableModel, QModelIndex, Qt
 from PySide2.QtGui import QColor
 
-from timewire.core.models.process import Process
-from timewire.util.util import get_formatted_time
+from timechart.core.models.process import Process
+from timechart.util.util import get_formatted_time
 
 table = None
 

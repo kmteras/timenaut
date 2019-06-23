@@ -26,7 +26,7 @@ Rectangle {
 
         color: "white"
         font.family: logoFont.name
-        text: "timewire"
+        text: "timechart"
 
         // Maximize font size
         font.pointSize: 60

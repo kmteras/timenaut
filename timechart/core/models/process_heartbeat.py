@@ -2,8 +2,8 @@ from time import time
 
 import math
 
-from timewire.core.models.process import Process
-from timewire.core.models.window import Window
+from timechart.core.models.process import Process
+from timechart.core.models.window import Window
 
 
 class ProcessHeartbeat:

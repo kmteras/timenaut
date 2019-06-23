@@ -2,8 +2,8 @@ import psutil
 import win32gui
 import win32process
 
-from timewire.core.models.process import Process
-from timewire.core.models.window import Window
+from timechart.core.models.process import Process
+from timechart.core.models.window import Window
 
 
 def get_process_data() -> (Process, Window):

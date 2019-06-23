@@ -1,15 +1,15 @@
 import PySide2.QtCore as QtCore
 from PySide2.QtWidgets import QTableView
 
-import timewire.core.database as database
-from timewire.core.database import get_process_data, get_window_data_by_process
-from timewire.core.models.process import Process
-from timewire.core.models.process_table_model import process_table_model_singleton
-from timewire.core.models.type_list_model import type_list_model_singleton
-from timewire.core.models.window import Window
-from timewire.core.models.window_table_model import window_table_model_singleton
-from timewire.util.util import get_formatted_time
-from timewire.views.base_view import BaseView
+import timechart.core.database as database
+from timechart.core.database import get_process_data, get_window_data_by_process
+from timechart.core.models.process import Process
+from timechart.core.models.process_table_model import process_table_model_singleton
+from timechart.core.models.type_list_model import type_list_model_singleton
+from timechart.core.models.window import Window
+from timechart.core.models.window_table_model import window_table_model_singleton
+from timechart.util.util import get_formatted_time
+from timechart.views.base_view import BaseView
 
 
 class ActivityView(BaseView):

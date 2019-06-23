@@ -4,9 +4,9 @@ from PySide2.QtGui import QIcon, QCloseEvent, QFocusEvent, QWindow
 from PySide2.QtQuick import QQuickView
 from PySide2.QtWidgets import QSystemTrayIcon, QMenu, QAction, QApplication
 
-from timewire.core.tracker import Tracker
-from timewire.util.util import is_debug
-from timewire.views.base_view import BaseView
+from timechart.core.tracker import Tracker
+from timechart.util.util import is_debug
+from timechart.views.base_view import BaseView
 
 
 class MainWindow(QQuickView):

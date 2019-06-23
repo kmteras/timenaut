@@ -6,11 +6,11 @@ from datetime import time as timetime
 
 import PySide2.QtSql as QtSql
 
-from timewire.core.models.process import Process
-from timewire.core.models.process_heartbeat import ProcessHeartbeat
-from timewire.core.models.window import Window
-from timewire.util.database_error import DatabaseError
-from timewire.util.util import get_data_file_location
+from timechart.core.models.process import Process
+from timechart.core.models.process_heartbeat import ProcessHeartbeat
+from timechart.core.models.window import Window
+from timechart.util.database_error import DatabaseError
+from timechart.util.util import get_data_file_location
 
 
 def connect() -> None:

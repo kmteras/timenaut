@@ -3,8 +3,8 @@ import logging
 import psutil
 import pydbus
 
-from timewire.core.models.process import Process
-from timewire.core.models.window import Window
+from timechart.core.models.process import Process
+from timechart.core.models.window import Window
 
 bus = pydbus.SessionBus()
 shell = bus.get('org.gnome.Shell', '/org/gnome/Shell')

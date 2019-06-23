@@ -1,9 +1,9 @@
-# Timewire
+# Timechart
 
 ## Installation
 
-`git clone git@github.com:Teras23/timewire.git`  
-`cd timewire`  
+`git clone git@github.com:Teras23/timechart.git`  
+`cd timechart`  
 `python3 -m venv venv`  
 `source venv/bin/activate`  
 `pip3 install wheel`  

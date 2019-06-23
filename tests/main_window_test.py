@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from timewire.views.main_window import MainWindow
+from timechart.views.main_window import MainWindow
 
 
 class MainWindowTest(TestCase):
