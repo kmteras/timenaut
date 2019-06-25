@@ -4,7 +4,7 @@ import signal
 import sys
 
 from PySide2.QtCore import Qt, QCoreApplication
-from PySide2.QtGui import QFont
+from PySide2.QtGui import QFont, QFontDatabase, QGuiApplication
 from PySide2.QtQml import QQmlApplicationEngine, qmlRegisterType
 from PySide2.QtQuick import QQuickWindow
 from PySide2.QtWidgets import QApplication
@@ -31,14 +31,21 @@ def main():
 
     logging.info(f"Scene graph backend: {QQuickWindow.sceneGraphBackend()}")
 
-    logging.info(f"System default font: {QFont().defaultFamily()}")
+    logging.info(f"System default font: {QGuiApplication.font().family()}")
 
-    montserrat = QFont("qrc:/font/Montserrat-Regular.ttf")
-    montserrat.setPointSizeF(12)
+    font_id = QFontDatabase.addApplicationFont(":/font/Montserrat-Regular.ttf")
 
-    logging.info(f"Application font: {montserrat.family()}")
+    if font_id != -1:
+        family = QFontDatabase.applicationFontFamilies(font_id)[0]
 
-    QApplication.setFont(montserrat)
+        montserrat = QFont(family)
+        montserrat.setPointSizeF(12)
+
+        logging.info(f"Loaded font: {montserrat.family()}")
+
+        QGuiApplication.setFont(montserrat)
+
+    logging.info(f"Application font: {QGuiApplication.font().family()}")
 
     # Database setup
     try:
