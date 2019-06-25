@@ -1,6 +1,9 @@
 language: python
 python:
   - "3.6"
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install -y libcairo2-dev libgirepository1.0-dev gir1.2-gtk-3.0
 install:
   - pip install -r requirements.txt
 script:
