@@ -24,6 +24,11 @@ MainWindow {
         source: "qrc:/font/Slabo13px-Regular.ttf"
     }
 
+    FontLoader {
+        id: font
+        source: "qrc:/font/Montserrat-Regular.ttf"
+    }
+
     Rectangle {
         id: viewArea
 

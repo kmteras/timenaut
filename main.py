@@ -31,9 +31,14 @@ def main():
 
     logging.info(f"Scene graph backend: {QQuickWindow.sceneGraphBackend()}")
 
+    logging.info(f"System default font: {QFont().defaultFamily()}")
+
     montserrat = QFont("qrc:/font/Montserrat-Regular.ttf")
     montserrat.setPointSizeF(12)
-    application.setFont(montserrat)
+
+    logging.info(f"Application font: {montserrat.family()}")
+
+    QApplication.setFont(montserrat)
 
     # Database setup
     try:
