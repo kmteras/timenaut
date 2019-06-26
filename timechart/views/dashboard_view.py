@@ -90,34 +90,54 @@ def update_process_graph(graph, date=None):
     graph.update()
 
 
-def update_timeline(graph, date=datetime.datetime.now().isoformat()[:10]):
+def update_timeline(graph: TimelineGraph, date=datetime.datetime.now().isoformat()[:10]):
     data = get_timeline_data()
 
-    d = collections.OrderedDict()
+    labels = []
+    values = []
+    colors = []
 
     current_date = date
 
     for v in range(24):
         for m in range(6):
-            d[f'{current_date} {v:02d}:{m * 10:02d}:00'] = {}
+            labels.append(f'{v:02d}:{m * 10:02d}')
+            values.append([])
+            colors.append([])
+
+    graph.set_labels(labels)
 
     leftover_time = {}
 
-    for v in data:
-        if v[2][:10] == current_date:
-            time = v[1]
+    for h in range(24):
+        for m in range(6):
+            for v in data:
+                if v['date_time'][:16] == f"{current_date} {h:02d}:{m * 10:02d}":
+                    time = v['duration']
 
-            if v[3] in leftover_time:
-                time += leftover_time[v[3]]
-                leftover_time[v[3]] = 0
+                    if v['color'] in leftover_time:
+                        time += leftover_time[v['color']]
+                        leftover_time[v['color']] = 0
 
-            # TODO: this does not carry over time if total of different types is over
-            if v[1] > 600:
-                leftover_time[v[3]] = v[1] - 600
-                time = 600
+                    total_already = sum(values[h * 6 + m])
+                    time = min(total_already + time, 600) - total_already
+                    leftover_time[v['color']] = max(0, v['duration'] - time)
 
-            d[v[2]][v[0]] = {"time": time, "color": v[3]}
+                    values[h * 6 + m].append(time)
+                    colors[h * 6 + m].append(v['color'])
 
-    graph.set_values(d)
+            for v in leftover_time.keys():
+                if leftover_time[v] > 0:
+                    time = leftover_time[v]
+
+                    total_already = sum(values[h * 6 + m])
+                    time = min(total_already + time, 600) - total_already
+                    leftover_time[v] = max(0, leftover_time[v] - time)
+
+                    values[h * 6 + m].append(time)
+                    colors[h * 6 + m].append(v)
+
+    graph.set_values(values)
+    graph.set_colors(colors)
 
     graph.update()

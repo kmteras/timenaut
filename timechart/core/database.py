@@ -442,7 +442,7 @@ GROUP BY
             spent_time = query.value(1)
             timeframe = query.value(2)
             type_color = query.value(3)
-            results.append((type_, spent_time, timeframe, type_color))
+            results.append({'type': type_, 'duration': int(spent_time), 'date_time': timeframe, 'color': type_color})
     return results
 
 

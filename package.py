@@ -13,6 +13,8 @@ if __name__ == '__main__':
     else:
         file_name = f'timechart_{platform}.zip'
 
+    print(f"Zipping to {file_name}")
+
     zip_file = zipfile.ZipFile(os.path.join('dist', file_name), 'w', zipfile.ZIP_DEFLATED)
 
     dist_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dist", "timechart")

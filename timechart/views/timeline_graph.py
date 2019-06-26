@@ -14,7 +14,8 @@ class TimelineGraph(QQuickPaintedItem):
         QQuickPaintedItem.__init__(self, parent)
         self.title = None
         self.labels: List[str] = ["Default"]
-        self.values: collections.OrderedDict = []
+        self.values: List[List[float]] = []
+        self.colors: List[List[str]] = []
         self.x_padding = 16
         self.y_padding = 16
         self.text_padding = 50
@@ -27,8 +28,11 @@ class TimelineGraph(QQuickPaintedItem):
     def set_labels(self, labels: List[str]):
         self.labels = labels
 
-    def set_values(self, values):
+    def set_values(self, values: List[List[float]]):
         self.values = values
+
+    def set_colors(self, colors: List[List[QColor]]):
+        self.colors = colors
 
     def paint(self, p: QPainter):
         pen = QPen(QColor(*Color.WHITE))
@@ -39,18 +43,17 @@ class TimelineGraph(QQuickPaintedItem):
 
         p.drawRect(self.x_padding, self.y_padding, real_width, real_height)
 
-        bar_amount = 24 * 6  # One bar every 10 minutes
-
+        bar_amount = len(self.values)
         bar_width = min(math.floor(real_width / bar_amount - self.bar_gap), self.max_width)
 
         p.setBrush(QColor(*Color.GREEN))
-        for i, time in enumerate(self.values.keys()):
+        for i, bar in enumerate(self.values):
             height_shift = 0
             # Draw bars
-            for type in self.values[time]:
-                if self.values[time][type]["time"] > 0:
-                    p.setBrush(QColor(self.values[time][type]["color"]))
-                    bar_height = int(real_height * (self.values[time][type]["time"] / 600))
+            for j, stacked_bar in enumerate(bar):
+                if stacked_bar > 0:
+                    p.setBrush(QColor(self.colors[i][j]))
+                    bar_height = int(real_height * (stacked_bar / 600))
                     p.drawRect(self.x_padding + self.axis_width + self.bar_gap + i * (bar_width + self.bar_gap),
                                self.y_padding + real_height - bar_height - height_shift,
                                bar_width, bar_height)
@@ -62,7 +65,7 @@ class TimelineGraph(QQuickPaintedItem):
                             self.y_padding + real_height + 10)
                 p.rotate(45)
                 p.setPen(QPen(QColor(*Color.BLACK)))
-                p.drawText(0, 0, time[11:])
+                p.drawText(0, 0, self.labels[i])
                 p.setPen(QPen(QColor(*Color.WHITE)))
                 p.rotate(-45)
                 p.resetTransform()
