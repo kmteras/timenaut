@@ -10,7 +10,7 @@ from timechart.core.models.process import Process
 from timechart.core.models.process_heartbeat import ProcessHeartbeat
 from timechart.core.models.window import Window
 from timechart.util.database_error import DatabaseError
-from timechart.util.util import get_data_file_location
+from timechart.util.util import get_data_file_location, get_heartbeat_time
 
 
 def connect() -> None:
@@ -133,7 +133,6 @@ last_process_id = None
 last_window_id = None
 last_start_time = time()
 last_end_time = time()
-TIME_INTERVAL = 1
 
 
 def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
@@ -156,7 +155,7 @@ def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
             "SET end_time=:end_time "
             "WHERE start_time=:last_start_time")
 
-        end_time = min(int(last_end_time) + TIME_INTERVAL, end_time)
+        end_time = min(int(last_end_time) + get_heartbeat_time(), end_time)
 
         query.bindValue(":last_start_time", last_start_time)
         query.bindValue(":end_time", end_time)
@@ -164,6 +163,20 @@ def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
         if not query.exec_():
             raise DatabaseError(query.lastError())
     else:
+        if last_window_id is not None:
+            # Update the end time of the last process
+            query = QtSql.QSqlQuery()
+            query.prepare(
+                "UPDATE heartbeats "
+                "SET end_time=:start_time "
+                "WHERE start_time=:last_start_time")
+
+            query.bindValue(":last_start_time", last_start_time)
+            query.bindValue(":start_time", end_time)
+            if not query.exec_():
+                raise DatabaseError(query.lastError())
+
+        # Add new process
         query = QtSql.QSqlQuery()
         query.prepare(
             "INSERT INTO heartbeats (process_id, window_id, start_time, end_time) "
