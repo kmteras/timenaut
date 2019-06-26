@@ -3,7 +3,17 @@ import zipfile
 import sys
 
 if __name__ == '__main__':
-    zip_file = zipfile.ZipFile(os.path.join('dist', f'timechart_{sys.platform}.zip'), 'w', zipfile.ZIP_DEFLATED)
+    platform = sys.platform
+
+    if platform == "win32":
+        platform = "win"
+
+    if len(sys.argv) > 1:
+        file_name = f'timechart_{platform}_{sys.argv[1]}.zip'
+    else:
+        file_name = f'timechart_{platform}.zip'
+
+    zip_file = zipfile.ZipFile(os.path.join('dist', file_name), 'w', zipfile.ZIP_DEFLATED)
 
     dist_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dist", "timechart")
 

@@ -1,21 +1,31 @@
-dist: xenial
 language: python
-python:
-  - "3.6"
-before_install:
-  - sudo apt-get update
-  - sudo apt-get install -y libcairo2-dev libgirepository1.0-dev gir1.2-gtk-3.0
+matrix:
+  include:
+    - os: linux
+      dist: xenial
+      python: 3.6
+      before_install:
+        - sudo apt-get update
+        - sudo apt-get install -y libcairo2-dev libgirepository1.0-dev gir1.2-gtk-3.0
+      env:
+        - DIST_FILE=timechart_linux_$TRAVIS_TAG.zip
+    - os: windows
+      language: shell
+      before_install: choco install python --version 3.6.8
+      env:
+        - PATH=/c/Python36:/c/Python36/Scripts:$PATH
+        - DIST_FILE=timechart_win_$TRAVIS_TAG.zip
 install:
-  - pip install -r requirements.txt
+  - pip3 install -r requirements.txt
 script:
   - python setup.py
 before_deploy:
-  - python package.py
+  - python package.py $TRAVIS_TAG
 deploy:
   provider: releases
   api_key:
     secure: eBWm4QS58to4M5xo+3hqB8bCe5XNwy15tjX99OufVf3A4Dms7gbfHq+0JXNRo3wfO4zZAdG9FBM7l6oUi9ht4eyA3srznKEPDSXSAuR/8tOA9zox9R82+VG6UcD70bCrG0vD0lldqRg+iAX8DM92TH/9GKjP1Gqxr6HIN4TL3pNbXZoB+YzcEPxB10l0F84uGCXTs0kZfm8mFrigpwCS+kc5le0q6LeF2rF6pw/WRKmxCPu4hrVPZjJoEM6no/iUWiEWLMXsR2vcxudjQogggNje9BFLRcA3SzmsVjVlcWConhTJ2FulSakopflk1ks1I7D0UoSfoP5OZuBPRppncB4HigfzsjXxDLKhxeCdttOLsL8xO4QUQZacX6aAV57anX1AC0iL82rRCf3kxBfDLav5NsqtRWfmbO9GadzACd0Ht7oqCWLe5j9wrNgTpFirJEdboyZFnHjk4zbrRUgRmbToXQhRE9iO9mb0UYBqH0uxj2Uic5wWLZX0l/6ARcwYmaWN7TBfTwWpigtOlxcAVawCt23q8FJZ/ylCr9KjQbqiNHYme4uLEiSwBTgjgyeIhrP0olmntrPD35XO/IXkAm7Q3TbMix77aO0wmRX+/sU6BDDZVrKxspqfxe1sHvo4X28sWVBD/3zLXT0xx0/l8rH61yn2ja05S6RJqADiE1o=
-  file: dist/timechart_linux.zip
+  file: dist/$DIST_FILE
   skip_cleanup: true
   on:
     tags: true
