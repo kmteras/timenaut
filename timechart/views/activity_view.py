@@ -2,7 +2,7 @@ import PySide2.QtCore as QtCore
 from PySide2.QtWidgets import QTableView
 
 import timechart.core.database as database
-from timechart.core.database import get_process_data, get_window_data_by_process
+from timechart.core.database import get_process_data, get_window_data_by_process, get_types
 from timechart.core.models.process import Process
 from timechart.core.models.process_table_model import process_table_model_singleton
 from timechart.core.models.type_list_model import type_list_model_singleton
@@ -41,6 +41,11 @@ class ActivityView(BaseView):
         process_model = process_table_model_singleton()
         data = list(map(lambda x: [*x], get_process_data()))
         process_model.update_data(data)
+
+        type_model = type_list_model_singleton()
+        data = list(map(lambda x: [*x], get_types()))
+        type_model.update_data(data)
+
 
         if self.selected_process is not None:
             self.update_window_model()
