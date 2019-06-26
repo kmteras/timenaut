@@ -24,7 +24,7 @@ ComboBox {
                     leftPadding: 8
                     MouseArea {
                         anchors.fill: parent
-                        onClicked: { parent.color = 'red' }
+                        onClicked: { TypeDeleted(index) }
                     }
             }
     }

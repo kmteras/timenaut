@@ -155,6 +155,12 @@ class ActivityView(BaseView):
         database.set_window_type(self.selected_window.id, type_model.types[row][0])
         self.update()
 
+    @QtCore.Slot(int)
+    def TypeDeleted(self, row: int):
+        type_model = type_list_model_singleton()
+        database.delete_type(type_model.types[row][0])
+        self.update()
+
     on_process_info_visible = QtCore.Signal()
     on_window_info_visible = QtCore.Signal()
 

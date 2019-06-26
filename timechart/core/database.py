@@ -81,6 +81,12 @@ def create_tables() -> None:
     if not query.exec_("INSERT OR REPLACE INTO productivity_type VALUES ('social', '#7293cb', 'false')"):
         raise DatabaseError(query.lastError())
 
+    if not query.exec_("INSERT OR REPLACE INTO productivity_type VALUES ('social', '#7293cb', 'false')"):
+        raise DatabaseError(query.lastError())
+
+    if not query.exec_("INSERT OR REPLACE INTO productivity_type VALUES ('misc', '#7296cb', 'true')"):
+        raise DatabaseError(query.lastError())
+
     logging.info("Created database tables")
 
 
@@ -555,3 +561,18 @@ ORDER BY
             results.append((process, count))
 
     return results
+
+def delete_type(type_str: str) -> None:
+    query = QtSql.QSqlQuery()
+
+    query.prepare(
+        """
+        DELETE FROM productivity_type WHERE productivity_type.type=:type_str;
+        """
+    )
+
+    query.bindValue(":type_str", type_str)
+    print("Type Deleted: " + type_str)
+
+    if not query.exec_():
+        raise DatabaseError(query.lastError())
