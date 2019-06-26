@@ -5,16 +5,28 @@ ComboBox {
     id: comboBox
     x: 400
     y: 90
+    width: 200
     textRole: "type"
     model: typeListModel
     delegate: ItemDelegate {
-        contentItem: Text {
-            font.bold: true
-            text: type
-            color: itemColor
-            elide: Text.ElideRight
-            verticalAlignment: Text.AlignVCenter
-        }
+            Text {
+                id: typeText
+                font.bold: true
+                text: type
+                color: itemColor
+                elide: Text.ElideRight
+                verticalAlignment: Text.AlignVCenter
+            }
+            Text {
+                    id: cancelButton
+                    text: "X"
+                    anchors.left: typeText.right
+                    leftPadding: 8
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: { parent.color = 'red' }
+                    }
+            }
     }
 
     contentItem: Text {
