@@ -1,16 +1,17 @@
 import logging
 from datetime import date, datetime, timedelta
+from datetime import time as timetime
 from time import time
 from typing import List, Tuple
-from datetime import time as timetime
 
 import PySide2.QtSql as QtSql
 
 from timechart.core.models.process import Process
 from timechart.core.models.process_heartbeat import ProcessHeartbeat
 from timechart.core.models.window import Window
+from timechart.core.settings import Settings
 from timechart.util.database_error import DatabaseError
-from timechart.util.util import get_data_file_location, get_heartbeat_time
+from timechart.util.util import get_data_file_location
 
 
 def connect() -> None:
@@ -155,7 +156,7 @@ def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
             "SET end_time=:end_time "
             "WHERE start_time=:last_start_time")
 
-        end_time = min(int(last_end_time) + get_heartbeat_time(), end_time)
+        end_time = min(int(last_end_time) + Settings().heartbeat_time, end_time)
 
         query.bindValue(":last_start_time", last_start_time)
         query.bindValue(":end_time", end_time)
@@ -491,7 +492,8 @@ def get_type_data(date_=None) -> List[Tuple[str, int, str]]:
 
     if date is not None:
         query.bindValue(":startDate", int(datetime.combine(date=date_, time=timetime.min).timestamp()))
-        query.bindValue(":endDate", int(datetime.combine(date=date_ + timedelta(days=1), time=timetime.min).timestamp()))
+        query.bindValue(":endDate",
+                        int(datetime.combine(date=date_ + timedelta(days=1), time=timetime.min).timestamp()))
     else:
         query.bindValue(":startDate", 0)
         query.bindValue(":endDate", 2 ** 32)
@@ -548,7 +550,8 @@ ORDER BY
 
     if date is not None:
         query.bindValue(":startDate", int(datetime.combine(date=date_, time=timetime.min).timestamp()))
-        query.bindValue(":endDate", int(datetime.combine(date=date_ + timedelta(days=1), time=timetime.min).timestamp()))
+        query.bindValue(":endDate",
+                        int(datetime.combine(date=date_ + timedelta(days=1), time=timetime.min).timestamp()))
     else:
         query.bindValue(":startDate", 0)
         query.bindValue(":endDate", 2 ** 32)

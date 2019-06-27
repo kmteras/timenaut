@@ -4,8 +4,9 @@ from PySide2.QtGui import QIcon, QCloseEvent, QFocusEvent, QWindow
 from PySide2.QtQuick import QQuickView
 from PySide2.QtWidgets import QSystemTrayIcon, QMenu, QAction, QApplication
 
+from timechart.core.settings import Settings
 from timechart.core.tracker import Tracker
-from timechart.util.util import is_debug, get_heartbeat_time
+from timechart.util.util import is_debug
 from timechart.views.base_view import BaseView
 
 
@@ -29,7 +30,7 @@ class MainWindow(QQuickView):
         self.update_timer = QtCore.QTimer()
         self.connect(self.update_timer, SIGNAL("timeout()"), self.heartbeat)
 
-        self.update_timer.start(get_heartbeat_time() * 1000)
+        self.update_timer.start(Settings().heartbeat_time * 1000)
 
         if Tracker().errors:
             raise Exception("Tracker initialization had errors")
