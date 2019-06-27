@@ -15,12 +15,12 @@ from timechart.core.models.type_list_model import type_list_model_singleton
 from timechart.core.models.window_table_model import window_table_model_singleton
 from timechart.util.util import is_debug
 from timechart.views.activity_view import ActivityView
-from timechart.views.bar_graph import BarGraph
+from views.components.bar_graph import BarGraph
 from timechart.views.dashboard_view import DashboardView
 from timechart.views.main_window import MainWindow
-from timechart.views.pie_graph import PieGraph
+from views.components.pie_graph import PieGraph
 from timechart.views.settings_view import SettingsView
-from timechart.views.timeline_graph import TimelineGraph
+from views.components.timeline_graph import TimelineGraph
 
 
 def main():

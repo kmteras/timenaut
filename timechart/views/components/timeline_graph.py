@@ -1,4 +1,3 @@
-import collections
 from typing import List
 
 import math
@@ -6,7 +5,7 @@ from PySide2.QtCore import Qt
 from PySide2.QtGui import QPainter, QColor, QPen
 from PySide2.QtQuick import QQuickPaintedItem
 
-from timechart.views.graph_colors import Color
+from util.graph_colors import Color
 
 
 class TimelineGraph(QQuickPaintedItem):
