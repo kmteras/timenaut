@@ -18,8 +18,9 @@ ComboBox {
                 verticalAlignment: Text.AlignVCenter
             }
             Text {
-                    id: cancelButton
+                    id: removeButton
                     text: "X"
+                    visible: typeListModel.getRemovable(index)
                     anchors.left: typeText.right
                     leftPadding: 8
                     MouseArea {

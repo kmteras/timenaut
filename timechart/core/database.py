@@ -343,7 +343,8 @@ def get_types() -> List:
         """
         SELECT
             type,
-            color
+            color,
+            removable
         FROM productivity_type
         """
     )
@@ -356,7 +357,8 @@ def get_types() -> List:
         while query.next():
             type_name = query.value(0)
             color = query.value(1)
-            types.append((type_name, color))
+            removable = query.value(2)
+            types.append((type_name, color, removable))
 
     return types
 
@@ -567,12 +569,12 @@ def delete_type(type_str: str) -> None:
 
     query.prepare(
         """
-        DELETE FROM productivity_type WHERE productivity_type.type=:type_str;
+        DELETE FROM productivity_type WHERE type=:type_str;
         """
     )
 
     query.bindValue(":type_str", type_str)
-    print("Type Deleted: " + type_str)
+    query.bindValue(":removable_bool", True)
 
     if not query.exec_():
         raise DatabaseError(query.lastError())

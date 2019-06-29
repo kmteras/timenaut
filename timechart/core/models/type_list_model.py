@@ -16,7 +16,7 @@ class TypeListModel(QAbstractListModel):
         if model is None:
             model = self
 
-        self.types: List[List[str, QColor]] = list(map(lambda x: [x[0], QColor(x[1])], get_types()))
+        self.types: List[List[str, QColor, bool]] = list(map(lambda x: [x[0], QColor(x[1]), x[2]], get_types()))
 
     def rowCount(self, index=QModelIndex()):
         return len(self.types)
@@ -66,6 +66,10 @@ class TypeListModel(QAbstractListModel):
     @QtCore.Slot(int, result=QColor)
     def getColor(self, row: int) -> QColor:
         return self.types[row][1]
+
+    @QtCore.Slot(int, result=bool)
+    def getRemovable(self, row: int) -> bool:
+        return self.types[row][2] == "true"
 
     def find(self, type_str: str) -> int:
         if type_str is None:
