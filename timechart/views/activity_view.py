@@ -35,6 +35,7 @@ class ActivityView(BaseView):
 
     def componentComplete(self):
         BaseView.componentComplete(self)
+        self.update()
 
     def update(self):
         BaseView.update(self)

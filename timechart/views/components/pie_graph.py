@@ -4,7 +4,7 @@ from PySide2.QtCore import QRectF
 from PySide2.QtGui import QPainter, QColor, QPen, QBrush
 from PySide2.QtQuick import QQuickPaintedItem
 
-from util.graph_colors import Color
+from timechart.util.graph_colors import Color
 
 
 class PieGraph(QQuickPaintedItem):

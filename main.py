@@ -3,27 +3,35 @@ import os
 import signal
 import sys
 
-from PySide2.QtCore import Qt, QCoreApplication
+from PySide2.QtCore import Qt, QCoreApplication, QDir
 from PySide2.QtGui import QFont, QFontDatabase, QGuiApplication
 from PySide2.QtQml import QQmlApplicationEngine, qmlRegisterType
 from PySide2.QtQuick import QQuickWindow
 from PySide2.QtWidgets import QApplication
 
 import timechart.core.database as database
+from timechart.core.application_singleton import ApplicationSingleton, ApplicationSingletonException
 from timechart.core.models.process_table_model import process_table_model_singleton
 from timechart.core.models.type_list_model import type_list_model_singleton
 from timechart.core.models.window_table_model import window_table_model_singleton
 from timechart.util.util import is_debug
 from timechart.views.activity_view import ActivityView
-from views.components.bar_graph import BarGraph
+from timechart.views.components.bar_graph import BarGraph
+from timechart.views.components.pie_graph import PieGraph
+from timechart.views.components.timeline_graph import TimelineGraph
 from timechart.views.dashboard_view import DashboardView
 from timechart.views.main_window import MainWindow
-from views.components.pie_graph import PieGraph
 from timechart.views.settings_view import SettingsView
-from views.components.timeline_graph import TimelineGraph
 
 
 def main():
+    temp_path = os.path.join(QDir.tempPath(), "timechart.lock")
+    try:
+        singleton = ApplicationSingleton(temp_path)
+    except ApplicationSingletonException:
+        logging.info(f"An instance is already running with {temp_path}")
+        sys.exit()
+
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
     QCoreApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
     application = QApplication()
