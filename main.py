@@ -27,7 +27,7 @@ def main():
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
     QCoreApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
     application = QApplication()
-    application.setApplicationName("Timechart")
+    application.setApplicationName("timechart")
 
     logging.info(f"Scene graph backend: {QQuickWindow.sceneGraphBackend()}")
 

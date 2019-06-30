@@ -11,6 +11,7 @@ MainWindow {
     objectName: "mainWindow"
     width: 800
     height: 480
+    title: "Timechart"
 
     minimumWidth: 800
     minimumHeight: 480
