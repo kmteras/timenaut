@@ -134,6 +134,7 @@ last_process_id = None
 last_window_id = None
 last_start_time = time()
 last_end_time = time()
+last_idle = False
 
 
 def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
@@ -141,6 +142,7 @@ def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
     global last_window_id
     global last_start_time
     global last_end_time
+    global last_idle
 
     if not heartbeat.is_valid():
         return
@@ -149,7 +151,7 @@ def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
     window_id = add_window(heartbeat.window, process_id)
     end_time = int(heartbeat.time)
 
-    if process_id == last_process_id and window_id == last_window_id:
+    if process_id == last_process_id and window_id == last_window_id and last_idle == heartbeat.idle:
         query = QtSql.QSqlQuery()
         query.prepare(
             "UPDATE heartbeats "
@@ -180,11 +182,12 @@ def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
         # Add new process
         query = QtSql.QSqlQuery()
         query.prepare(
-            "INSERT INTO heartbeats (process_id, window_id, start_time, end_time) "
-            "VALUES (:process_id, :window_id, :datetime, :datetime)")
+            "INSERT INTO heartbeats (process_id, window_id, start_time, end_time, idle) "
+            "VALUES (:process_id, :window_id, :datetime, :datetime, :idle)")
         query.bindValue(":process_id", process_id)
         query.bindValue(":window_id", window_id)
         query.bindValue(":datetime", end_time)
+        query.bindValue(":idle", heartbeat.idle)
         if not query.exec_():
             raise DatabaseError(query.lastError())
 
@@ -192,6 +195,7 @@ def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
         last_window_id = window_id
         last_start_time = int(heartbeat.time)
         last_end_time = heartbeat.time
+        last_idle = heartbeat.idle
 
 
 def get_window_data() -> List[Tuple[Process, Window, int]]:
