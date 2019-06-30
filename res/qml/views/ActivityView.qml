@@ -77,6 +77,19 @@ ActivityView {
                     currentIndex = index
                 }
             }
+
+            NewControls.TextField {
+                x: 400
+                y: 90
+                width: 200
+                height: 40
+
+                visible: newTypeTextFieldVisible
+
+                background: Rectangle {
+                    color: "gray"
+                }
+            }
         }
 
         Rectangle {

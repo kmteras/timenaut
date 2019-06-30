@@ -37,22 +37,4 @@ ComboBox {
         color: typeListModel.getColor(comboBox.currentIndex)
         verticalAlignment: Text.AlignVCenter
     }
-
-    TextField {
-    signal newTypeCreated()
-
-    Component.onCompleted: newTypeCreated.connect(new_type_created)
-
-    onNewTypeCreated: {
-        visible: true
-    }
-    z: parent.z+1
-    anchors.fill: parent
-    visible: false
-
-    background: Rectangle {
-        id: background
-        color: "gray"
-    }
-}
 }

@@ -32,6 +32,7 @@ class ActivityView(BaseView):
 
         self.process_path = None
         self.process_title = None
+        self.type_text_field_visible = False
 
     def componentComplete(self):
         BaseView.componentComplete(self)
@@ -104,6 +105,13 @@ class ActivityView(BaseView):
         self.process_title = text
         self.on_process_title.emit()
 
+    def get_type_text_field_visible(self):
+        return self.type_text_field_visible
+
+    def set_type_text_field_visible(self, visible: bool):
+        self.type_text_field_visible = visible
+        self.new_type_created.emit()
+
     @QtCore.Slot(int)
     def processSelected(self, row: int):
         process_model = process_table_model_singleton()
@@ -153,7 +161,7 @@ class ActivityView(BaseView):
         type_model = type_list_model_singleton()
         type_str = type_model.types[row][0]
         if type_str == "new":
-            self.new_type_created.emit()
+            self.set_type_text_field_visible(True)
             print("new!")
         else:
             database.set_process_type(self.selected_process.id, type_str)
@@ -184,6 +192,7 @@ class ActivityView(BaseView):
 
     new_type_created = QtCore.Signal()
 
+    newTypeTextFieldVisible = QtCore.Property(bool, get_type_text_field_visible, notify=new_type_created)
     processInfoVisible = QtCore.Property(bool, get_process_info_visible, notify=on_process_info_visible)
     windowInfoVisible = QtCore.Property(bool, get_window_info_visible, notify=on_window_info_visible)
 
