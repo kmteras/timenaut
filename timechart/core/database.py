@@ -84,7 +84,10 @@ def create_tables() -> None:
     if not query.exec_("INSERT OR REPLACE INTO productivity_type VALUES ('social', '#7293cb', 'false')"):
         raise DatabaseError(query.lastError())
 
-    if not query.exec_("INSERT OR REPLACE INTO productivity_type VALUES ('misc', '#7296cb', 'true')"):
+    if not query.exec_("INSERT OR REPLACE INTO productivity_type VALUES ('misc', '#82cfa5', 'true')"):
+        raise DatabaseError(query.lastError())
+
+    if not query.exec_("INSERT OR REPLACE INTO productivity_type VALUES ('new', '#717e91', 'true')"):
         raise DatabaseError(query.lastError())
 
     logging.info("Created database tables")

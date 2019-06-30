@@ -151,7 +151,12 @@ class ActivityView(BaseView):
     @QtCore.Slot(int)
     def processTypeSelected(self, row: int):
         type_model = type_list_model_singleton()
-        database.set_process_type(self.selected_process.id, type_model.types[row][0])
+        type_str = type_model.types[row][0]
+        if type_str == "new":
+            self.new_type_created.emit()
+            print("new!")
+        else:
+            database.set_process_type(self.selected_process.id, type_str)
         self.update()
 
     @QtCore.Slot(int)
@@ -176,6 +181,8 @@ class ActivityView(BaseView):
 
     set_process_type = QtCore.Signal(int)
     set_window_type = QtCore.Signal(int)
+
+    new_type_created = QtCore.Signal()
 
     processInfoVisible = QtCore.Property(bool, get_process_info_visible, notify=on_process_info_visible)
     windowInfoVisible = QtCore.Property(bool, get_window_info_visible, notify=on_window_info_visible)
