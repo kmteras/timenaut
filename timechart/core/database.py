@@ -217,15 +217,16 @@ def get_window_data() -> List[Tuple[Process, Window, int]]:
                     THEN pt.color
                 ELSE wt.color
             END
-        FROM heartbeats
+        FROM heartbeats AS hb
         JOIN
             (SELECT start_time, end_time - start_time AS difference FROM heartbeats) d
-        ON d.start_time=heartbeats.start_time
-        LEFT JOIN processes p on heartbeats.process_id = p.id
-        LEFT JOIN windows w on heartbeats.window_id = w.id
+        ON d.start_time=hb.start_time
+        LEFT JOIN processes p on hb.process_id = p.id
+        LEFT JOIN windows w on hb.window_id = w.id
         LEFT JOIN productivity_type pt on p.type_str = pt.type
         LEFT JOIN productivity_type wt on w.type_str = wt.type
-        GROUP BY heartbeats.process_id, window_id
+        WHERE hb.idle = FALSE
+        GROUP BY hb.process_id, window_id
         HAVING
             total_time > 0
         ORDER BY SUM(difference) DESC
@@ -265,16 +266,16 @@ def get_window_data_by_process(process_id: int) -> List[Tuple[Window, int]]:
                     THEN pt.color
                 ELSE wt.color
             END
-        FROM heartbeats
+        FROM heartbeats AS hb
         JOIN 
             (SELECT start_time, end_time - start_time AS difference FROM heartbeats) d 
-        ON d.start_time=heartbeats.start_time
-        LEFT JOIN windows w ON heartbeats.window_id = w.id
+        ON d.start_time=hb.start_time
+        LEFT JOIN windows w ON hb.window_id = w.id
         LEFT JOIN processes p ON p.id = w.process_id
         LEFT JOIN productivity_type pt on p.type_str = pt.type
         LEFT JOIN productivity_type wt on w.type_str = wt.type
-        WHERE w.process_id=:process_id
-        GROUP BY heartbeats.process_id, window_id
+        WHERE w.process_id=:process_id AND hb.idle = FALSE
+        GROUP BY hb.process_id, window_id
         HAVING 
             total_time > 0
         ORDER BY SUM(difference) DESC
@@ -311,7 +312,7 @@ def get_process_data() -> List[Tuple[Process, int]]:
             process_id,
             pt.type,
             pt.color
-        FROM heartbeats
+        FROM heartbeats AS hb
         JOIN 
             (SELECT 
                 start_time, 
@@ -319,11 +320,12 @@ def get_process_data() -> List[Tuple[Process, int]]:
             FROM 
                 heartbeats) d 
         ON 
-            d.start_time=heartbeats.start_time
+            d.start_time=hb.start_time
         LEFT JOIN 
-            processes p on heartbeats.process_id = p.id
+            processes p on hb.process_id = p.id
         LEFT JOIN 
             productivity_type pt on p.type_str = pt.type
+        WHERE hb.idle = FALSE
         GROUP BY 
             process_id
         ORDER BY 
@@ -444,6 +446,8 @@ LEFT JOIN
     productivity_type pt on p.type_str = pt.type
 LEFT JOIN
     productivity_type wt on w.type_str = wt.type
+WHERE
+    hb.idle = FALSE
 GROUP BY
     ROUND(hb.start_time / (60 * 10), 0) * (60 * 10),
     type_
@@ -481,7 +485,7 @@ def get_type_data(date_=None) -> List[Dict[str, Union[str, int]]]:
                     THEN pt.color
                 ELSE wt.color
             END AS type_color
-        FROM heartbeats
+        FROM heartbeats AS hb
         JOIN
             (SELECT
                 start_time,
@@ -489,12 +493,13 @@ def get_type_data(date_=None) -> List[Dict[str, Union[str, int]]]:
             FROM
                 heartbeats) d
         ON
-            d.start_time=heartbeats.start_time
-        LEFT JOIN windows w ON heartbeats.window_id = w.id
+            d.start_time=hb.start_time
+        LEFT JOIN windows w ON hb.window_id = w.id
         LEFT JOIN processes p ON p.id = w.process_id
         LEFT JOIN productivity_type pt on p.type_str = pt.type
         LEFT JOIN productivity_type wt on w.type_str = wt.type
-        WHERE d.start_time > :startDate AND d.start_time < :endDate
+        WHERE 
+            d.start_time > :startDate AND d.start_time < :endDate AND hb.idle = FALSE
         GROUP BY
             type_wp
         ORDER BY
@@ -552,7 +557,7 @@ LEFT JOIN
     productivity_type pt on p.type_str = pt.type
 LEFT JOIN
     productivity_type wt on w.type_str = wt.type
-WHERE hb.start_time > :startDate AND hb.start_time < :endDate
+WHERE hb.start_time > :startDate AND hb.start_time < :endDate AND hb.idle = FALSE
 GROUP BY
     type_, hb.process_id
 ORDER BY
