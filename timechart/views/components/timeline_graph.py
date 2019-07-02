@@ -17,7 +17,8 @@ class TimelineGraph(QQuickPaintedItem):
         self.colors: List[List[str]] = []
         self.x_padding = 16
         self.y_padding = 16
-        self.text_padding = 50
+        self.text_bar_gap = 15
+        self.text_padding = 35
         self.font_size = 12
         self.draw_border = draw_border
         self.max_width = 10
@@ -47,21 +48,22 @@ class TimelineGraph(QQuickPaintedItem):
 
         p.setBrush(QColor(*Color.GREEN))
         for i, bar in enumerate(self.values):
-            height_shift = 0
+            time_shift = 0
             # Draw bars
             for j, stacked_bar in enumerate(bar):
                 if stacked_bar > 0:
                     p.setBrush(QColor(self.colors[i][j]))
-                    bar_height = int(real_height * (stacked_bar / 600))
+                    bar_height = math.ceil(real_height * (stacked_bar / 600))
+                    height_shift = int(real_height * (time_shift / 600))
                     p.drawRect(self.x_padding + self.axis_width + self.bar_gap + i * (bar_width + self.bar_gap),
                                self.y_padding + real_height - bar_height - height_shift,
                                bar_width, bar_height)
-                    height_shift += bar_height
+                    time_shift += stacked_bar
 
             # Draw time
             if i % 6 == 0:
                 p.translate(self.x_padding + self.axis_width + self.bar_gap + i * (bar_width + self.bar_gap),
-                            self.y_padding + real_height + 10)
+                            self.y_padding + real_height + self.text_bar_gap)
                 p.rotate(45)
                 p.setPen(QPen(QColor(*Color.BLACK)))
                 p.drawText(0, 0, self.labels[i])
@@ -72,5 +74,8 @@ class TimelineGraph(QQuickPaintedItem):
         # Draw lines
         p.setBrush(QColor(*Color.DARK))
         p.setPen(Qt.NoPen)
-        p.drawRect(self.x_padding, self.y_padding + real_height - self.axis_width, real_width, self.axis_width)
+        p.drawRect(self.x_padding,
+                   self.y_padding + real_height - self.axis_width,
+                   bar_amount * (bar_width + self.bar_gap),
+                   self.axis_width)
         p.drawRect(self.x_padding, self.y_padding, self.axis_width, real_height)
