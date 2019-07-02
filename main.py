@@ -26,6 +26,9 @@ from timechart.views.settings_view import SettingsView
 
 def main():
     temp_path = os.path.join(QDir.tempPath(), "timechart.lock")
+    if is_debug():
+        temp_path = os.path.join(QDir.tempPath(), "timechart_dev.lock")
+
     try:
         singleton = ApplicationSingleton(temp_path)
     except ApplicationSingletonException:
@@ -54,6 +57,7 @@ def main():
         QGuiApplication.setFont(montserrat)
 
     logging.info(f"Application font: {QGuiApplication.font().family()}")
+    logging.info(f"Application point size: {QGuiApplication.font().pointSize()}")
 
     # Database setup
     try:
