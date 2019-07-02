@@ -62,11 +62,16 @@ class PieGraph(QQuickPaintedItem):
             p.drawPie(circle_rect, total_drawn_angles, angle)
             total_drawn_angles += angle
 
+        labels_height = (len(self.labels) - 1) * 30
+        labels_padding = (self.height() - labels_height) / 2
+
         for i, value in enumerate(self.labels):
             if self.colors is None:
                 p.setBrush(QBrush(QColor(*Color.colors[i])))
             else:
                 p.setBrush(QBrush(QColor(self.colors[i])))
 
-            p.drawRect(self.x_padding + int(min(self.width(), self.height())), 30 + i * 30 - 15, 20, 20)
-            p.drawText(self.x_padding + int(min(self.width(), self.height())) + 30, 30 + i * 30, value)
+            p.drawRect(self.x_padding + int(min(self.width(), self.height())), labels_padding + i * 30 - 15,
+                       20, 20)
+            p.drawText(self.x_padding + int(min(self.width(), self.height())) + 30, labels_padding + i * 30,
+                       value)

@@ -56,7 +56,7 @@ DashboardViewBase {
         id: panel
         y: 260
         radius: 10
-        width: main.width / 2
+        width: main.width / 2 - 30
         height: main.height - 280
         color: "white"
 
