@@ -2,7 +2,7 @@ import logging
 from datetime import date, datetime, timedelta
 from datetime import time as timetime
 from time import time
-from typing import List, Tuple
+from typing import List, Tuple, Dict, Union
 
 import PySide2.QtSql as QtSql
 
@@ -464,15 +464,23 @@ GROUP BY
     return results
 
 
-def get_type_data(date_=None) -> List[Tuple[str, int, str]]:
+def get_type_data(date_=None) -> List[Dict[str, Union[str, int]]]:
     query = QtSql.QSqlQuery()
 
     query.prepare(
         """
         SELECT
-            pt.type,
             SUM(difference),
-            pt.color
+            CASE
+                WHEN w.type_str IS NULL
+                    THEN p.type_str
+                ELSE w.type_str
+            END AS type_wp,
+            CASE
+                WHEN w.type_str IS NULL
+                    THEN pt.color
+                ELSE wt.color
+            END AS type_color
         FROM heartbeats
         JOIN
             (SELECT
@@ -482,13 +490,13 @@ def get_type_data(date_=None) -> List[Tuple[str, int, str]]:
                 heartbeats) d
         ON
             d.start_time=heartbeats.start_time
-        LEFT JOIN
-            processes p on heartbeats.process_id = p.id
-        LEFT JOIN
-            productivity_type pt on p.type_str = pt.type
+        LEFT JOIN windows w ON heartbeats.window_id = w.id
+        LEFT JOIN processes p ON p.id = w.process_id
+        LEFT JOIN productivity_type pt on p.type_str = pt.type
+        LEFT JOIN productivity_type wt on w.type_str = wt.type
         WHERE d.start_time > :startDate AND d.start_time < :endDate
         GROUP BY
-            type
+            type_wp
         ORDER BY
             SUM(difference) DESC
         """
@@ -508,10 +516,10 @@ def get_type_data(date_=None) -> List[Tuple[str, int, str]]:
         raise DatabaseError(query.lastError())
     else:
         while query.next():
-            type_ = query.value(0)
-            count = query.value(1)
-            color = query.value(2)
-            results.append((type_, count, color))
+            results.append({
+                "count": query.value(0),
+                "type": query.value(1),
+                "color": query.value(2)})
 
     return results
 

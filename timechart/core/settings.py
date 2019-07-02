@@ -1,7 +1,7 @@
 from timechart.core.singleton import Singleton
 
-DEFAULT_HEARTBEAT_TIME = 60
-DEFAULT_IDLE_TIME = 300
+DEFAULT_HEARTBEAT_TIME = 10
+DEFAULT_IDLE_TIME = 180
 
 
 class Settings(metaclass=Singleton):

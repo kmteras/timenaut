@@ -66,9 +66,9 @@ class DashboardView(BaseView):
 def update_type_graph(graph, date=None):
     type_data = get_type_data(date_=date)
 
-    graph.set_values([x[1] for x in type_data])
-    graph.set_labels([x[0] for x in type_data])
-    graph.set_colors([x[2] for x in type_data])
+    graph.set_values([x["count"] for x in type_data])
+    graph.set_labels([x["type"] for x in type_data])
+    graph.set_colors([x["color"] for x in type_data])
     graph.update()
 
 
