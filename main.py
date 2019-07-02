@@ -50,14 +50,14 @@ def main():
         family = QFontDatabase.applicationFontFamilies(font_id)[0]
 
         montserrat = QFont(family)
-        montserrat.setPointSizeF(12)
+        montserrat.setPixelSize(16)
 
         logging.info(f"Loaded font: {montserrat.family()}")
 
         QGuiApplication.setFont(montserrat)
 
     logging.info(f"Application font: {QGuiApplication.font().family()}")
-    logging.info(f"Application point size: {QGuiApplication.font().pointSize()}")
+    logging.info(f"Application point size: {QGuiApplication.font().pixelSize()}")
 
     # Database setup
     try:
