@@ -162,7 +162,6 @@ class ActivityView(BaseView):
         type_str = type_model.types[row][0]
         if type_str == "new":
             self.set_type_text_field_visible(True)
-            print("new!")
         else:
             database.set_process_type(self.selected_process.id, type_str)
         self.update()
@@ -178,6 +177,10 @@ class ActivityView(BaseView):
         type_model = type_list_model_singleton()
         database.delete_type(type_model.types[row][0])
         self.update()
+
+    @QtCore.Slot(bool)
+    def setVisible(self, value: bool):
+        self.set_type_text_field_visible(value)
 
     on_process_info_visible = QtCore.Signal()
     on_window_info_visible = QtCore.Signal()

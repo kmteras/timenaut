@@ -1,5 +1,5 @@
 import QtQuick 2.12
-import QtQuick.Controls 2.12 as NewControls
+import QtQuick.Controls 2.5 as NewControls
 import QtQuick.Controls 1.0
 import Views 1.0
 import "qrc:/qml/fragments"
@@ -13,6 +13,7 @@ ActivityView {
             visible: activityView.processInfoVisible
 
             signal processTypeSelected(int index)
+            signal setVisible(bool value)
 
             Text {
                 x: 10
@@ -84,7 +85,10 @@ ActivityView {
                 width: 200
                 height: 40
 
+                onActiveFocusChanged: if(!focus) {setVisible(false)}
+
                 visible: newTypeTextFieldVisible
+                focus: newTypeTextFieldVisible
 
                 background: Rectangle {
                     color: "gray"
