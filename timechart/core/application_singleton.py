@@ -44,8 +44,8 @@ class ApplicationSingleton:
 
     def close_lockfile(self):
         if sys.platform == 'win32':
-            if hasattr(self, 'fd'):
-                os.close(self.fd)
+            if hasattr(self, 'fp'):
+                os.close(self.fp)
                 os.unlink(self.lockfile)
         else:
             fcntl.lockf(self.fp, fcntl.LOCK_UN)
