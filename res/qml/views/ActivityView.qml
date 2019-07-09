@@ -93,6 +93,16 @@ ActivityView {
                 background: Rectangle {
                     color: "gray"
                 }
+
+                Button {
+                    anchors.left: parent.right
+                    text: "OK"
+                    onClicked: {
+                        TypeAdded(parent.text)
+                        setVisible(false)
+                        parent.text = ""
+                    }
+                }
             }
         }
 

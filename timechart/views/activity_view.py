@@ -178,6 +178,11 @@ class ActivityView(BaseView):
         database.delete_type(type_model.types[row][0])
         self.update()
 
+    @QtCore.Slot(str)
+    def TypeAdded(self, type_str: str):
+        database.add_type(type_str)
+        self.update()
+
     @QtCore.Slot(bool)
     def setVisible(self, value: bool):
         self.set_type_text_field_visible(value)

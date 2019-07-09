@@ -568,6 +568,7 @@ ORDER BY
 
     return results
 
+
 def delete_type(type_str: str) -> None:
     query = QtSql.QSqlQuery()
 
@@ -579,6 +580,26 @@ def delete_type(type_str: str) -> None:
 
     query.bindValue(":type_str", type_str)
     query.bindValue(":removable_bool", True)
+
+    if not query.exec_():
+        raise DatabaseError(query.lastError())
+
+
+def add_type(type_str: str) -> None:
+    query = QtSql.QSqlQuery()
+
+    import random
+    r = lambda: random.randint(0, 255)
+    color = '#%02X%02X%02X' % (r(), r(), r())
+
+    query.prepare(
+        """
+        INSERT OR REPLACE INTO productivity_type VALUES (:type_str, :color, 'true');
+        """
+    )
+
+    query.bindValue(":type_str", type_str)
+    query.bindValue(":color", color)
 
     if not query.exec_():
         raise DatabaseError(query.lastError())
