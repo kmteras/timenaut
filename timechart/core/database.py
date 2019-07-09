@@ -87,7 +87,7 @@ def create_tables() -> None:
     if not query.exec_("INSERT OR REPLACE INTO productivity_type VALUES ('misc', '#82cfa5', 'true')"):
         raise DatabaseError(query.lastError())
 
-    if not query.exec_("INSERT OR REPLACE INTO productivity_type VALUES ('new', '#717e91', 'true')"):
+    if not query.exec_("INSERT OR REPLACE INTO productivity_type VALUES ('new', '#717e91', 'false')"):
         raise DatabaseError(query.lastError())
 
     logging.info("Created database tables")
@@ -349,6 +349,7 @@ def get_types() -> List:
             color,
             removable
         FROM productivity_type
+        ORDER BY (CASE WHEN type = 'new' THEN 1 ELSE 0 END), removable
         """
     )
 
