@@ -2,7 +2,7 @@ import PySide2.QtCore as QtCore
 from PySide2.QtWidgets import QTableView
 
 import timechart.core.database as database
-from timechart.core.database import get_process_data, get_window_data_by_process
+from timechart.core.database import get_process_data, get_window_data_by_process, get_types
 from timechart.core.models.process import Process
 from timechart.core.models.process_table_model import process_table_model_singleton
 from timechart.core.models.type_list_model import type_list_model_singleton
@@ -32,6 +32,7 @@ class ActivityView(BaseView):
 
         self.process_path = None
         self.process_title = None
+        self.type_text_field_visible = False
 
     def componentComplete(self):
         BaseView.componentComplete(self)
@@ -42,6 +43,11 @@ class ActivityView(BaseView):
         process_model = process_table_model_singleton()
         data = list(map(lambda x: [*x], get_process_data()))
         process_model.update_data(data)
+
+        type_model = type_list_model_singleton()
+        data = list(map(lambda x: [*x], get_types()))
+        type_model.update_data(data)
+
 
         if self.selected_process is not None:
             self.update_window_model()
@@ -100,6 +106,13 @@ class ActivityView(BaseView):
         self.process_title = text
         self.on_process_title.emit()
 
+    def get_type_text_field_visible(self):
+        return self.type_text_field_visible
+
+    def set_type_text_field_visible(self, visible: bool):
+        self.type_text_field_visible = visible
+        self.new_type_created.emit()
+
     @QtCore.Slot(int)
     def processSelected(self, row: int):
         process_model = process_table_model_singleton()
@@ -147,14 +160,37 @@ class ActivityView(BaseView):
     @QtCore.Slot(int)
     def processTypeSelected(self, row: int):
         type_model = type_list_model_singleton()
-        database.set_process_type(self.selected_process.id, type_model.types[row][0])
+        type_str = type_model.types[row][0]
+        if type_str == "new":
+            self.set_type_text_field_visible(True)
+        else:
+            database.set_process_type(self.selected_process.id, type_str)
         self.update()
 
     @QtCore.Slot(int)
     def windowTypeSelected(self, row: int):
         type_model = type_list_model_singleton()
-        database.set_window_type(self.selected_window.id, type_model.types[row][0])
+        type_str = type_model.types[row][0]
+        if type_str == "new":
+            self.set_type_text_field_visible(True)
+        else:
+            database.set_window_type(self.selected_window.id, type_model.types[row][0])
         self.update()
+
+    @QtCore.Slot(int)
+    def TypeDeleted(self, row: int):
+        type_model = type_list_model_singleton()
+        database.delete_type(type_model.types[row][0])
+        self.update()
+
+    @QtCore.Slot(str)
+    def TypeAdded(self, type_str: str):
+        database.add_type(type_str)
+        self.update()
+
+    @QtCore.Slot(bool)
+    def setVisible(self, value: bool):
+        self.set_type_text_field_visible(value)
 
     on_process_info_visible = QtCore.Signal()
     on_window_info_visible = QtCore.Signal()
@@ -167,6 +203,9 @@ class ActivityView(BaseView):
     set_process_type = QtCore.Signal(int)
     set_window_type = QtCore.Signal(int)
 
+    new_type_created = QtCore.Signal()
+
+    newTypeTextFieldVisible = QtCore.Property(bool, get_type_text_field_visible, notify=new_type_created)
     processInfoVisible = QtCore.Property(bool, get_process_info_visible, notify=on_process_info_visible)
     windowInfoVisible = QtCore.Property(bool, get_window_info_visible, notify=on_window_info_visible)
 

@@ -82,6 +82,15 @@ def create_tables() -> None:
     if not query.exec_("INSERT OR REPLACE INTO productivity_type VALUES ('social', '#7293cb', 'false')"):
         raise DatabaseError(query.lastError())
 
+    if not query.exec_("INSERT OR REPLACE INTO productivity_type VALUES ('social', '#7293cb', 'false')"):
+        raise DatabaseError(query.lastError())
+
+    if not query.exec_("INSERT OR REPLACE INTO productivity_type VALUES ('misc', '#82cfa5', 'true')"):
+        raise DatabaseError(query.lastError())
+
+    if not query.exec_("INSERT OR REPLACE INTO productivity_type VALUES ('new', '#717e91', 'false')"):
+        raise DatabaseError(query.lastError())
+
     logging.info("Created database tables")
 
 
@@ -357,8 +366,10 @@ def get_types() -> List:
         """
         SELECT
             type,
-            color
+            color,
+            removable
         FROM productivity_type
+        ORDER BY (CASE WHEN type = 'new' THEN 1 ELSE 0 END), removable
         """
     )
 
@@ -370,7 +381,8 @@ def get_types() -> List:
         while query.next():
             type_name = query.value(0)
             color = query.value(1)
-            types.append((type_name, color))
+            removable = query.value(2)
+            types.append((type_name, color, removable))
 
     return types
 
@@ -588,3 +600,39 @@ ORDER BY
             results.append((process, count))
 
     return results
+
+
+def delete_type(type_str: str) -> None:
+    query = QtSql.QSqlQuery()
+
+    query.prepare(
+        """
+        DELETE FROM productivity_type WHERE type=:type_str;
+        """
+    )
+
+    query.bindValue(":type_str", type_str)
+    query.bindValue(":removable_bool", True)
+
+    if not query.exec_():
+        raise DatabaseError(query.lastError())
+
+
+def add_type(type_str: str) -> None:
+    query = QtSql.QSqlQuery()
+
+    import random
+    r = lambda: random.randint(0, 255)
+    color = '#%02X%02X%02X' % (r(), r(), r())
+
+    query.prepare(
+        """
+        INSERT OR REPLACE INTO productivity_type VALUES (:type_str, :color, 'true');
+        """
+    )
+
+    query.bindValue(":type_str", type_str)
+    query.bindValue(":color", color)
+
+    if not query.exec_():
+        raise DatabaseError(query.lastError())
