@@ -169,7 +169,11 @@ class ActivityView(BaseView):
     @QtCore.Slot(int)
     def windowTypeSelected(self, row: int):
         type_model = type_list_model_singleton()
-        database.set_window_type(self.selected_window.id, type_model.types[row][0])
+        type_str = type_model.types[row][0]
+        if type_str == "new":
+            self.set_type_text_field_visible(True)
+        else:
+            database.set_window_type(self.selected_window.id, type_model.types[row][0])
         self.update()
 
     @QtCore.Slot(int)

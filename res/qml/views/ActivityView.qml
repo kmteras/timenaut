@@ -8,12 +8,11 @@ ActivityView {
     id: activityView
 
     Rectangle {
+        signal setVisible(bool value)
 
         Rectangle {
             visible: activityView.processInfoVisible
-
             signal processTypeSelected(int index)
-            signal setVisible(bool value)
 
             Text {
                 x: 10
@@ -76,32 +75,6 @@ ActivityView {
 
                 onSetProcessType: {
                     currentIndex = index
-                }
-            }
-
-            NewControls.TextField {
-                x: 400
-                y: 90
-                width: 200
-                height: 40
-
-                onActiveFocusChanged: if(!focus) {setVisible(false)}
-
-                visible: newTypeTextFieldVisible
-                focus: newTypeTextFieldVisible
-
-                background: Rectangle {
-                    color: "gray"
-                }
-
-                Button {
-                    anchors.left: parent.right
-                    text: "OK"
-                    onClicked: {
-                        TypeAdded(parent.text)
-                        setVisible(false)
-                        parent.text = ""
-                    }
                 }
             }
         }
@@ -170,6 +143,32 @@ ActivityView {
 
                 onSetWindowType: {
                     currentIndex = index
+                }
+            }
+        }
+
+        NewControls.TextField {
+            x: 400
+            y: 90
+            width: 200
+            height: 40
+
+            onActiveFocusChanged: if(!focus) {setVisible(false)}
+
+            visible: newTypeTextFieldVisible
+            focus: newTypeTextFieldVisible
+
+            background: Rectangle {
+                color: "gray"
+            }
+
+            Button {
+                anchors.left: parent.right
+                text: "OK"
+                onClicked: {
+                    TypeAdded(parent.text)
+                    setVisible(false)
+                    parent.text = ""
                 }
             }
         }
