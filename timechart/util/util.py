@@ -1,16 +1,36 @@
 import logging
-import math
 import os
 import sys
 
+import math
 from PySide2.QtCore import QStandardPaths
 
 data_file_name = 'timechart.dat'
 data_file_name_development = 'timechart_dev.dat'
 
 
+def get_application_name() -> str:
+    return "timechart"
+
+
+def get_user_data_location() -> str:
+    current_snap_app = os.environ.get("SNAP_INSTANCE_NAME")
+    if current_snap_app == get_application_name():
+        return os.environ.get("SNAP_USER_DATA")
+    else:
+        return QStandardPaths.writableLocation(QStandardPaths.AppLocalDataLocation)
+
+
+def get_data_location() -> str:
+    current_snap_app = os.environ.get("SNAP_INSTANCE_NAME")
+    if current_snap_app == get_application_name():
+        return os.environ.get("SNAP_DATA")
+    else:
+        return QStandardPaths.writableLocation(QStandardPaths.AppLocalDataLocation)
+
+
 def get_data_file_location() -> str:
-    data_folder = QStandardPaths.writableLocation(QStandardPaths.AppLocalDataLocation)
+    data_folder = get_user_data_location()
 
     if not os.path.isdir(data_folder):
         logging.warning(f"{data_folder} does not exist")

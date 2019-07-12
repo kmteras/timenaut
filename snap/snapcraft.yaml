@@ -1,0 +1,23 @@
+name: timechart
+version: '0.0.1+git'
+summary: Time tracking app to show you what you spend your time on
+description: |
+  Time tracking app to show you what you spend your time on
+
+grade: devel
+confinement: devmode
+
+base: core18
+
+parts:
+  timechart:
+    plugin: dump
+    source: dist/timechart
+    source-type: local
+    stage-packages:
+      - libgl1
+
+apps:
+  timechart:
+    command: run.sh timechart
+    plugs: [desktop, x11, wayland, unity7, home]

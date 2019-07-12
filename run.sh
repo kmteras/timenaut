@@ -1,0 +1,7 @@
+export LD_LIBRARY_PATH=$SNAP:$LD_LIBRARY_PATH
+export QT_PLUGIN_PATH=$SNAP/plugins
+export QML2_IMPORT_PATH=$QML2_IMPORT_PATH:$SNAP/qml
+export QT_QPA_PLATFORM_PLUGIN_PATH=$SNAP/plugins/platforms/
+
+export QT_QPA_PLATFORM=xcb
+export QT_QPA_PLATFORMTHEME=appmenu-qt5
