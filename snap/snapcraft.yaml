@@ -1,5 +1,5 @@
 name: timechart
-version: '0.0.1+git'
+version: '0.0.1'
 summary: Time tracking app to show you what you spend your time on
 description: |
   Time tracking app to show you what you spend your time on
@@ -8,6 +8,14 @@ grade: devel
 confinement: devmode
 
 base: core18
+
+environment:
+  LD_LIBRARY_PATH: $SNAP:$LD_LIBRARY_PATH
+  QT_PLUGIN_PATH: $SNAP/plugins
+  QML2_IMPORT_PATH: $QML2_IMPORT_PATH:$SNAP/qml
+  QT_QPA_PLATFORM_PLUGIN_PATH: $SNAP/plugins/platforms/
+  QT_QPA_PLATFORM: xcb
+  QT_QPA_PLATFORMTHEME: appmenu-qt5
 
 parts:
   timechart:
@@ -19,5 +27,7 @@ parts:
 
 apps:
   timechart:
-    command: run.sh timechart
-    plugs: [desktop, x11, wayland, unity7, home]
+    command: timechart
+    plugs: [desktop, x11, wayland, opengl, dbus]
+    desktop: timechart
+    autostart: timechart-autostart.desktop

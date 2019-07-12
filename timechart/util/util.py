@@ -21,14 +21,6 @@ def get_user_data_location() -> str:
         return QStandardPaths.writableLocation(QStandardPaths.AppLocalDataLocation)
 
 
-def get_data_location() -> str:
-    current_snap_app = os.environ.get("SNAP_INSTANCE_NAME")
-    if current_snap_app == get_application_name():
-        return os.environ.get("SNAP_DATA")
-    else:
-        return QStandardPaths.writableLocation(QStandardPaths.AppLocalDataLocation)
-
-
 def get_data_file_location() -> str:
     data_folder = get_user_data_location()
 

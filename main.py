@@ -120,8 +120,9 @@ if __name__ == "__main__":
             format=debugging_logging_format)
     else:
         logging.basicConfig(
-            level=logging.INFO,
+            level=logging.DEBUG,
             handlers=[
+                logging.StreamHandler(),
                 logging.FileHandler(logging_file)
             ],
             format=logging_format)

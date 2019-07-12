@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Timechart
+Icon=$SNAP/icon.png
+Exec=timechart %U

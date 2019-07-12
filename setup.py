@@ -16,6 +16,7 @@ if __name__ == '__main__':
         './main.py',
         '--name', 'timechart',
         '--icon', 'res/img/icon.ico',
+        '--add-data', f'res/img/icon.png{os.pathsep}.',
         '--window',
         '-y',
     ]
