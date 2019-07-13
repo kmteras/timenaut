@@ -2,6 +2,6 @@
 Version=1.0
 Type=Application
 Name=Timechart
-Icon=$SNAP/application/icons/icon.png
+Icon=${SNAP}/application/icons/icon.png
 Exec=timechart %U
 Categories=Development,Utility,Office,Education
