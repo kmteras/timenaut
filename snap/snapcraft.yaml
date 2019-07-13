@@ -17,7 +17,7 @@ environment:
   QT_QPA_PLATFORM: xcb
   QT_QPA_PLATFORMTHEME: appmenu-qt5
 
-slots:
+plugs:
   shell-dbus:
     interface: dbus
     bus: session
@@ -40,8 +40,7 @@ parts:
 apps:
   timechart:
     command: timechart
-    plugs: [desktop, x11, wayland, opengl]
-    slots: [shell-dbus, mutter-dbus]
+    plugs: [desktop, x11, wayland, opengl, shell-dbus, mutter-dbus]
     desktop: share/application/timechart.desktop
     passthrough:
       autostart: timechart-autostart.desktop
