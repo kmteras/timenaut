@@ -26,9 +26,9 @@ install:
   - pip3 install -r requirements.txt
 script:
   - python setup.py
-  - snapcraft --destructive-mode
 before_deploy:
-  - python package.py $TRAVIS_TAG
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then snapcraft --destructive-mode; fi
+  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then python package.py $TRAVIS_TAG; fi
 deploy:
   provider: releases
   api_key:
