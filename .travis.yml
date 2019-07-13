@@ -16,6 +16,7 @@ matrix:
             - name: snapcraft
               channel: edge
               confinement: classic
+            - name: multipass
     - os: windows
       language: shell
       before_install: choco install python --version 3.6.8
@@ -26,7 +27,7 @@ install:
   - pip3 install -r requirements.txt
 script:
   - python setup.py
-  - snapcraft --destructive-mode
+  - snapcraft
   - python main.py
 before_deploy:
   - python package.py $TRAVIS_TAG
