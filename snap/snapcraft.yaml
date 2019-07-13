@@ -4,8 +4,8 @@ summary: Time tracking app to show you what you spend your time on
 description: |
   Time tracking app to show you what you spend your time on
 
-grade: devel
-confinement: devmode
+grade: stable
+confinement: strict
 
 base: core18
 
@@ -16,7 +16,16 @@ environment:
   QT_QPA_PLATFORM_PLUGIN_PATH: $SNAP/qt5_plugins/platforms/
   QT_QPA_PLATFORM: xcb
   QT_QPA_PLATFORMTHEME: appmenu-qt5
-  QT_DEBUG_PLUGINS: 1
+
+slots:
+  shell-dbus:
+    interface: dbus
+    bus: session
+    name: org.gnome.Shell
+  mutter-dbus:
+    interface: dbus
+    bus: session
+    name: org.gnome.Mutter.IdleMonitor
 
 parts:
   timechart:
@@ -31,7 +40,8 @@ parts:
 apps:
   timechart:
     command: timechart
-    plugs: [desktop, x11, wayland, opengl, dbus]
+    plugs: [desktop, x11, wayland, opengl]
+    slots: [shell-dbus, mutter-dbus]
     desktop: share/application/timechart.desktop
     passthrough:
       autostart: timechart-autostart.desktop
