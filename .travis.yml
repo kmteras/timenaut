@@ -9,6 +9,11 @@ matrix:
         - sudo apt-get install -y libcairo2-dev libgirepository1.0-dev gir1.2-gtk-3.0
       env:
         - DIST_FILE=timechart_linux_$TRAVIS_TAG.zip
+      addons:
+        snaps:
+            - name: snapcraft
+              channel: edge
+              classic: true
     - os: windows
       language: shell
       before_install: choco install python --version 3.6.8
@@ -19,6 +24,7 @@ install:
   - pip3 install -r requirements.txt
 script:
   - python setup.py
+  - python main.py
 before_deploy:
   - python package.py $TRAVIS_TAG
 deploy:
