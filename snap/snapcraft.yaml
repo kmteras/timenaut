@@ -29,6 +29,6 @@ apps:
   timechart:
     command: timechart
     plugs: [desktop, x11, wayland, opengl, dbus]
-    desktop: timechart
+    desktop: share/application/timechart.desktop
     passthrough:
       autostart: timechart-autostart.desktop
