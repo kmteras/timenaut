@@ -16,6 +16,7 @@ environment:
   QT_QPA_PLATFORM_PLUGIN_PATH: $SNAP/qt5_plugins/platforms/
   QT_QPA_PLATFORM: xcb
   QT_QPA_PLATFORMTHEME: appmenu-qt5
+  QT_DEBUG_PLUGINS: 1
 
 parts:
   timechart:
