@@ -24,7 +24,6 @@ matrix:
         - DIST_FILE=timechart_win_$TRAVIS_TAG.zip
 install:
   - pip3 install -r requirements.txt
-  - lxc init --preseed
 script:
 #  - python setup.py
   - snapcraft --destructive-mode
