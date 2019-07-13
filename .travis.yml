@@ -6,7 +6,7 @@ matrix:
       python: 3.6
       before_install:
         - sudo apt-get update
-        - sudo apt-get install -y libcairo2-dev libgirepository1.0-dev gir1.2-gtk-3.0
+        - sudo apt-get install -y libcairo2-dev libgirepository1.0-dev gir1.2-gtk-3.0 libxkbcommon-x11-0
       env:
         - DIST_FILE=timechart_v0.0.1_amd64.snap
         - QT_QPA_PLATFORM=xcb
