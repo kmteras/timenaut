@@ -25,6 +25,8 @@ parts:
     source-type: local
     stage-packages:
       - libgl1
+      - libxkbcommon0
+      - libxkbcommon-x11-0
 
 apps:
   timechart:
