@@ -17,6 +17,8 @@ matrix:
               channel: edge
               confinement: classic
             - name: multipass
+              channel: edge
+              confinement: classic
     - os: windows
       language: shell
       before_install: choco install python --version 3.6.8
