@@ -1,6 +1,7 @@
 import os
-import zipfile
+import subprocess
 import sys
+import zipfile
 
 if __name__ == '__main__':
     platform = sys.platform
@@ -29,3 +30,6 @@ if __name__ == '__main__':
                            arcname=zip_file_name)
 
     zip_file.close()
+
+    if sys.platform == 'linux':
+        subprocess.run(['snapcraft'])
