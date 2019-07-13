@@ -11,9 +11,9 @@ base: core18
 
 environment:
   LD_LIBRARY_PATH: $SNAP:$LD_LIBRARY_PATH
-  QT_PLUGIN_PATH: $SNAP/plugins
+  QT_PLUGIN_PATH: $SNAP/qt5_plugins
   QML2_IMPORT_PATH: $QML2_IMPORT_PATH:$SNAP/qml
-  QT_QPA_PLATFORM_PLUGIN_PATH: $SNAP/plugins/platforms/
+  QT_QPA_PLATFORM_PLUGIN_PATH: $SNAP/qt5_plugins/platforms/
   QT_QPA_PLATFORM: xcb
   QT_QPA_PLATFORMTHEME: appmenu-qt5
 
