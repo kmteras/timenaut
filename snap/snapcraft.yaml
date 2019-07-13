@@ -30,4 +30,5 @@ apps:
     command: timechart
     plugs: [desktop, x11, wayland, opengl, dbus]
     desktop: timechart
-    autostart: timechart-autostart.desktop
+    passthrough:
+      autostart: timechart-autostart.desktop
