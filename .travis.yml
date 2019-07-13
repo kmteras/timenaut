@@ -25,7 +25,7 @@ matrix:
 install:
   - pip3 install -r requirements.txt
 script:
-#  - python setup.py
+  - python setup.py
   - snapcraft --destructive-mode
   - python main.py
 before_deploy:
