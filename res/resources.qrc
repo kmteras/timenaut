@@ -11,6 +11,8 @@
     <file>qml/views/ActivityView.qml</file>
     <file>qml/views/SettingsView.qml</file>
 
+    <file>qml/components/TCheckBox.qml</file>
+
     <file>qml/fragments/Navigation.qml</file>
     <file>qml/fragments/NavigationLogo.qml</file>
     <file>qml/fragments/NavigationItem.qml</file>

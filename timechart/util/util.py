@@ -1,24 +1,81 @@
 import logging
+import math
 import os
 import sys
+from shutil import copy
 
-import math
 from PySide2.QtCore import QStandardPaths
 
 data_file_name = 'timechart.dat'
 data_file_name_development = 'timechart_dev.dat'
+program_location = ''
 
 
 def get_application_name() -> str:
     return "timechart"
 
 
-def get_user_data_location() -> str:
+def is_snap() -> bool:
     current_snap_app = os.environ.get("SNAP_INSTANCE_NAME")
-    if current_snap_app == get_application_name():
+    return current_snap_app == get_application_name()
+
+
+def get_user_data_location() -> str:
+    if is_snap():
         return os.environ.get("SNAP_USER_DATA")
     else:
         return QStandardPaths.writableLocation(QStandardPaths.AppLocalDataLocation)
+
+
+def get_auto_start_file_location() -> str:
+    return os.path.join(get_user_data_location(), '.config', 'autostart', 'timechart.desktop')
+
+
+def get_program_location() -> str:
+    return program_location
+
+
+def set_program_location(value: str) -> None:
+    global program_location
+    program_location = value
+
+
+def set_auto_start(value: bool):
+    if sys.platform != 'linux':
+        return
+
+    if value:
+        # Set program to start on boot
+        logging.info("Enabled start on boot")
+        config_dir = os.path.join(get_user_data_location(), '.config')
+        if not os.path.isdir(config_dir):
+            try:
+                os.mkdir(config_dir)
+                logging.info(f"Created directory {config_dir}")
+            except OSError as e:
+                logging.error(e)
+
+        autostart_dir = os.path.join(config_dir, 'autostart')
+        if not os.path.isdir(autostart_dir):
+            try:
+                os.mkdir(autostart_dir)
+                logging.info(f"Created directory {autostart_dir}")
+            except OSError as e:
+                logging.error(e)
+
+        copy(os.path.join(get_program_location(), 'share', 'application', 'timechart.desktop'),
+             get_auto_start_file_location())
+    else:
+        # Set program to not start on boot
+        logging.info("Disabled start on boot")
+        if os.path.exists(get_auto_start_file_location()):
+            os.remove(get_auto_start_file_location())
+
+
+def get_auto_start() -> bool:
+    if sys.platform == 'linux':
+        return os.path.isfile(get_auto_start_file_location())
+    return False
 
 
 def get_data_file_location() -> str:

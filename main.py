@@ -17,6 +17,7 @@ from timechart.core.models.type_list_model import type_list_model_singleton
 from timechart.core.models.window_table_model import window_table_model_singleton
 from timechart.views.activity_view import ActivityView
 from timechart.views.components.bar_graph import BarGraph
+from timechart.views.components.check_box import TCheckBox
 from timechart.views.components.pie_graph import PieGraph
 from timechart.views.components.timeline_graph import TimelineGraph
 from timechart.views.dashboard_view import DashboardView
@@ -77,6 +78,8 @@ def main():
         qmlRegisterType(ActivityView, "Views", 1, 0, "ActivityView")
         qmlRegisterType(SettingsView, "Views", 1, 0, "SettingsView")
 
+        qmlRegisterType(TCheckBox, "Controls", 1, 0, "TBaseCheckBox")
+
         qml = QQmlApplicationEngine()
 
         qml.rootContext().setContextProperty("processTableModel", process_table_model_singleton())
@@ -105,6 +108,7 @@ def quit_signal(signum, frame):
 logging_format = '%(asctime)s %(levelname)s %(name)s: %(message)s'
 debugging_logging_format = '%(asctime)s %(levelname)s [%(filename)s:%(lineno)d] %(name)s: %(message)s'
 logging_file = os.path.join(util.get_user_data_location(), 'timechart.log')
+util.set_program_location(os.path.abspath(os.path.dirname(__file__)))
 
 if __name__ == "__main__":
     os.putenv("QT_SCALE_FACTOR", "1")
