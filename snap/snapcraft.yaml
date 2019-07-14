@@ -17,16 +17,6 @@ environment:
   QT_QPA_PLATFORM: xcb
   QT_QPA_PLATFORMTHEME: appmenu-qt5
 
-plugs:
-  shell-dbus:
-    interface: dbus
-    bus: session
-    name: org.gnome.Shell
-  mutter-dbus:
-    interface: dbus
-    bus: session
-    name: org.gnome.Mutter.IdleMonitor
-
 parts:
   timechart:
     plugin: dump
@@ -40,7 +30,7 @@ parts:
 apps:
   timechart:
     command: timechart
-    plugs: [desktop, x11, wayland, opengl, shell-dbus, mutter-dbus]
+    plugs: [desktop, x11, wayland, opengl]
     desktop: share/application/timechart.desktop
     passthrough:
       autostart: timechart-autostart.desktop
