@@ -10,11 +10,11 @@ from PySide2.QtQuick import QQuickWindow
 from PySide2.QtWidgets import QApplication
 
 import timechart.core.database as database
+import timechart.util.util as util
 from timechart.core.application_singleton import ApplicationSingleton, ApplicationSingletonException
 from timechart.core.models.process_table_model import process_table_model_singleton
 from timechart.core.models.type_list_model import type_list_model_singleton
 from timechart.core.models.window_table_model import window_table_model_singleton
-from timechart.util.util import is_debug
 from timechart.views.activity_view import ActivityView
 from timechart.views.components.bar_graph import BarGraph
 from timechart.views.components.pie_graph import PieGraph
@@ -26,11 +26,11 @@ from timechart.views.settings_view import SettingsView
 
 def main():
     temp_path = os.path.join(QDir.tempPath(), "timechart.lock")
-    if is_debug():
+    if util.is_debug():
         temp_path = os.path.join(QDir.tempPath(), "timechart_dev.lock")
 
     try:
-        singleton = ApplicationSingleton(temp_path)
+        ApplicationSingleton(temp_path)
     except ApplicationSingletonException:
         logging.info(f"An instance is already running with {temp_path}")
         sys.exit()
@@ -104,13 +104,14 @@ def quit_signal(signum, frame):
 
 logging_format = '%(asctime)s %(levelname)s %(name)s: %(message)s'
 debugging_logging_format = '%(asctime)s %(levelname)s [%(filename)s:%(lineno)d] %(name)s: %(message)s'
-base_dir = os.path.abspath(os.path.dirname(__file__))
-logging_file = os.path.join(base_dir, 'timechart.log')
+logging_file = os.path.join(util.get_user_data_location(), 'timechart.log')
 
 if __name__ == "__main__":
     os.putenv("QT_SCALE_FACTOR", "1")
 
-    if is_debug():
+    print(f"Logs are located at: {logging_file}")
+
+    if util.is_debug():
         logging.basicConfig(
             level=logging.DEBUG,
             handlers=[
@@ -119,8 +120,9 @@ if __name__ == "__main__":
             format=debugging_logging_format)
     else:
         logging.basicConfig(
-            level=logging.INFO,
+            level=logging.DEBUG,
             handlers=[
+                logging.StreamHandler(),
                 logging.FileHandler(logging_file)
             ],
             format=logging_format)
@@ -129,7 +131,7 @@ if __name__ == "__main__":
 
     res = None
 
-    if is_debug():
+    if util.is_debug():
         import subprocess
 
         current_dir = os.path.dirname(os.path.realpath(__file__))

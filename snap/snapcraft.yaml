@@ -1,0 +1,36 @@
+name: timechart
+version: 'v0.0.1'
+summary: Time tracking app to show you what you spend your time on
+description: |
+  Time tracking app to show you what you spend your time on
+
+grade: stable
+confinement: strict
+
+base: core18
+
+environment:
+  LD_LIBRARY_PATH: $SNAP:$LD_LIBRARY_PATH
+  QT_PLUGIN_PATH: $SNAP/qt5_plugins
+  QML2_IMPORT_PATH: $QML2_IMPORT_PATH:$SNAP/qml
+  QT_QPA_PLATFORM_PLUGIN_PATH: $SNAP/qt5_plugins/platforms/
+  QT_QPA_PLATFORM: xcb
+  QT_QPA_PLATFORMTHEME: appmenu-qt5
+
+parts:
+  timechart:
+    plugin: dump
+    source: dist/timechart
+    source-type: local
+    stage-packages:
+      - libgl1
+      - libxkbcommon0
+      - libxkbcommon-x11-0
+
+apps:
+  timechart:
+    command: timechart
+    plugs: [desktop, x11, wayland, opengl]
+    desktop: share/application/timechart.desktop
+    passthrough:
+      autostart: timechart-autostart.desktop

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Timechart
+Icon=${SNAP}/share/icons/icon.png
+Exec=timechart %U
+Categories=Development,Utility,Office,Education
