@@ -32,6 +32,9 @@ def get_auto_start_file_location() -> str:
 
 
 def get_program_location() -> str:
+    if is_snap():
+        return os.environ.get("SNAP")
+
     return program_location
 
 
