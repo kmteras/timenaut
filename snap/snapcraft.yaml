@@ -27,20 +27,10 @@ parts:
       - libxkbcommon0
       - libxkbcommon-x11-0
 
-plugs:
-  dbus-gnome-shell:
-    bus: session
-    interface: dbus
-    name: org.gnome.Shell
-  dbus-idlemonitor:
-    bus: session
-    interface: dbus
-    name: org.gnome.Mutter.IdleMonitor
-
 apps:
   timechart:
     command: timechart
-    plugs: [desktop, x11, wayland, opengl, dbus-gnome-shell, dbus-idlemonitor]
+    plugs: [desktop, x11, wayland, opengl, dbus]
     desktop: share/application/timechart.desktop
     passthrough:
       autostart: timechart-autostart.desktop
