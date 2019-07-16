@@ -180,11 +180,13 @@ def add_heartbeat(heartbeat: ProcessHeartbeat) -> None:
             query = QtSql.QSqlQuery()
             query.prepare(
                 "UPDATE heartbeats "
-                "SET end_time=:start_time "
+                "SET end_time=:end_time "
                 "WHERE start_time=:last_start_time")
 
+            limited_end_time = min(int(last_end_time) + Settings().heartbeat_time, end_time)
+
             query.bindValue(":last_start_time", last_start_time)
-            query.bindValue(":start_time", end_time)
+            query.bindValue(":end_time", limited_end_time)
             if not query.exec_():
                 raise DatabaseError(query.lastError())
 
