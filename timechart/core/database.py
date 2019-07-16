@@ -603,6 +603,35 @@ ORDER BY
 
     return results
 
+def delete_process_references(type_str: str) -> None:
+    query = QtSql.QSqlQuery()
+
+    query.prepare(
+        """
+        UPDATE processes SET type_str = 'unknown' WHERE type_str =:type_str;
+        """
+    )
+
+    query.bindValue(":type_str", type_str)
+
+    if not query.exec_():
+        raise DatabaseError(query.lastError())
+
+def delete_window_references(type_str: str) -> None:
+    query = QtSql.QSqlQuery()
+
+    query.prepare(
+        """
+        UPDATE windows AS win
+        SET type_str = (SELECT type_str FROM processes WHERE processes.id = win.process_id)
+        WHERE win.type_str =:type_str
+        """
+    )
+
+    query.bindValue(":type_str", type_str)
+
+    if not query.exec_():
+        raise DatabaseError(query.lastError())
 
 def delete_type(type_str: str) -> None:
     query = QtSql.QSqlQuery()
@@ -616,6 +645,8 @@ def delete_type(type_str: str) -> None:
     query.bindValue(":type_str", type_str)
     query.bindValue(":removable_bool", True)
 
+    delete_process_references(type_str)
+    delete_window_references(type_str)
     if not query.exec_():
         raise DatabaseError(query.lastError())
 
