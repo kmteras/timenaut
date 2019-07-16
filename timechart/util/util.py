@@ -28,7 +28,7 @@ def get_user_data_location() -> str:
 
 
 def get_auto_start_file_location() -> str:
-    return os.path.join(get_user_data_location(), '.config', 'autostart', 'timechart.desktop')
+    return os.path.join(get_user_data_location(), '.config', 'autostart', 'timechart-autostart.desktop')
 
 
 def get_program_location() -> str:
