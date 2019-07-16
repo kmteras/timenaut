@@ -5,7 +5,7 @@ description: |
   Time tracking app to show you what you spend your time on
 
 grade: stable
-confinement: strict
+confinement: classic
 
 base: core18
 
@@ -27,30 +27,10 @@ parts:
       - libxkbcommon0
       - libxkbcommon-x11-0
 
-plugs:
-  dbus-gnome-shell:
-    bus: session
-    interface: dbus
-    name: org.gnome.Shell
-  dbus-idlemonitor:
-    bus: session
-    interface: dbus
-    name: org.gnome.Mutter.IdleMonitor
-
-slots:
-  dbus-gnome-shell:
-    bus: session
-    interface: dbus
-    name: org.gnome.Shell
-  dbus-idlemonitor:
-    bus: session
-    interface: dbus
-    name: org.gnome.Mutter.IdleMonitor
-
 apps:
   timechart:
     command: timechart
-    plugs: [desktop, x11, wayland, opengl, dbus, dbus-gnome-shell, dbus-idlemonitor]
+    plugs: [desktop, x11, wayland, opengl]
     slots: [dbus-gnome-shell, dbus-idlemonitor]
     desktop: share/application/timechart.desktop
     passthrough:
