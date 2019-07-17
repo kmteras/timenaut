@@ -5,3 +5,5 @@ Name=Timechart
 Icon=${SNAP}/share/icons/icon.png
 Exec=timechart %U
 Categories=Development,Utility,Office,Education
+Terminal=false
+StartupNotify=false

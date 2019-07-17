@@ -5,7 +5,7 @@ description: |
   Time tracking app to show you what you spend your time on
 
 grade: stable
-confinement: strict
+confinement: classic
 
 base: core18
 
