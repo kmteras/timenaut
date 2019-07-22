@@ -20,7 +20,13 @@
                                 maxTicksLimit: 25
                             }
                         }],
-                        yAxes: [{stacked: true}]
+                        yAxes: [{
+                            stacked: true,
+                            ticks: {
+                                min: 0,
+                                // max: 600
+                            }
+                        }]
                     }
                 });
         }
