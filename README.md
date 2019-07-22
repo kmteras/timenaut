@@ -1,21 +1,29 @@
-# Timechart
+# timechart
 
-## Installation
+## Project setup
+```
+npm install
+```
 
-`git clone git@github.com:Teras23/timechart.git`  
-`cd timechart`  
-`python3 -m venv venv`  
-`source venv/bin/activate`  
-`pip3 install wheel`  
-`pip3 install -r requirements.txt`  
+### Compiles and hot-reloads for development
+```
+npm run serve
+```
 
-For python 3.7+  
-`cd venv/src/pyinstaller/bootloader`  
-`python3 ./waf distclean all`  
+### Compiles and minifies for production
+```
+npm run build
+```
 
-## Running for development
-`python3 main.py`
+### Run your tests
+```
+npm run test
+```
 
-## Building for distribution
+### Lints and fixes files
+```
+npm run lint
+```
 
-`python3 setup.py`
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
