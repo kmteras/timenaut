@@ -27,7 +27,7 @@ async function createWindow() {
         width: 800, height: 600, resizable: false, webPreferences: {
             nodeIntegration: true
         },
-        show: !!process.env.WEBPACK_DEV_SERVER_URL
+        show: !process.env.WEBPACK_DEV_SERVER_URL
     });
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
