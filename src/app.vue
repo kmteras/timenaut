@@ -55,7 +55,9 @@
     }
 
     #navigation {
-        grid-column: 1 / 2;
+        position: fixed;
+        width: 60px;
+        height: 100%;
     }
 
     #content {
