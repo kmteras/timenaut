@@ -5,6 +5,7 @@ import * as path from 'path';
 
 export default class Database {
     db: sqlite3.Database;
+    static db: Database;
 
     constructor() {
         this.db = new sqlite3.Database(path.join(app.getPath('userData'), 'timechart_dev.dat'), (err) => {
@@ -14,6 +15,7 @@ export default class Database {
              }
              else {
                  console.log('Connected to the database');
+                 Database.db = this;
              }
         });
     }

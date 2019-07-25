@@ -4,6 +4,7 @@ import {app, BrowserWindow, ipcMain, protocol} from 'electron'
 import {createProtocol, installVueDevtools} from 'vue-cli-plugin-electron-builder/lib'
 import Database from "./models/database";
 import Timeline from "./services/timeline";
+import DailyPieChart from "./services/dailyPieChart";
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -19,8 +20,8 @@ async function createWindow() {
     // Create the browser window.
     db = new Database();
 
-    let timeline = new Timeline(db);
-    timeline.getData();
+    new Timeline(db);
+    new DailyPieChart(db);
 
     win = new BrowserWindow({
         width: 800, height: 600, resizable: false, webPreferences: {
