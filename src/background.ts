@@ -25,13 +25,15 @@ async function createWindow() {
     win = new BrowserWindow({
         width: 800, height: 600, resizable: false, webPreferences: {
             nodeIntegration: true
-        }
+        },
+        show: !!process.env.WEBPACK_DEV_SERVER_URL
     });
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // Load the url of the dev server if in development mode
         win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
-        if (!process.env.IS_TEST) win.webContents.openDevTools();
+        win.showInactive();
+        // if (!process.env.IS_TEST) win.webContents.openDevTools();
     } else {
         createProtocol('app');
         // Load the index.html when not in development
