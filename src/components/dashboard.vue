@@ -1,11 +1,11 @@
 <template>
     <div id="dashboard">
         <div class="section" id="timelineSection">
-            <timeline :height="280"/>
+            <timeline :height="250"/>
         </div>
 
         <div class="section" id="pieSection">
-            <daily-pie-chart :height="230" :width="200"/>
+            <daily-pie-chart :height="260" :width="200"/>
         </div>
 
         <div class="section" id="barSection">
@@ -44,7 +44,7 @@
     #dashboard {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        grid-template-rows: 300px auto;
+        grid-template-rows: 270px auto;
     }
 
     #timelineSection {
