@@ -1,11 +1,13 @@
 'use strict';
 
-import {app, BrowserWindow, ipcMain, protocol} from 'electron'
+import {app, BrowserWindow, ipcMain, Menu, protocol, Tray, nativeImage} from 'electron'
 import {createProtocol, installVueDevtools} from 'vue-cli-plugin-electron-builder/lib'
 import Database from "./models/database";
 import Timeline from "./services/timeline";
 import DailyPieChart from "./services/dailyPieChart";
 import Heartbeat from "./services/heartbeat";
+import path from 'path';
+
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -13,6 +15,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 // be closed automatically when the JavaScript object is garbage collected.
 let win: any;
 let db: Database;
+let tray: any;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: {secure: true, standard: true}}]);
@@ -27,11 +30,15 @@ async function createWindow() {
 
     heartbeat.start();
 
+    // @ts-ignore
+    const iconUrl = path.join(__dirname, '../src/assets/icon_debug.png');
+
     win = new BrowserWindow({
         width: 800, height: 600, resizable: false, webPreferences: {
             nodeIntegration: true
         },
-        show: !process.env.WEBPACK_DEV_SERVER_URL
+        show: !process.env.WEBPACK_DEV_SERVER_URL,
+        icon: iconUrl
     });
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -49,9 +56,36 @@ async function createWindow() {
         event.returnValue = 'pong'
     });
 
+    tray = new Tray(iconUrl);
+    const contextMenu = Menu.buildFromTemplate([
+        {
+            label: 'Show/Hide', click() {
+                if (win.isVisible()) {
+                    win.hide();
+                } else {
+                    win.show();
+                }
+            }
+        },
+        {type: 'separator'},
+        {
+            label: 'Quit', click() {
+                app.quit();
+            }
+        },
+    ]);
+    tray.setToolTip('Timechart');
+    tray.setContextMenu(contextMenu);
+    tray.setHighlightMode('always');
+
+    win.on('close', (event: Event) => {
+        win.hide();
+        event.preventDefault();
+    });
+
     win.on('closed', () => {
         win = null
-    })
+    });
 }
 
 // Quit when all windows are closed.
@@ -83,7 +117,7 @@ app.on('ready', async () => {
             console.error('Vue Devtools failed to install:', e.toString())
         }
     }
-    await createWindow()
+    await createWindow();
 });
 
 // Exit cleanly on request from parent process in development mode.

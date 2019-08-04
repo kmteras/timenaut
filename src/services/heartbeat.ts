@@ -16,7 +16,7 @@ export default class Heartbeat {
     }
 
     start() {
-        console.log(activeWin.sync());
+        // console.log(activeWin.sync());
         this.heartbeat(new HeartbeatModel(BigInt(0)));
         setTimeout(this.start.bind(this), 1000);
     }
