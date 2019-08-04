@@ -30,4 +30,11 @@ export default class Database {
             })
         })
     }
+
+    run(sql: string, params?: any) {
+        return new Promise((resolve, reject) => {
+            this.db.run(sql, params);
+            resolve();
+        })
+    }
 }

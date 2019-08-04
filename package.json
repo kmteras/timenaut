@@ -20,7 +20,8 @@
     "sqlite3": "^4.0.9",
     "material-design-icons": "^3.0.1",
     "vue-chartjs": "^3.4.2",
-    "chart.js": "^2.8.0"
+    "chart.js": "^2.8.0",
+    "active-win": "^5.1.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.9.0",

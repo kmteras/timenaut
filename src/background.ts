@@ -5,6 +5,7 @@ import {createProtocol, installVueDevtools} from 'vue-cli-plugin-electron-builde
 import Database from "./models/database";
 import Timeline from "./services/timeline";
 import DailyPieChart from "./services/dailyPieChart";
+import Heartbeat from "./services/heartbeat";
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -22,6 +23,9 @@ async function createWindow() {
 
     new Timeline(db);
     new DailyPieChart(db);
+    let heartbeat = new Heartbeat(db);
+
+    heartbeat.start();
 
     win = new BrowserWindow({
         width: 800, height: 600, resizable: false, webPreferences: {

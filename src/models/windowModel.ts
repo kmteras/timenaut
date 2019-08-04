@@ -1,4 +1,4 @@
-export default class Heartbeat {
+export default class WindowModel {
     time: bigint;
 
     constructor(time: bigint) {
