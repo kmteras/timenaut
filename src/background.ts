@@ -77,6 +77,8 @@ async function createWindow() {
         {type: 'separator'},
         {
             label: 'Quit', click() {
+                // @ts-ignore
+                app.close = true;
                 app.quit();
             }
         },
@@ -86,8 +88,11 @@ async function createWindow() {
     tray.setHighlightMode('always');
 
     win.on('close', (event: Event) => {
-        win.hide();
-        event.preventDefault();
+        // @ts-ignore
+        if (!app.close) {
+            win.hide();
+            event.preventDefault();
+        }
     });
 
     win.on('closed', () => {
