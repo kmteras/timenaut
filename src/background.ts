@@ -30,8 +30,15 @@ async function createWindow() {
 
     heartbeat.start();
 
-    // @ts-ignore
-    const iconUrl = path.join(__dirname, '../src/assets/icon_debug.png');
+    let iconUrl = null;
+
+    if (process.env.WEBPACK_DEV_SERVER_URL) {
+        // @ts-ignore
+        iconUrl = path.join(__static, 'icon_development.png');
+    } else {
+        // @ts-ignore
+        iconUrl = path.join(__static, 'icon.png');
+    }
 
     win = new BrowserWindow({
         width: 800, height: 600, resizable: false, webPreferences: {
