@@ -1,6 +1,8 @@
 {
   "name": "timechart",
   "version": "0.1.0",
+  "author": "Karl Martin Teras",
+  "description": "TODO",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -10,7 +12,7 @@
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
-    "electron:generate-icons": "electron-icon-builder --input=./public/icon_debug.png --output=dist_electron --flatten"
+    "electron:generate-icons": "electron-icon-builder --input=./src/assets/icon.png --output=build --flatten"
   },
   "main": "background.js",
   "dependencies": {
