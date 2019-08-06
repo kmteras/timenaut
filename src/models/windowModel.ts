@@ -1,7 +1,13 @@
-export default class WindowModel {
-    time: bigint;
+import ProcessModel from './processModel'
 
-    constructor(time: bigint) {
-        this.time = time
+export default class WindowModel {
+    id?: number;
+    name: string;
+    type_str?: string;
+    type_color?: string;
+    process?: ProcessModel;
+
+    constructor(name: string) {
+        this.name = name
     }
 }

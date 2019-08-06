@@ -1,7 +1,12 @@
 export default class ProcessModel {
-    time: bigint;
+    id?: number;
+    path: string;
+    name: string;
+    type_str?: string;
+    type_color?: string;
 
-    constructor(time: bigint) {
-        this.time = time
+    constructor(path: string, name: string) {
+        this.path = path;
+        this.name = name;
     }
 }
