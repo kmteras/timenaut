@@ -1,28 +1,32 @@
-import activeWin from "active-win";
 import HeartbeatModel from "../models/heartbeatModel";
 import Database from "../models/database";
 
-
+// WARNING: changing this file does not restart electron properly in development mode
 export default class Heartbeat {
     lastProcessId = null;
     lastWindowId = null;
     lastStartTime = null;
     lastEndTime = null;
     lastIdle: boolean = false;
-    db: Database;
+    running: boolean;
+    timeout: any;
 
-    constructor(db: Database) {
-        this.db = db;
+    constructor() {
+        this.running = true;
     }
 
     start() {
-        // console.log(activeWin.sync());
-        this.heartbeat(new HeartbeatModel(BigInt(0)));
-        setTimeout(this.start.bind(this), 1000);
+        this.timeout = setTimeout(this.heartbeat.bind(this), 1000); //TODO: get interval from somewhere
     }
 
-    heartbeat(heartbeat: HeartbeatModel) {
-
+    heartbeat() {
+        try {
+            let heartbeat = new HeartbeatModel(BigInt(0));
+            console.log(heartbeat.toString());
+        } catch (e) {
+            console.error(e)
+        }
+        this.timeout = setTimeout(this.heartbeat.bind(this), 1000); //TODO: get interval from somewhere
     }
 
     private async updateHeartbeat() {
@@ -32,7 +36,7 @@ export default class Heartbeat {
             WHERE start_time = ?
         `;
 
-        await this.db.run(sql, [])
+        await Database.db.run(sql, [])
     }
 
     private async addHeartbeat() {
@@ -40,6 +44,6 @@ export default class Heartbeat {
             INSERT INTO heartbeats (process_id, window_id, start_time, end_time, idle)
             VALUES (?, ?, ?, ?, ?)
         `;
-        await this.db.run(sql, [])
+        await Database.db.run(sql, [])
     }
 }

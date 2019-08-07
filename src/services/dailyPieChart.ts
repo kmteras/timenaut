@@ -3,10 +3,7 @@ import {ipcMain} from 'electron'
 
 
 export default class DailyPieChart {
-    db: Database;
-
-    constructor(db: Database) {
-        this.db = db;
+    constructor() {
         ipcMain.on('get-pie-data', async (event: any, arg: any) => {
             event.returnValue = await this.getData();
         })

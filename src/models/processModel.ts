@@ -9,4 +9,8 @@ export default class ProcessModel {
         this.path = path;
         this.name = name;
     }
+
+    public toString(): string {
+        return `ProcessModel: {${this.path}: ${this.name}}`
+    }
 }

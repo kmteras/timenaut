@@ -23,15 +23,14 @@ protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: {secure: true,
 async function createWindow() {
     // Create the browser window.
     db = new Database();
+    await db.connect();
 
     new Timeline(db);
-    new DailyPieChart(db);
-    let heartbeat = new Heartbeat(db);
-
+    new DailyPieChart();
+    let heartbeat = new Heartbeat();
     heartbeat.start();
 
     let iconUrl = null;
-
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // @ts-ignore
         iconUrl = path.join(__static, 'icon_development.png');
@@ -96,7 +95,7 @@ async function createWindow() {
     });
 
     win.on('closed', () => {
-        win = null
+        win = null;
     });
 }
 
@@ -137,7 +136,7 @@ if (isDevelopment) {
     if (process.platform === 'win32') {
         process.on('message', data => {
             if (data === 'graceful-exit') {
-                app.quit()
+                app.quit();
             }
         })
     } else {
