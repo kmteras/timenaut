@@ -71,7 +71,6 @@ export default class Timeline {
                     for (let value of results) {
                         const curHour = h.toString().padStart(2, "0") + ":" + m.toString().padStart(2, "0");
                         if (value.timeframe.substr(0, 16) === today.substr(0, 10) + " " + curHour) {
-                            // console.log(value.timeframe);
                             let time: number = value.spent_time;
                             const color: string = value.type_color;
                             const type: string = value.type_;

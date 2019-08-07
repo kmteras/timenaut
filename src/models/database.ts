@@ -23,13 +23,39 @@ export default class Database {
         });
     }
 
-    all(sql: string, params?: any) {
+    async update() {
+        try {
+            // for (let command of this.commands) {
+            //     await this.run(command)
+            // }
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    all(sql: string, params?: any): Promise<[object]> {
         return new Promise((resolve, reject) => {
             if (this.db === undefined) {
                 return reject("Not connected to the database");
             }
 
             this.db.all(sql, params, (err, response) => {
+                if (err) {
+                    return reject(err);
+                }
+                // @ts-ignore
+                return resolve(response);
+            })
+        });
+    }
+
+    one(sql: string, params?: any): Promise<object> {
+        return new Promise((resolve, reject) => {
+            if (this.db === undefined) {
+                return reject("Not connected to the database");
+            }
+
+            this.db.get(sql, params, (err, response) => {
                 if (err) {
                     return reject(err);
                 }

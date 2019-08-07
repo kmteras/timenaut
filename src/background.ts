@@ -24,6 +24,7 @@ async function createWindow() {
     // Create the browser window.
     db = new Database();
     await db.connect();
+    await db.update();
 
     new Timeline(db);
     new DailyPieChart();

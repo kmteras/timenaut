@@ -1,5 +1,6 @@
 import HeartbeatModel from "../models/heartbeatModel";
 import Database from "../models/database";
+import ProcessModel from "@/models/processModel";
 
 // WARNING: changing this file does not restart electron properly in development mode
 export default class Heartbeat {
@@ -16,17 +17,27 @@ export default class Heartbeat {
     }
 
     start() {
-        this.timeout = setTimeout(this.heartbeat.bind(this), 1000); //TODO: get interval from somewhere
-    }
-
-    heartbeat() {
         try {
-            let heartbeat = new HeartbeatModel(BigInt(0));
-            console.log(heartbeat.toString());
+            this.heartbeat(new HeartbeatModel(BigInt(0))).then();
         } catch (e) {
             console.error(e)
         }
-        this.timeout = setTimeout(this.heartbeat.bind(this), 1000); //TODO: get interval from somewhere
+
+        this.timeout = setTimeout(this.start.bind(this), 1000); //TODO: get interval from somewhere
+    }
+
+    async heartbeat(heartbeat: HeartbeatModel) {
+        let process = await heartbeat.process.find();
+
+        if (process == null) {
+            await heartbeat.process.save();
+        }
+
+        let window = await heartbeat.window.find();
+
+        if (window == null) {
+            await heartbeat.window.save();
+        }
     }
 
     private async updateHeartbeat() {

@@ -13,7 +13,7 @@ export default class HeartbeatModel {
 
         if (windowInfo !== undefined) {
             this.process = new ProcessModel(windowInfo.owner.path, windowInfo.owner.name);
-            this.window = new WindowModel(windowInfo.title);
+            this.window = new WindowModel(windowInfo.title, this.process);
         } else {
             throw new Error("Could not get active window");
         }
