@@ -2,16 +2,17 @@
     import {Doughnut} from 'vue-chartjs';
     import {ipcRenderer} from 'electron';
 
-    import {Component, Mixins, Provide} from 'vue-property-decorator';
+    import {Component, Mixins, Provide, Vue} from 'vue-property-decorator';
 
     @Component
     export default class DailyPieChart extends Mixins(Doughnut) {
-        @Provide() data: object = DailyPieChart.getData();
+        @Provide() data: {datasets: {}, labels: {}} = DailyPieChart.getData();
 
         mounted() {
             this.drawChart(true);
 
             ipcRenderer.on('heartbeat', (event: any) => {
+                // TODO: update graph somehow so it does not refresh everything
                 this.drawChart(false);
             })
         }
@@ -21,6 +22,9 @@
                 {
                     animation: {
                         duration: animation ? 1000 : 0
+                    },
+                    hover: {
+                        animationDuration: animation ? 400: 0
                     },
                     responsive: true,
                     maintainAspectRatio: false,
