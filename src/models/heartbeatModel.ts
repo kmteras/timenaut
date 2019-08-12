@@ -6,10 +6,13 @@ export default class HeartbeatModel {
     time: number;
     process: ProcessModel;
     window: WindowModel;
+    idle: boolean;
 
     constructor(time: bigint) {
         this.time = Math.floor(new Date().getTime() / 1000);
         const windowInfo = activeWin.sync();
+
+        this.idle = false; // TODO see if is idle
 
         if (windowInfo !== undefined) {
             this.process = new ProcessModel(windowInfo.owner.path, windowInfo.owner.name);

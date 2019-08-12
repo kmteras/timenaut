@@ -13,10 +13,11 @@ export default class ProcessModel {
         this.name = name;
     }
 
-    async save() {
+    async save(): Promise<ProcessModel> {
         await Database.db.run(`
             INSERT INTO processes (path)
-            VALUES (?)`, [this.path])
+            VALUES (?)`, [this.path]);
+        return this;
     }
 
     async find(): Promise<ProcessModel | null> {

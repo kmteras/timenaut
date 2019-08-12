@@ -13,10 +13,11 @@ export default class WindowModel {
         this.process = process;
     }
 
-    async save() {
+    async save(): Promise<WindowModel> {
         await Database.db.run(`
             INSERT INTO windows (process_id, title)
-            VALUES (?, ?)`, [this.process.id, this.title])
+            VALUES (?, ?)`, [this.process.id, this.title]);
+        return this;
     }
 
     async find(): Promise<WindowModel | null> {
