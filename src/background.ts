@@ -28,8 +28,6 @@ async function createWindow() {
 
     new Timeline(db);
     new DailyPieChart();
-    let heartbeat = new Heartbeat();
-    heartbeat.start();
 
     let iconUrl = null;
     if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -47,6 +45,9 @@ async function createWindow() {
         show: !process.env.WEBPACK_DEV_SERVER_URL,
         icon: iconUrl
     });
+
+    let heartbeat = new Heartbeat(win);
+    heartbeat.start();
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // Load the url of the dev server if in development mode

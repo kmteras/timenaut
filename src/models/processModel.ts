@@ -17,10 +17,17 @@ export default class ProcessModel {
         await Database.db.run(`
             INSERT INTO processes (path, type_str)
             VALUES (?, 'unknown')`, [this.path]);
-        return this;
+
+        let newProcess = await this.find();
+
+        if (newProcess === undefined) {
+            throw Error("Could not find just saved process");
+        }
+
+        return newProcess;
     }
 
-    async find(): Promise<ProcessModel | null> {
+    async find(): Promise<ProcessModel | undefined> {
         let response = await Database.db.one(`
             SELECT *
             FROM processes
@@ -32,7 +39,7 @@ export default class ProcessModel {
             this.type_str = response.type_str;
             return this;
         } else {
-            return null;
+            return undefined;
         }
     }
 

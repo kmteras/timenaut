@@ -17,10 +17,17 @@ export default class WindowModel {
         await Database.db.run(`
             INSERT INTO windows (process_id, title)
             VALUES (?, ?)`, [this.process.id, this.title]);
-        return this;
+
+        let newWindow = await this.find();
+
+        if (newWindow === undefined) {
+            throw Error("Could not find just saved window");
+        }
+
+        return newWindow;
     }
 
-    async find(): Promise<WindowModel | null> {
+    async find(): Promise<WindowModel | undefined> {
         let response = await Database.db.one(`
             SELECT *
             FROM windows
@@ -32,11 +39,11 @@ export default class WindowModel {
             this.type_str = response.type_str;
             return this;
         } else {
-            return null;
+            return undefined;
         }
     }
 
     public toString = (): string => {
-        return `WindowModel: {${this.title}}`
+        return `WindowModel [${this.id}]: {${this.title}}`
     }
 }

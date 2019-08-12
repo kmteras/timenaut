@@ -1,5 +1,7 @@
 import HeartbeatModel from "../models/heartbeatModel";
 import Database from "../models/database";
+import {ipcMain} from 'electron'
+import BrowserWindow = Electron.BrowserWindow;
 
 
 // WARNING: changing this file does not restart electron properly in development mode
@@ -8,9 +10,11 @@ export default class Heartbeat {
     lastEndTime?: number;
     running: boolean;
     timeout: any;
+    private win: BrowserWindow;
 
-    constructor() {
+    constructor(window: BrowserWindow) {
         this.running = true;
+        this.win = window;
     }
 
     start() {
@@ -36,10 +40,7 @@ export default class Heartbeat {
             window = await heartbeat.window.save();
         }
 
-        if (this.lastHeartbeat !== undefined) {
-            console.log(this.lastHeartbeat);
-        }
-        console.log(heartbeat);
+        console.log(heartbeat.toString());
 
         if (this.lastHeartbeat !== undefined) {
             if (process.id === this.lastHeartbeat.process.id
@@ -52,6 +53,7 @@ export default class Heartbeat {
 
         this.addHeartbeat(heartbeat, this.lastHeartbeat, this.lastEndTime);
         this.lastHeartbeat = heartbeat;
+        this.win.webContents.send('heartbeat');
     }
 
     private async updateHeartbeat(heartbeat: HeartbeatModel,

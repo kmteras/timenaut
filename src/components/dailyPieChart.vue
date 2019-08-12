@@ -9,6 +9,14 @@
         @Provide() data: object = DailyPieChart.getData();
 
         mounted() {
+            this.render();
+
+            ipcRenderer.on('heartbeat', (event: any) => {
+                this.render();
+            })
+        }
+
+        render() {
             this.renderChart(this.data,
                 {
                     responsive: true,
