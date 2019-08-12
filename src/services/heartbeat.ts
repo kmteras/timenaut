@@ -47,6 +47,7 @@ export default class Heartbeat {
                 && window.id == this.lastHeartbeat.window.id
                 && heartbeat.idle == this.lastHeartbeat.idle) {
                 this.lastEndTime = await this.updateHeartbeat(heartbeat, this.lastHeartbeat, this.lastEndTime);
+                this.win.webContents.send('heartbeat');
                 return;
             }
         }

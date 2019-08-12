@@ -9,16 +9,19 @@
         @Provide() data: object = DailyPieChart.getData();
 
         mounted() {
-            this.render();
+            this.drawChart(true);
 
             ipcRenderer.on('heartbeat', (event: any) => {
-                this.render();
+                this.drawChart(false);
             })
         }
 
-        render() {
+        drawChart(animation: boolean) {
             this.renderChart(this.data,
                 {
+                    animation: {
+                        duration: animation ? 1000 : 0
+                    },
                     responsive: true,
                     maintainAspectRatio: false,
                     legend: {
