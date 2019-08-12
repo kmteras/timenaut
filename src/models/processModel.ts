@@ -15,8 +15,8 @@ export default class ProcessModel {
 
     async save(): Promise<ProcessModel> {
         await Database.db.run(`
-            INSERT INTO processes (path)
-            VALUES (?)`, [this.path]);
+            INSERT INTO processes (path, type_str)
+            VALUES (?, 'unknown')`, [this.path]);
         return this;
     }
 

@@ -37,6 +37,11 @@ export default class Heartbeat {
         }
 
         if (this.lastHeartbeat !== undefined) {
+            console.log(this.lastHeartbeat);
+        }
+        console.log(heartbeat);
+
+        if (this.lastHeartbeat !== undefined) {
             if (process.id === this.lastHeartbeat.process.id
                 && window.id == this.lastHeartbeat.window.id
                 && heartbeat.idle == this.lastHeartbeat.idle) {
