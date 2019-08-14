@@ -1,22 +1,29 @@
 <template>
     <div id="dashboard">
+        <div id="dateSelectionSection" class="topSection is-vertical-center">
+            <span class="is-pulled-left">{{date.toDateString()}}</span>
+            <div class="is-pulled-right">
+                <button class="button" v-on:click="prevDate">&#8592;</button>
+                <button class="button" v-on:click="nextDate">&#8594;</button>
+            </div>
+        </div>
+
         <div class="section" id="timelineSection">
             <timeline :height="250"/>
         </div>
 
         <div class="section" id="pieSection">
-            <daily-pie-chart :height="260" :width="200"/>
+            <daily-pie-chart :height="220" :width="200" :date="date"/>
         </div>
 
         <div class="section" id="barSection">
-<!--            <daily-pie-chart />-->
+            <!--<daily-pie-chart />-->
         </div>
     </div>
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Provide, Vue} from 'vue-property-decorator';
-    import {ipcRenderer} from 'electron';
+    import {Component, Provide, Vue} from 'vue-property-decorator';
     import Timeline from '@/components/timelineChart.vue';
     import DailyPieChart from '@/components/dailyPieChart.vue';
 
@@ -27,15 +34,15 @@
         }
     })
     export default class Dashboard extends Vue {
-        @Prop() private msg!: string;
+        @Provide() date: Date = new Date();
 
-        // @Inject() message!: string;
-        @Provide() message = 'message';
-
-        clickTest() {
-            this.message = ipcRenderer.sendSync('synchronous-message');
+        prevDate() {
+            this.date = new Date(this.date.getTime() - 24 * 60 * 60 * 1000);
         }
 
+        nextDate() {
+            this.date = new Date(this.date.getTime() + 24 * 60 * 60 * 1000);
+        }
     }
 </script>
 
@@ -44,22 +51,27 @@
     #dashboard {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        grid-template-rows: 270px auto;
+        grid-template-rows: 40px 270px auto;
     }
 
-    #timelineSection {
+    #dateSelectionSection {
         grid-column: 1 / 3;
         grid-row: 1 / 2;
     }
 
+    #timelineSection {
+        grid-column: 1 / 3;
+        grid-row: 2 / 3;
+    }
+
     #pieSection {
         grid-column: 1 / 2;
-        grid-row: 2 / 3;
+        grid-row: 3 / 4;
     }
 
     #barSection {
         grid-column: 2 / 3;
-        grid-row: 2 / 3;
+        grid-row: 3 / 4;
     }
 
     .section {
@@ -68,5 +80,15 @@
         border-radius: 10px;
         box-shadow: 5px 5px 5px grey;
         background-color: white;
+    }
+
+    .topSection {
+        margin: 15px 10px 5px 10px;
+    }
+
+    .is-vertical-center {
+        display: flex;
+        align-items: center;
+        justify-content: space-between
     }
 </style>

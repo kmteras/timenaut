@@ -1,5 +1,5 @@
 <template>
-    <div id="app">
+    <div id="app" class="content">
         <navigation id="navigation" :items=navigationItems :switchPage="switchPage"/>
         <app-content id="content" :page="page"/>
     </div>
