@@ -1,6 +1,6 @@
 import HeartbeatModel from "../models/heartbeatModel";
 import Database from "../models/database";
-import {ipcMain} from 'electron'
+import log from 'electron-log'
 import BrowserWindow = Electron.BrowserWindow;
 
 
@@ -21,7 +21,7 @@ export default class Heartbeat {
         try {
             this.heartbeat(new HeartbeatModel(BigInt(0))).then();
         } catch (e) {
-            console.error(e)
+            log.error(e)
         }
 
         this.timeout = setTimeout(this.start.bind(this), 1000); //TODO: get interval from somewhere
@@ -40,7 +40,7 @@ export default class Heartbeat {
             window = await heartbeat.window.save();
         }
 
-        console.log(heartbeat.toString());
+        log.debug(heartbeat.toString());
 
         if (this.lastHeartbeat !== undefined) {
             if (process.id === this.lastHeartbeat.process.id
@@ -52,7 +52,7 @@ export default class Heartbeat {
             }
         }
 
-        this.addHeartbeat(heartbeat, this.lastHeartbeat, this.lastEndTime);
+        this.addHeartbeat(heartbeat, this.lastHeartbeat);
         this.lastHeartbeat = heartbeat;
         this.win.webContents.send('heartbeat');
     }
@@ -75,7 +75,7 @@ export default class Heartbeat {
         return endTime;
     }
 
-    private async addHeartbeat(heartbeat: HeartbeatModel, lastHeartbeat?: HeartbeatModel, lastEndTime?: number) {
+    private async addHeartbeat(heartbeat: HeartbeatModel, lastHeartbeat?: HeartbeatModel) {
         if (lastHeartbeat !== undefined) {
             await this.updateHeartbeat(heartbeat, lastHeartbeat)
         }

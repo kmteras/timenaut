@@ -1,6 +1,7 @@
 import * as sqlite3 from 'sqlite3';
-import {app, BrowserWindow, ipcMain, protocol} from 'electron'
+import {app} from 'electron'
 import * as path from 'path';
+import log from 'electron-log'
 
 
 export default class Database {
@@ -17,7 +18,7 @@ export default class Database {
                 if (err) {
                     return reject(err);
                 }
-                console.log('Connected to the database');
+                log.info('Connected to the database');
                 return resolve();
             })
         });
