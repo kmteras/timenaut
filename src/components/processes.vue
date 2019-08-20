@@ -79,12 +79,12 @@
         selectedWindowId: number = -1;
 
         processData: [ProcessData] = this.getProcessData();
-        windowData: [WindowData] = this.getWindowData();
+        windowData: [WindowData] = this.getWindowData(this.selectedProcessId);
 
         mounted() {
             ipcRenderer.on('heartbeat', () => {
                 this.processData = this.getProcessData();
-                this.windowData = this.getWindowData();
+                this.windowData = this.getWindowData(this.selectedProcessId);
             })
         }
 
