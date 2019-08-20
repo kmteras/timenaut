@@ -36,9 +36,14 @@
 </script>
 
 <style>
+    html {
+        height: 100%;
+    }
+
     body {
         margin: 0;
         background-color: #D9D9D9;
+        height: 100%;
     }
 
     #app {
@@ -47,6 +52,8 @@
         -moz-osx-font-smoothing: grayscale;
         text-align: center;
         color: #2c3e50;
+        margin-bottom: 0;
+        height: 100%;
     }
 
     #app {

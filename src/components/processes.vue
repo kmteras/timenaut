@@ -1,6 +1,9 @@
 <template>
-    <div class="content">
-        <h1>Processes</h1>
+    <div id="processes">
+        <div class="section" id="infoSection">
+            <h1>Processes</h1>
+        </div>
+        <div class="section" id="processesSection"></div>
     </div>
 </template>
 
@@ -20,21 +23,28 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-    h3 {
-        margin: 40px 0 0;
+    #processes {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 2fr 5fr;
+        height: 100%;
     }
 
-    ul {
-        list-style-type: none;
-        padding: 0;
+    #infoSection {
+        grid-column: 1 / 2;
+        grid-row: 1 / 2;
     }
 
-    li {
-        display: inline-block;
-        margin: 0 10px;
+    #processesSection {
+        grid-column: 1 / 2;
+        grid-row: 2 / 3;
     }
 
-    a {
-        color: #42b983;
+    .section {
+        padding: 10px;
+        margin: 10px;
+        border-radius: 10px;
+        box-shadow: 5px 5px 5px grey;
+        background-color: white;
     }
 </style>
