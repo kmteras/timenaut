@@ -24,7 +24,9 @@ export default class Heartbeat {
             log.error(e)
         }
 
-        this.timeout = setTimeout(this.start.bind(this), 1000); //TODO: get interval from somewhere
+         if (this.running) {
+             this.timeout = setTimeout(this.start.bind(this), 1000); //TODO: get interval from somewhere
+         }
     }
 
     async heartbeat(heartbeat: HeartbeatModel) {

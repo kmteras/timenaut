@@ -7,6 +7,7 @@ import Timeline from "./services/timeline";
 import DailyPieChart from "./services/dailyPieChart";
 import Heartbeat from "./services/heartbeat";
 import path from 'path';
+import log from 'electron-log'
 
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -15,7 +16,8 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 // be closed automatically when the JavaScript object is garbage collected.
 let win: any;
 let db: Database;
-let tray: any;
+let tray: Tray;
+let heartbeat: Heartbeat;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: {secure: true, standard: true}}]);
@@ -46,7 +48,7 @@ async function createWindow() {
         icon: iconUrl
     });
 
-    let heartbeat = new Heartbeat(win);
+    heartbeat = new Heartbeat(win);
     heartbeat.start();
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -80,6 +82,7 @@ async function createWindow() {
             label: 'Quit', click() {
                 // @ts-ignore
                 app.close = true;
+                log.info("Closing app from quit");
                 app.quit();
             }
         },
@@ -89,11 +92,16 @@ async function createWindow() {
     tray.setHighlightMode('always');
 
     win.on('close', (event: Event) => {
-        // @ts-ignore
-        if (!app.close) {
-            win.hide();
-            event.preventDefault();
+        if (!isDevelopment) { // Overcome vue development hotreloading not closing window
+            // @ts-ignore
+            if (!app.close) { // TODO: get from settings
+                log.info("Hiding window");
+                win.hide();
+                return event.preventDefault();
+            }
         }
+        log.info("Closing window");
+        heartbeat.running = false;
     });
 
     win.on('closed', () => {
@@ -127,7 +135,7 @@ app.on('ready', async () => {
         try {
             await installVueDevtools()
         } catch (e) {
-            console.error('Vue Devtools failed to install:', e.toString())
+            log.error('Vue Devtools failed to install:', e.toString())
         }
     }
     await createWindow();
