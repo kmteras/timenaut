@@ -12,11 +12,14 @@
         mounted() {
             this.drawChart(true);
 
-            ipcRenderer.on('heartbeat', (event: any) => {
-                // TODO: update graph somehow so it does not refresh everything
-                this.data = this.getData();
-                this.drawChart(false);
-            })
+            ipcRenderer.on('heartbeat', this.update.bind(this))
+        }
+
+        update(): any {
+            // TODO: update graph somehow so it does not refresh everything
+            // TODO: if this tab is in focus
+            this.data = this.getData();
+            this.drawChart(false);
         }
 
         drawChart(animation: boolean) {

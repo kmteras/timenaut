@@ -20,7 +20,8 @@
         },
     })
     export default class App extends Vue {
-        page: object = Dashboard;
+        // @ts-ignore
+        page: Vue = Dashboard;
 
         navigationItems = [
             {icon: 'dashboard', iconAlt: 'dashboard', page: Dashboard},
@@ -28,7 +29,7 @@
             {icon: 'settings', iconAlt: 'settings', page: Settings}
         ];
 
-        switchPage(newPage: object) {
+        switchPage(newPage: Vue) {
             this.page = newPage;
         }
 
@@ -38,12 +39,15 @@
 <style>
     html {
         height: 100%;
+        overflow-x: hidden !important;
+        overflow-y: hidden !important;
     }
 
     body {
         margin: 0;
         background-color: #D9D9D9;
-        height: 100%;
+        min-height: 100%;
+        max-height: 100%;
     }
 
     #app {
@@ -59,6 +63,8 @@
     #app {
         display: grid;
         grid-template-columns: 60px auto;
+        grid-template-rows: 100%;
+        height: 100vh;
     }
 
     #navigation {

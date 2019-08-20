@@ -21,7 +21,8 @@ export default class Heartbeat {
         try {
             this.heartbeat(new HeartbeatModel(BigInt(0))).then();
         } catch (e) {
-            log.error(e)
+            // Tough shit, cant really do anything - not a severe problem
+            log.warn(e)
         }
 
          if (this.running) {

@@ -1,12 +1,10 @@
 import Database from "../models/database";
 import {ipcMain} from 'electron'
+import log from 'electron-log'
 
 
 export default class Timeline {
-    db: Database;
-
-    constructor(db: Database) {
-        this.db = db;
+    constructor() {
         ipcMain.on('get-timeline-data', async (event: any, arg: any) => {
             event.returnValue = await this.getData();
         })
@@ -22,7 +20,7 @@ export default class Timeline {
 
     async getData() {
         try {
-            let results: any = await this.db.all(`
+            let results: any = await Database.db.all(`
                 SELECT CASE
                            WHEN w.type_str IS NULL
                                THEN p.type_str
@@ -132,7 +130,7 @@ export default class Timeline {
                 datasets: datasets
             }
         } catch (e) {
-            console.error(e);
+            log.error(e);
         }
     }
 }

@@ -4,6 +4,7 @@ import {app, BrowserWindow, ipcMain, Menu, protocol, Tray, nativeImage} from 'el
 import {createProtocol, installVueDevtools} from 'vue-cli-plugin-electron-builder/lib'
 import Database from "./models/database";
 import Timeline from "./services/timeline";
+import Processes from "./services/processes";
 import DailyPieChart from "./services/dailyPieChart";
 import Heartbeat from "./services/heartbeat";
 import path from 'path';
@@ -28,8 +29,9 @@ async function createWindow() {
     await db.connect();
     await db.update();
 
-    new Timeline(db);
+    new Timeline();
     new DailyPieChart();
+    new Processes();
 
     let iconUrl = null;
     if (process.env.WEBPACK_DEV_SERVER_URL) {
