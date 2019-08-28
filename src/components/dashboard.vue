@@ -9,7 +9,7 @@
         </div>
 
         <div class="section" id="timelineSection">
-            <timeline :height="250"/>
+            <timeline :height="250" :date="date"/>
         </div>
 
         <div class="section" id="pieSection">

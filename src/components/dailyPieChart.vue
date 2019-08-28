@@ -84,8 +84,7 @@
 
         @Watch("date")
         onDateChange() {
-            this.data = this.getData();
-            this.drawChart(true);
+            this.update()
         }
     }
 </script>
