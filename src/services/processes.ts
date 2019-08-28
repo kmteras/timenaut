@@ -66,7 +66,7 @@ export default class Processes {
         try {
             let results: any = await Database.db.all(`
                 SELECT window_id,
-                       title,
+                       w.title,
                        SUM(difference) AS time,
                        CASE
                            WHEN w.type_str IS NULL

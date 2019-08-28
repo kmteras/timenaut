@@ -1,8 +1,4 @@
 export default `
-    SELECT *
-    from sqlite_master; -- A random command to init intellij autocomplete
-    PRAGMA foreign_keys = ON;
-
     CREATE TABLE IF NOT EXISTS processes
     (
         id       INTEGER PRIMARY KEY,

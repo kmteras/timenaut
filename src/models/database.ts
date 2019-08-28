@@ -1,11 +1,13 @@
-import * as sqlite3 from 'sqlite3';
+import Sqlite from 'better-sqlite3';
 import {app} from 'electron'
 import * as path from 'path';
 import log from 'electron-log';
 import databaseInit from './databaseInit';
 
+type ParamTypes = number | string | Buffer | boolean | null | undefined;
+
 export default class Database {
-    db?: sqlite3.Database;
+    db?: Sqlite.Database;
     static db: Database;
 
     constructor() {
@@ -13,64 +15,74 @@ export default class Database {
     }
 
     async connect() {
-        return new Promise((resolve, reject) => {
-            this.db = new sqlite3.Database(path.join(app.getPath('userData'), 'timechart_dev.dat'), (err) => {
-                if (err) {
-                    return reject(err);
-                }
-                log.info('Connected to the database');
-                return resolve();
-            })
-        });
+        let option = {
+            // verbose: log.debug
+        };
+
+        let databaseFile = path.join(app.getPath('userData'), 'timechart_dev.dat');
+
+        log.info(`Opening database at ${databaseFile}`);
+        this.db = await new Sqlite(databaseFile, option);
+        this.db.pragma('journal_mode = WAL');
+        this.db.pragma('synchronous = 1');
+        this.db.pragma('foreign_keys = ON');
     }
 
     async update() {
         try {
-            await this.run(databaseInit);
+            await this.db!.exec(databaseInit);
         } catch (e) {
             throw e;
         }
     }
 
-    all(sql: string, params?: any): Promise<[object]> {
-        return new Promise((resolve, reject) => {
-            if (this.db === undefined) {
-                return reject("Not connected to the database");
-            }
+    all(sql: string, params?: ParamTypes[]): any[] {
+        if (this.db === undefined) {
+            throw Error("Not connected to the database");
+        }
 
-            this.db.all(sql, params, (err, response) => {
-                if (err) {
-                    return reject(err);
-                }
-                // @ts-ignore
-                return resolve(response);
-            })
-        });
+        params = this.convertTypes(params);
+
+        let statement: Sqlite.Statement = this.db.prepare(sql);
+
+        if (params) {
+            return statement.all(params);
+        } else {
+            return statement.all();
+        }
     }
 
-    one(sql: string, params?: any): Promise<object> {
-        return new Promise((resolve, reject) => {
-            if (this.db === undefined) {
-                return reject("Not connected to the database");
-            }
+    one(sql: string, params?: ParamTypes[]): any {
+        if (this.db === undefined) {
+            throw Error("Not connected to the database");
+        }
 
-            this.db.get(sql, params, (err, response) => {
-                if (err) {
-                    return reject(err);
-                }
-                return resolve(response);
-            })
-        });
+        params = this.convertTypes(params);
+
+        let statement: Sqlite.Statement = this.db.prepare(sql);
+        return statement.get(params);
     }
 
-    run(sql: string, params?: any) {
-        return new Promise((resolve, reject) => {
-            if (this.db === undefined) {
-                return reject("Not connected to the database");
-            }
+    run(sql: string, params?: ParamTypes[]): void {
+        if (this.db === undefined) {
+            throw Error("Not connected to the database");
+        }
 
-            this.db.run(sql, params);
-            resolve();
-        })
+        params = this.convertTypes(params);
+
+        let statement: Sqlite.Statement = this.db.prepare(sql);
+        statement.run(params);
+    }
+
+    private convertTypes(params?: ParamTypes[]): ParamTypes[] | undefined {
+        if (params !== undefined) {
+            for (let i = 0; i < params.length; i++) {
+                let param = params[i];
+                if (typeof param == "boolean") {
+                    params[i] = param ? 1 : 0;
+                }
+            }
+        }
+        return params;
     }
 }
