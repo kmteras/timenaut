@@ -5,8 +5,8 @@ import log from 'electron-log'
 
 export default class Timeline {
     constructor() {
-        ipcMain.on('get-timeline-data', async (event: any, arg: any) => {
-            event.returnValue = await this.getData();
+        ipcMain.on('get-timeline-data', async (event: any, time: number) => {
+            event.returnValue = await this.getData(new Date(time));
         })
     }
 
@@ -18,7 +18,7 @@ export default class Timeline {
         return total;
     }
 
-    async getData() {
+    async getData(date: Date) {
         try {
             let results: any = await Database.db.all(`
                 SELECT CASE
@@ -43,8 +43,13 @@ export default class Timeline {
                          LEFT JOIN
                      productivity_type wt on w.type_str = wt.type
                 WHERE hb.idle = FALSE
+                  AND hb.start_time > ?
+                  AND hb.start_time < ?
                 GROUP BY ROUND(hb.start_time / (60 * 10), 0) * (60 * 10),
-                         type_`);
+                         type_`, [
+                date.getTime() / 1000 - 24 * 60 * 60, // TODO: fix time
+                date.getTime() / 1000
+            ]);
 
             let labels = [];
             let values: { [id: string]: number }[] = [];
@@ -59,8 +64,7 @@ export default class Timeline {
 
             let leftoverTime: { [id: string]: number } = {};
 
-            // const today = new Date().toISOString();
-            const today = '2019-07-20';
+            const today = date.toISOString().substr(0, 10);
 
             // TODO: fix all this shit
 
