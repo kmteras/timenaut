@@ -1,8 +1,8 @@
 import * as sqlite3 from 'sqlite3';
 import {app} from 'electron'
 import * as path from 'path';
-import log from 'electron-log'
-
+import log from 'electron-log';
+import databaseInit from './databaseInit';
 
 export default class Database {
     db?: sqlite3.Database;
@@ -26,9 +26,7 @@ export default class Database {
 
     async update() {
         try {
-            // for (let command of this.commands) {
-            //     await this.run(command)
-            // }
+            await this.run(databaseInit);
         } catch (e) {
             throw e;
         }
