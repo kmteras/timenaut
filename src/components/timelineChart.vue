@@ -44,7 +44,7 @@
                             stacked: true,
                             ticks: {
                                 min: 0,
-                                // max: 600
+                                max: 600
                             }
                         }]
                     }
