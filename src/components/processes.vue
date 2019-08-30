@@ -7,7 +7,19 @@
             <div v-else-if="selectedProcess !== undefined">
                 <p>{{"Path: " + selectedProcess.path}}</p>
             </div>
-            <div v-else>
+
+            <div v-if="selectedWindow !== undefined">
+                <p>{{"Process: " + selectedProcess.name}}</p>
+            </div>
+            <div v-else-if="selectedProcess !== undefined">
+                <p>{{"Process: " + selectedProcess.name}}</p>
+            </div>
+
+            <div v-if="selectedWindow !== undefined">
+                <p>{{"Process: " + timeAsString(selectedWindow.time)}}</p>
+            </div>
+            <div v-else-if="selectedProcess !== undefined">
+                <p>{{"Process: " + timeAsString(selectedProcess.time)}}</p>
             </div>
         </div>
         <div class="section" id="tableSection">
@@ -117,9 +129,9 @@
             if (hours > 0) {
                 return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
             } else if (minutes > 0) {
-                return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+                return `${minutes}:${seconds.toString().padStart(2, "0")}`
             } else {
-                return `${seconds.toString().padStart(2, "0")}`
+                return `${seconds}`
             }
         }
     }
@@ -146,7 +158,7 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr;
-        height: 100%;
+        height: 100%; /* maybe has to be removed */
     }
 
     .section {
