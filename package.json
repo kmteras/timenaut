@@ -17,19 +17,19 @@
   "main": "background.js",
   "dependencies": {
     "active-win": "^5.1.2",
+    "desktop-idle": "^1.2.0",
     "bulma": "^0.7.5",
     "chart.js": "^2.8.0",
     "core-js": "^2.6.5",
     "material-design-icons": "^3.0.1",
     "better-sqlite3": "^5.4.2",
-    "@types/better-sqlite3": "^5.4.0",
     "vue": "^2.6.10",
     "vue-chartjs": "^3.4.2",
     "vue-class-component": "^7.0.2",
     "vue-property-decorator": "^8.1.0"
   },
   "devDependencies": {
-    "@types/sqlite3": "^3.1.5",
+    "@types/better-sqlite3": "^5.4.0",
     "@vue/cli-plugin-babel": "^3.10.0",
     "@vue/cli-plugin-eslint": "^3.10.0",
     "@vue/cli-plugin-typescript": "^3.10.0",
