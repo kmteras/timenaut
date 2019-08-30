@@ -5,7 +5,7 @@
             <div class="is-pulled-right">
                 <button class="button" v-on:click="prevDate">&#8592;</button>
                 <button class="button" v-on:click="today">Today</button>
-                <button class="button" v-on:click="nextDate">&#8594;</button>
+                <button class="button" :class="{'hidden': hasNextDate()}" v-on:click="nextDate">&#8594;</button>
             </div>
         </div>
 
@@ -38,15 +38,33 @@
         @Provide() date: Date = new Date();
 
         prevDate() {
-            this.date = new Date(this.date.getTime() - 24 * 60 * 60 * 1000);
+            this.date = this.getPrevDate();
         }
 
         today() {
-            this.date = new Date(Date.now());
+            this.date = this.getToday();
         }
 
         nextDate() {
-            this.date = new Date(this.date.getTime() + 24 * 60 * 60 * 1000);
+            this.date = this.getNextDate();
+        }
+
+        hasNextDate(): boolean {
+            return this.getNextDate() > this.getToday();
+        }
+
+        // TODO: get prev matching date from databse
+        private getPrevDate(): Date {
+            return new Date(this.date.getTime() - 24 * 60 * 60 * 1000);
+        }
+
+        private getToday(): Date {
+            return new Date(Date.now());
+        }
+
+        // TODO: get next matching date from databse
+        private getNextDate(): Date {
+            return new Date(this.date.getTime() + 24 * 60 * 60 * 1000);
         }
     }
 </script>
@@ -95,5 +113,9 @@
         display: flex;
         align-items: center;
         justify-content: space-between
+    }
+
+    .hidden {
+        visibility: hidden;
     }
 </style>
