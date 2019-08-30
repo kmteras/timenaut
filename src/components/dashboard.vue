@@ -4,6 +4,7 @@
             <span class="is-pulled-left">{{date.toDateString()}}</span>
             <div class="is-pulled-right">
                 <button class="button" v-on:click="prevDate">&#8592;</button>
+                <button class="button" v-on:click="today">Today</button>
                 <button class="button" v-on:click="nextDate">&#8594;</button>
             </div>
         </div>
@@ -38,6 +39,10 @@
 
         prevDate() {
             this.date = new Date(this.date.getTime() - 24 * 60 * 60 * 1000);
+        }
+
+        today() {
+            this.date = new Date(Date.now());
         }
 
         nextDate() {
