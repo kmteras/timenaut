@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/timechart.iml" filepath="$PROJECT_DIR$/.idea/timechart.iml" />
+      <module fileurl="file://$PROJECT_DIR$/timechart.iml" filepath="$PROJECT_DIR$/timechart.iml" />
     </modules>
   </component>
 </project>
