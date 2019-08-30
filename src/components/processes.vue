@@ -16,10 +16,10 @@
             </div>
 
             <div v-if="selectedWindow !== undefined">
-                <p>{{"Process: " + timeAsString(selectedWindow.time)}}</p>
+                <p>{{"Time: " + timeAsString(selectedWindow.time)}}</p>
             </div>
             <div v-else-if="selectedProcess !== undefined">
-                <p>{{"Process: " + timeAsString(selectedProcess.time)}}</p>
+                <p>{{"Time: " + timeAsString(selectedProcess.time)}}</p>
             </div>
         </div>
         <div class="section" id="tableSection">
@@ -158,7 +158,6 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr;
-        height: 100%; /* maybe has to be removed */
     }
 
     .section {
