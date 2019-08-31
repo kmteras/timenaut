@@ -60,7 +60,7 @@
 
         private getToday(): Date {
             let date: Date = new Date();
-            return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+            return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
         }
 
         // TODO: get next matching date from databse
