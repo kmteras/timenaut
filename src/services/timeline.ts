@@ -44,11 +44,11 @@ export default class Timeline {
                      productivity_type wt on w.type_str = wt.type
                 WHERE hb.idle = FALSE
                   AND hb.start_time > ?
-                  AND hb.start_time < ?
+                  AND hb.end_time < ?
                 GROUP BY ROUND(hb.start_time / (60 * 10), 0) * (60 * 10),
                          type_`, [
-                date.getTime() / 1000 - 24 * 60 * 60, // TODO: fix time
-                date.getTime() / 1000
+                date.getTime() / 1000 + date.getTimezoneOffset() * 60 * 60, // TODO: ugh
+                date.getTime() / 1000 + 24 * 60 * 60  // TODO: fix time
             ]);
 
             let labels = [];

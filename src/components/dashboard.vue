@@ -35,7 +35,7 @@
         }
     })
     export default class Dashboard extends Vue {
-        @Provide() date: Date = new Date();
+        @Provide() date: Date = this.getToday();
 
         prevDate() {
             this.date = this.getPrevDate();
@@ -59,7 +59,8 @@
         }
 
         private getToday(): Date {
-            return new Date(Date.now());
+            let date: Date = new Date();
+            return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
         }
 
         // TODO: get next matching date from databse
