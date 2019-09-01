@@ -35,9 +35,16 @@ async function createWindow() {
     new DailyPieChart();
     new Processes();
 
-    autoLauncher = new AutoLaunch({
-        name: "timechart"
-    });
+    let autostartOptions: any = {
+        name: "timechart",
+        hidden: true
+    };
+
+    if (process.env.APPIMAGE) {
+        autostartOptions['path'] = process.env.APPIMAGE;
+    }
+
+    autoLauncher = new AutoLaunch(autostartOptions);
 
     let iconUrl = null;
     if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -146,20 +153,36 @@ app.on('activate', async () => {
     }
 });
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', async () => {
-    if (isDevelopment && !process.env.IS_TEST) {
-        // Install Vue Devtools
-        try {
-            await installVueDevtools()
-        } catch (e) {
-            log.error('Vue Devtools failed to install:', e.toString())
+const lock = app.requestSingleInstanceLock();
+
+if (!lock) {
+    app.quit()
+} else {
+    // @ts-ignore
+    app.on('second-instance', (event: Event, commandLine: string, workingDirectory: string) => {
+        if (win) {
+            if (win.isMinimized()) {
+                win.restore();
+            }
+            win.focus();
         }
-    }
-    await createWindow();
-});
+    });
+
+    // This method will be called when Electron has finished
+    // initialization and is ready to create browser windows.
+    // Some APIs can only be used after this event occurs.
+    app.on('ready', async () => {
+        if (isDevelopment && !process.env.IS_TEST) {
+            // Install Vue Devtools
+            try {
+                await installVueDevtools()
+            } catch (e) {
+                log.error('Vue Devtools failed to install:', e.toString())
+            }
+        }
+        await createWindow();
+    });
+}
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {

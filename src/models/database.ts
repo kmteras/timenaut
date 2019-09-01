@@ -19,7 +19,9 @@ export default class Database {
             // verbose: log.debug
         };
 
-        let databaseFile = path.join(app.getPath('userData'), 'timechart_dev.dat');
+        let databaseFileName = process.env.WEBPACK_DEV_SERVER_URL ? 'timechart_dev.dat' : 'timechart.dat';
+
+        let databaseFile = path.join(app.getPath('userData'), databaseFileName);
 
         log.info(`Opening database at ${databaseFile}`);
         this.db = await new Sqlite(databaseFile, option);

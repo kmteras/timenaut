@@ -6,7 +6,8 @@ module.exports = {
                 productName: "Timechart",
                 appId: "io.timechart.timechart",
                 linux: {
-                    category: "Utility"
+                    category: "Utility",
+                    icon: "build/icons/"
                 },
                 fileAssociations: [
                     {
