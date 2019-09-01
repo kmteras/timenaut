@@ -41,8 +41,8 @@ export default class DailyPieChart {
                 GROUP BY _type
                 ORDER BY SUM(difference) DESC
             `, [
-                date.getTime() / 1000 - 24 * 60 * 60, // TODO: fix time
-                date.getTime() / 1000
+                date.getTime() / 1000 + date.getTimezoneOffset() * 60 * 60, // TODO: ugh
+                date.getTime() / 1000 + 24 * 60 * 60  // TODO: fix time
             ]);
 
             return {
