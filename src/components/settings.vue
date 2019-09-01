@@ -16,9 +16,10 @@
 <script lang="ts">
     import {Provide, Inject, Component, Prop, Vue} from 'vue-property-decorator';
     import {ipcRenderer} from 'electron';
+    import {Updateable} from "@/components/Updateable";
 
     @Component
-    export default class Settings extends Vue {
+    export default class Settings extends Vue implements Updateable {
         autoStartup: boolean = this.hasAutoStart();
 
         toggleAutostart() {
@@ -28,6 +29,8 @@
         private hasAutoStart(): boolean {
             return ipcRenderer.sendSync("autostart-isenabled");
         }
+
+        update(): void {}
     }
 </script>
 

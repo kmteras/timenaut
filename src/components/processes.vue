@@ -64,6 +64,7 @@
     import {Component, Provide, Vue} from 'vue-property-decorator';
     import {ipcRenderer} from 'electron';
     import ContentPage from "@/components/contentPage.vue";
+    import {Updateable} from "@/components/Updateable";
 
     declare interface ProcessData {
         path: string,
@@ -83,7 +84,7 @@
     }
 
     @Component
-    export default class Processes extends Vue implements ContentPage {
+    export default class Processes extends Vue implements ContentPage, Updateable {
         @Provide() message = 'message';
         selectedProcess: ProcessData | null = null;
         selectedWindow: WindowData | null = null;
@@ -92,13 +93,6 @@
 
         processData: [ProcessData] = this.getProcessData();
         windowData: [WindowData] = this.getWindowData(this.selectedProcessId);
-
-        mounted() {
-            ipcRenderer.on('heartbeat', () => {
-                this.processData = this.getProcessData();
-                this.windowData = this.getWindowData(this.selectedProcessId);
-            })
-        }
 
         getProcessData(): [ProcessData] {
             return ipcRenderer.sendSync('get-processes-data');
@@ -133,6 +127,11 @@
             } else {
                 return `${seconds}`
             }
+        }
+
+        update(): void {
+            this.processData = this.getProcessData();
+            this.windowData = this.getWindowData(this.selectedProcessId);
         }
     }
 </script>

@@ -12,9 +12,16 @@
     import Dashboard from "@/components/dashboard.vue";
     import Processes from "@/components/processes.vue";
     import Settings from "@/components/settings.vue";
+    import {Updateable} from "@/components/Updateable";
 
     interface PageComponent {
-        new (): Vue;
+        new (): Updateable;
+    }
+
+    type NavigationItem = {
+        icon: string,
+        iconAlt: string,
+        page: PageComponent
     }
 
     @Component({
@@ -26,7 +33,7 @@
     export default class App extends Vue {
         page: PageComponent = Dashboard;
 
-        navigationItems = [
+        navigationItems: NavigationItem[] = [
             {icon: 'dashboard', iconAlt: 'dashboard', page: Dashboard},
             {icon: 'query_builder', iconAlt: 'processes', page: Processes},
             {icon: 'settings', iconAlt: 'settings', page: Settings}
