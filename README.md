@@ -5,7 +5,7 @@
 npm install
 ```
 
-Windows might require `npm install --global windows-build-tools`
+Windows might require `npm install --global windows-build-tools` in powershell with admin rights.
 
 ### Compiles and hot-reloads for development
 ```
