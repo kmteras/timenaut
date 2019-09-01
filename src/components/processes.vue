@@ -1,24 +1,24 @@
 <template>
     <div id="processes">
         <div class="section" id="infoSection">
-            <div v-if="selectedWindow !== undefined">
+            <div v-if="selectedWindow !== null">
                 <p>{{"Window: " + selectedWindow.title}}</p>
             </div>
-            <div v-else-if="selectedProcess !== undefined">
+            <div v-else-if="selectedProcess !== null">
                 <p>{{"Path: " + selectedProcess.path}}</p>
             </div>
 
-            <div v-if="selectedWindow !== undefined">
+            <div v-if="selectedWindow !== null">
                 <p>{{"Process: " + selectedProcess.name}}</p>
             </div>
-            <div v-else-if="selectedProcess !== undefined">
+            <div v-else-if="selectedProcess !== null">
                 <p>{{"Process: " + selectedProcess.name}}</p>
             </div>
 
-            <div v-if="selectedWindow !== undefined">
+            <div v-if="selectedWindow !== null">
                 <p>{{"Time: " + timeAsString(selectedWindow.time)}}</p>
             </div>
-            <div v-else-if="selectedProcess !== undefined">
+            <div v-else-if="selectedProcess !== null">
                 <p>{{"Time: " + timeAsString(selectedProcess.time)}}</p>
             </div>
         </div>
@@ -85,8 +85,8 @@
     @Component
     export default class Processes extends Vue implements ContentPage {
         @Provide() message = 'message';
-        selectedProcess?: ProcessData = undefined;
-        selectedWindow?: WindowData = undefined;
+        selectedProcess: ProcessData | null = null;
+        selectedWindow: WindowData | null = null;
         selectedProcessId: number = -1;
         selectedWindowId: number = -1;
 
@@ -111,7 +111,7 @@
         clickProcess(process: ProcessData) {
             this.selectedProcess = process;
             this.selectedProcessId = process.process_id;
-            this.selectedWindow = undefined;
+            this.selectedWindow = null;
             this.selectedWindowId = -1;
             this.windowData = this.getWindowData(this.selectedProcessId);
         }

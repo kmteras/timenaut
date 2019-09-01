@@ -11,8 +11,6 @@
 
         mounted() {
             this.drawChart(true);
-
-            ipcRenderer.on('heartbeat', this.update.bind(this))
         }
 
         update(): any {

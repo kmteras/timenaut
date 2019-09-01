@@ -13,6 +13,10 @@
     import Processes from "@/components/processes.vue";
     import Settings from "@/components/settings.vue";
 
+    interface PageComponent {
+        new (): Vue;
+    }
+
     @Component({
         components: {
             Navigation,
@@ -20,8 +24,7 @@
         },
     })
     export default class App extends Vue {
-        // @ts-ignore
-        page: Vue = Dashboard;
+        page: PageComponent = Dashboard;
 
         navigationItems = [
             {icon: 'dashboard', iconAlt: 'dashboard', page: Dashboard},
@@ -29,10 +32,9 @@
             {icon: 'settings', iconAlt: 'settings', page: Settings}
         ];
 
-        switchPage(newPage: Vue) {
+        switchPage(newPage: PageComponent) {
             this.page = newPage;
         }
-
     }
 </script>
 

@@ -10,11 +10,11 @@
         </div>
 
         <div class="section" id="timelineSection">
-            <timeline :height="250" :date="date"/>
+            <timeline :height="250" :date="date" ref="timeline"/>
         </div>
 
         <div class="section" id="pieSection">
-            <daily-pie-chart :height="220" :width="200" :date="date"/>
+            <daily-pie-chart :height="220" :width="200" :date="date" ref="pieChart"/>
         </div>
 
         <div class="section" id="barSection">
@@ -27,6 +27,7 @@
     import {Component, Provide, Vue} from 'vue-property-decorator';
     import Timeline from '@/components/timelineChart.vue';
     import DailyPieChart from '@/components/dailyPieChart.vue';
+    import {Updateable} from "@/components/Updateable";
 
     @Component({
         components: {
@@ -34,7 +35,7 @@
             DailyPieChart
         }
     })
-    export default class Dashboard extends Vue {
+    export default class Dashboard extends Vue implements Updateable {
         @Provide() date: Date = this.getToday();
 
         prevDate() {
@@ -67,6 +68,13 @@
         private getNextDate(): Date {
             return new Date(this.date.getTime() + 24 * 60 * 60 * 1000);
         }
+
+        update(): void {
+            // @ts-ignore
+            this.$refs.timeline.update();
+            // @ts-ignore
+            this.$refs.pieChart.update();
+        }
     }
 </script>
 
@@ -84,6 +92,7 @@
     }
 
     #timelineSection {
+        margin-top: 0;
         grid-column: 1 / 3;
         grid-row: 2 / 3;
     }
@@ -107,7 +116,7 @@
     }
 
     .topSection {
-        margin: 15px 10px 5px 10px;
+        margin: 5px 10px 5px 10px;
     }
 
     .is-vertical-center {
