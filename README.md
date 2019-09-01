@@ -5,6 +5,8 @@
 npm install
 ```
 
+Windows might require `npm install --global windows-build-tools`
+
 ### Compiles and hot-reloads for development
 ```
 npm run electron:serve
