@@ -7,6 +7,7 @@ import Timeline from "./services/timeline";
 import Processes from "./services/processes";
 import DailyPieChart from "./services/dailyPieChart";
 import Heartbeat from "./services/heartbeat";
+import AutoLaunch from 'auto-launch';
 import path from 'path';
 import log from 'electron-log'
 
@@ -19,6 +20,7 @@ let win: any;
 let db: Database;
 let tray: Tray;
 let heartbeat: Heartbeat;
+let autoLauncher: AutoLaunch;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: {secure: true, standard: true}}]);
@@ -32,6 +34,10 @@ async function createWindow() {
     new Timeline();
     new DailyPieChart();
     new Processes();
+
+    autoLauncher = new AutoLaunch({
+        name: "timechart"
+    });
 
     let iconUrl = null;
     if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -64,8 +70,20 @@ async function createWindow() {
         win.loadURL('app://./index.html');
     }
 
-    ipcMain.on('synchronous-message', (event: any, arg: any) => {
-        event.returnValue = 'pong'
+    ipcMain.on('autostart-isenabled', async (event: any, arg: any) => {
+        event.returnValue = await autoLauncher.isEnabled();
+    });
+
+    ipcMain.on('autostart-toggle', async (event: any) => {
+        if (await autoLauncher.isEnabled()) {
+            await autoLauncher.disable();
+            log.info("Autostart disabled");
+            event.returnValue = false;
+        } else {
+            await autoLauncher.enable();
+            log.info("Autostart enabled");
+            event.returnValue = true;
+        }
     });
 
     tray = new Tray(iconUrl);

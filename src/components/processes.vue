@@ -85,8 +85,8 @@
     @Component
     export default class Processes extends Vue implements ContentPage {
         @Provide() message = 'message';
-        selectedProcess?: ProcessData;
-        selectedWindow?: WindowData;
+        selectedProcess?: ProcessData = undefined;
+        selectedWindow?: WindowData = undefined;
         selectedProcessId: number = -1;
         selectedWindowId: number = -1;
 
