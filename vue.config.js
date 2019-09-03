@@ -14,7 +14,10 @@ module.exports = {
                         ext: "icon",
                         icon: "icons/"
                     }
-                ]
+                ],
+                snap: {
+                    confinement: "classic"
+                }
             }
         }
     }

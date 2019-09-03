@@ -55,12 +55,16 @@ async function createWindow() {
         iconUrl = path.join(__static, 'icon.png');
     }
 
+    log.info(`iconUrl: ${iconUrl}`);
+
+    let appIcon = nativeImage.createFromPath(iconUrl);
+
     win = new BrowserWindow({
         width: 800, height: 600, resizable: false, webPreferences: {
             nodeIntegration: true
         },
         show: !process.env.WEBPACK_DEV_SERVER_URL,
-        icon: iconUrl
+        icon: appIcon
     });
 
     heartbeat = new Heartbeat(win);
@@ -93,7 +97,7 @@ async function createWindow() {
         }
     });
 
-    tray = new Tray(iconUrl);
+    tray = new Tray(appIcon); // TODO: Tray icon is still broken with snap
     const contextMenu = Menu.buildFromTemplate([
         {
             label: 'Show/Hide', click() {
