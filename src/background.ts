@@ -25,6 +25,8 @@ let autoLauncher: AutoLaunch;
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: {secure: true, standard: true}}]);
 
+// process.env.TMPDIR = `$XDG_RUNTIME_DIR`;
+
 async function createWindow() {
     // Create the browser window.
     db = new Database();
@@ -57,14 +59,12 @@ async function createWindow() {
 
     log.info(`iconUrl: ${iconUrl}`);
 
-    let appIcon = nativeImage.createFromPath(iconUrl);
-
     win = new BrowserWindow({
         width: 800, height: 600, resizable: false, webPreferences: {
             nodeIntegration: true
         },
         show: !process.env.WEBPACK_DEV_SERVER_URL,
-        icon: appIcon
+        icon: iconUrl
     });
 
     heartbeat = new Heartbeat(win);
@@ -97,7 +97,7 @@ async function createWindow() {
         }
     });
 
-    tray = new Tray(appIcon); // TODO: Tray icon is still broken with snap
+    tray = new Tray(iconUrl); // TODO: Tray icon is still broken with snap
     const contextMenu = Menu.buildFromTemplate([
         {
             label: 'Show/Hide', click() {
@@ -120,7 +120,6 @@ async function createWindow() {
     ]);
     tray.setToolTip('Timechart');
     tray.setContextMenu(contextMenu);
-    tray.setHighlightMode('always');
 
     win.on('close', (event: Event) => {
         if (!isDevelopment) { // Overcome vue development hotreloading not closing window
