@@ -6,12 +6,16 @@ import log from 'electron-log'
 export default class Processes {
 
     constructor() {
-        ipcMain.on('get-processes-data', async (event: any) => {
+        ipcMain.on('get-processes-data', async (event: Event) => {
             event.returnValue = await this.getProcessesData();
         });
 
-        ipcMain.on('get-windows-data', async (event: any, processId: number) => {
+        ipcMain.on('get-windows-data', async (event: Event, processId: number) => {
             event.returnValue = await this.getWindowData(processId);
+        });
+
+        ipcMain.on('get-type-data', async (event: Event) => {
+           event.returnValue = await this.getTypeData();
         });
     }
 
@@ -90,6 +94,20 @@ export default class Processes {
                 GROUP BY window_id
                 HAVING time > 0
                 ORDER BY SUM(difference) DESC`, [processId]);
+
+            return results;
+        } catch (e) {
+            log.error(e);
+        }
+    }
+
+    async getTypeData() {
+        try {
+            let results: any = await Database.db.all(`
+                SELECT
+                    type,
+                    color
+                FROM productivity_type`);
 
             return results;
         } catch (e) {

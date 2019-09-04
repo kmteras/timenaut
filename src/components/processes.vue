@@ -21,6 +21,33 @@
             <div v-else-if="selectedProcess !== null">
                 <p>{{"Time: " + timeAsString(selectedProcess.time)}}</p>
             </div>
+
+            <div v-if="selectedWindow !== null">
+                <label for="windowTypeSelection">Type</label>
+                <select id="windowTypeSelection" :style="{color: selectedWindow.color}">
+                    <option :value="selectedWindow.type" :style="{color: selectedWindow.color}">
+                        {{selectedWindow.type}}
+                    </option>
+                    <option v-for="(typeData, idx) in this.getTypesBesides(selectedWindow.type)"
+                            :key="idx" :value="typeData.type"
+                            :style="{color: typeData.color}">
+                        {{typeData.type}}
+                    </option>
+                </select>
+            </div>
+            <div v-else-if="selectedProcess !== null">
+                <label for="processTypeSelection">Type</label>
+                <select id="processTypeSelection" :style="{color: selectedProcess.color}">
+                    <option :value="selectedProcess.type" :style="{color: selectedProcess.color}">
+                        {{selectedProcess.type}}
+                    </option>
+                    <option v-for="(typeData, idx) in this.getTypesBesides(selectedProcess.type)"
+                            :key="idx" :value="typeData.type"
+                            :style="{color: typeData.color}">
+                        {{typeData.type}}
+                    </option>
+                </select>
+            </div>
         </div>
         <div class="section" id="tableSection">
             <div id="processTableSection">
@@ -83,6 +110,11 @@
         color: string
     }
 
+    declare interface TypeData {
+        type: string,
+        color: string
+    }
+
     @Component
     export default class Processes extends Vue implements ContentPage, Updateable {
         @Provide() message = 'message';
@@ -91,14 +123,19 @@
         selectedProcessId: number = -1;
         selectedWindowId: number = -1;
 
-        processData: [ProcessData] = this.getProcessData();
-        windowData: [WindowData] = this.getWindowData(this.selectedProcessId);
+        typeDatas: TypeData[] = this.getTypeDatas();
+        processData: ProcessData[] = this.getProcessData();
+        windowData: WindowData[] = this.getWindowData(this.selectedProcessId);
 
-        getProcessData(): [ProcessData] {
+        getTypeDatas(): TypeData[] {
+            return ipcRenderer.sendSync('get-type-data');
+        }
+
+        getProcessData(): ProcessData[] {
             return ipcRenderer.sendSync('get-processes-data');
         }
 
-        getWindowData(processId: number): [WindowData] {
+        getWindowData(processId: number): WindowData[] {
             return ipcRenderer.sendSync('get-windows-data', processId);
         }
 
@@ -132,6 +169,10 @@
         update(): void {
             this.processData = this.getProcessData();
             this.windowData = this.getWindowData(this.selectedProcessId);
+        }
+
+        getTypesBesides(type: string): TypeData[] {
+            return this.typeDatas.filter(typeData => typeData.type !== type);
         }
     }
 </script>
