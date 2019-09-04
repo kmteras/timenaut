@@ -1,11 +1,13 @@
 # timechart
 
 ## Project setup
+
+Windows requires `npm install --vs2015 --global windows-build-tools` in powershell with admin rights.  
+Linux requires `sudo apt install libxss-dev`.
+
 ```
 npm install
 ```
-
-Windows might require `npm install --vs2015 --global windows-build-tools` in powershell with admin rights.
 
 ### Compiles and hot-reloads for development
 ```
