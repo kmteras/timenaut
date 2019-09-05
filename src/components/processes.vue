@@ -24,7 +24,7 @@
 
             <div v-if="selectedWindow !== null">
                 <label for="windowTypeSelection">Type</label>
-                <select id="windowTypeSelection" :style="{color: selectedWindow.color}">
+                <select id="windowTypeSelection" :style="{color: selectedWindow.color}" @change="setWindowType">
                     <option :value="selectedWindow.type" :style="{color: selectedWindow.color}">
                         {{selectedWindow.type}}
                     </option>
@@ -37,7 +37,7 @@
             </div>
             <div v-else-if="selectedProcess !== null">
                 <label for="processTypeSelection">Type</label>
-                <select id="processTypeSelection" :style="{color: selectedProcess.color}">
+                <select id="processTypeSelection" :style="{color: selectedProcess.color}" @change="setProcessType">
                     <option :value="selectedProcess.type" :style="{color: selectedProcess.color}">
                         {{selectedProcess.type}}
                     </option>
@@ -173,6 +173,18 @@
 
         getTypesBesides(type: string): TypeData[] {
             return this.typeDatas.filter(typeData => typeData.type !== type);
+        }
+
+        async setWindowType(event: Event) {
+            // @ts-ignore
+            ipcRenderer.sendSync('set-window-type', this.selectedWindowId, event.target.value);
+            this.update();
+        }
+
+        async setProcessType(event: Event) {
+            // @ts-ignore
+            ipcRenderer.sendSync('set-process-type', this.selectedProcessId, event.target.value);
+            this.update();
         }
     }
 </script>

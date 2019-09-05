@@ -15,7 +15,17 @@ export default class Processes {
         });
 
         ipcMain.on('get-type-data', async (event: Event) => {
-           event.returnValue = await this.getTypeData();
+            event.returnValue = await this.getTypeData();
+        });
+
+        ipcMain.on('set-process-type', async (event: Event, processId: number, type: string) => {
+            await this.setProcessType(processId, type);
+            event.returnValue = true;
+        });
+
+        ipcMain.on('set-window-type', async (event: Event, windowId: number, type: string) => {
+            await this.setWindowType(windowId, type);
+            event.returnValue = true;
         });
     }
 
@@ -104,12 +114,35 @@ export default class Processes {
     async getTypeData() {
         try {
             let results: any = await Database.db.all(`
-                SELECT
-                    type,
-                    color
+                SELECT type,
+                       color
                 FROM productivity_type`);
 
             return results;
+        } catch (e) {
+            log.error(e);
+        }
+    }
+
+    async setProcessType(processId: number, type: string) {
+        try {
+            await Database.db.run(`
+                UPDATE processes
+                SET type_str=?
+                WHERE id = ?
+            `, [type, processId]);
+        } catch (e) {
+            log.error(e);
+        }
+    }
+
+    async setWindowType(windowId: number, type: string) {
+        try {
+            await Database.db.run(`
+                UPDATE windows
+                SET type_str=?
+                WHERE id = ?
+            `, [type, windowId]);
         } catch (e) {
             log.error(e);
         }
