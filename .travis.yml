@@ -16,11 +16,6 @@ matrix:
               confinement: classic
       before_install:
         - sudo apt install libxss-dev -y
-    - os: windows
-      env:
-        - DIST_FILE=dist/timechart_win_$TRAVIS_TAG.zip
-      before_install:
-        - npm config set spin=false
 install:
   - npm ci --prefer-offline --no-audit
 script:
