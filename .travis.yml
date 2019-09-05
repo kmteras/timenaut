@@ -21,7 +21,7 @@ matrix:
       before_install:
         - npm config set spin=false
 install:
-  - npm ci
+  - npm ci --prefer-offline --no-audit
 script:
   - npm run lint
 before_deploy:
