@@ -19,7 +19,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: npm install, build, and test
         run: |
-          sudo apt install xscreensaver -y
+          sudo apt install libxss-dev -y
           npm install
           npm run build --if-present
           npm run lint
