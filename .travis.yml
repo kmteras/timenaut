@@ -1,34 +1,29 @@
-language: python
+language: node_js
+node_js:
+  - "stable"
+cache:
+  directories:
+    - "node_modules"
 matrix:
   include:
     - os: linux
       dist: bionic
-      python: 3.6
-      before_install:
-        - sudo apt-get update
-        - sudo apt-get install -y libcairo2-dev libgirepository1.0-dev gir1.2-gtk-3.0
       env:
         - DIST_FILE=timechart_v0.0.1_amd64.snap
-        - QT_QPA_PLATFORM=xcb
-        - QT_QPA_PLATFORMTHEME=appmenu-qt5
       addons:
         snaps:
             - name: snapcraft
               channel: edge
               confinement: classic
     - os: windows
-      language: shell
-      before_install: choco install python --version 3.6.8
       env:
-        - PATH=/c/Python36:/c/Python36/Scripts:$PATH
         - DIST_FILE=dist/timechart_win_$TRAVIS_TAG.zip
 install:
-  - pip3 install -r requirements.txt
+  - npm install
 script:
-  - python setup.py
+  - npm run lint
 before_deploy:
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then snapcraft --destructive-mode; fi
-  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then python package.py $TRAVIS_TAG; fi
+  - npm run electron:build
 deploy:
   provider: releases
   api_key:
