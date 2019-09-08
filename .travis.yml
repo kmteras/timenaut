@@ -9,7 +9,6 @@ matrix:
       dist: bionic
       before_install:
         - sudo apt install libxss-dev -y
-    - os: windows
 install:
   - npm install
 script:
