@@ -1,6 +1,6 @@
 {
   "name": "timechart",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Karl Martin Teras",
   "description": "Timechart is software to monitor your computer usage and give you feedback to help you improve.",
   "private": true,
