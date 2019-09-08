@@ -1,9 +1,9 @@
 module.exports = {
     pluginOptions: {
         electronBuilder: {
+            externals: ['better-sqlite3'],
             mainProcessWatch: ['src/**/*.ts', 'src/**/*.vue'],
             builderOptions: {
-                externals: ['better-sqlite3'],
                 productName: "Timechart",
                 appId: "io.timechart.timechart",
                 linux: {
