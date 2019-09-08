@@ -25,4 +25,7 @@ jobs:
         env:
           CI: true
       - name: Publish
+        env:
+          DO_KEY_ID: ${{ secrets.DO_KEY_ID }}
+          DO_SECRET_KEY: ${{ secrets.DO_SECRET_KEY }}
         run: npm run release
