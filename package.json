@@ -18,7 +18,6 @@
   "main": "background.js",
   "dependencies": {
     "active-win": "^5.1.2",
-    "desktop-idle": "^1.2.0",
     "bulma": "^0.7.5",
     "chart.js": "^2.8.0",
     "core-js": "^2.6.5",

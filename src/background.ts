@@ -42,8 +42,6 @@ async function createWindow() {
         hidden: true
     };
 
-    log.info(process.env);
-
     if (process.env.DESKTOPINTEGRATION) {
         autostartOptions['path'] = process.env.ARGV0;
     } else {

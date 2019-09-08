@@ -7,8 +7,6 @@ matrix:
   include:
     - os: linux
       dist: bionic
-      before_install:
-        - sudo apt install libxss-dev -y
 install:
   - npm install
 script:
