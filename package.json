@@ -13,7 +13,7 @@
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
     "electron:generate-icons": "electron-icon-builder --input=./src/assets/icon.png --output=build --flatten",
-    "release": "vue-cli-service electron:build --publish onTag"
+    "release": "vue-cli-service electron:build --publish onTagOrDraft"
   },
   "main": "background.js",
   "dependencies": {
