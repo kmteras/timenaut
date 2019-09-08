@@ -4,12 +4,10 @@ on: [push]
 
 jobs:
   build:
+    runs-on: windows-latest
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
         node-version: [10.x]
-
-    runs-on: ${{ matrix.platform }}
 
     steps:
       - uses: actions/checkout@v1
@@ -17,9 +15,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: ubuntu packages
-        run: sudo apt install libxss-dev -y
-        if: matrix.platform == 'ubuntu-latest'
       - name: npm install, build, and test
         run: |
           npm ci --prefer-offline --no-audit
