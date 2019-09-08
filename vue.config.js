@@ -7,7 +7,8 @@ module.exports = {
                 appId: "io.timechart.timechart",
                 linux: {
                     category: "Utility",
-                    icon: "build/icons/"
+                    icon: "build/icons/",
+                    target: ["AppImage"]
                 },
                 fileAssociations: [
                     {
@@ -17,6 +18,12 @@ module.exports = {
                 ],
                 snap: {
                     confinement: "classic"
+                },
+                publish: {
+                    provider: "spaces",
+                    name: "timenaut",
+                    region: "fra1",
+                    path: "timenaut"
                 }
             }
         }

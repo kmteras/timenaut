@@ -1,12 +1,11 @@
-'use strict';
-
-import {app, BrowserWindow, ipcMain, Menu, protocol, Tray, nativeImage} from 'electron'
+import {app, BrowserWindow, ipcMain, Menu, protocol, Tray} from 'electron'
 import {createProtocol, installVueDevtools} from 'vue-cli-plugin-electron-builder/lib'
 import Database from "./models/database";
 import Timeline from "./services/timeline";
 import Processes from "./services/processes";
 import DailyPieChart from "./services/dailyPieChart";
 import Heartbeat from "./services/heartbeat";
+import AutoUpdater from "./services/autoUpdater";
 import AutoLaunch from 'auto-launch';
 import path from 'path';
 import log from 'electron-log'
@@ -22,6 +21,11 @@ let tray: Tray;
 let heartbeat: Heartbeat;
 let autoLauncher: AutoLaunch;
 
+let timelineService = new Timeline();
+let dailyPieChartService = new DailyPieChart();
+let processesService = new Processes();
+let autoUpdaterService = new AutoUpdater();
+
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: {secure: true, standard: true}}]);
 
@@ -33,17 +37,17 @@ async function createWindow() {
     await db.connect();
     await db.update();
 
-    new Timeline();
-    new DailyPieChart();
-    new Processes();
-
     let autostartOptions: any = {
         name: "timechart",
         hidden: true
     };
 
-    if (process.env.APPIMAGE) {
-        autostartOptions['path'] = process.env.APPIMAGE;
+    log.info(process.env);
+
+    if (process.env.DESKTOPINTEGRATION) {
+        autostartOptions['path'] = process.env.ARGV0;
+    } else {
+        autoUpdaterService.check(); // Do not check for update with appimage
     }
 
     autoLauncher = new AutoLaunch(autostartOptions);
