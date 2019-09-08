@@ -9,6 +9,8 @@ jobs:
         os: [ubuntu-latest, windows-latest]
         node-version: [10.x]
 
+    runs-on: ${{ matrix.platform }}
+
     steps:
       - uses: actions/checkout@v1
       - name: Use Node.js ${{ matrix.node-version }}
