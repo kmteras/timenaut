@@ -24,3 +24,5 @@ jobs:
           npm run lint
         env:
           CI: true
+      - name: Publish
+        run: rpm run release

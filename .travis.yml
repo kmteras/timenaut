@@ -10,7 +10,7 @@ matrix:
       before_install:
         - sudo apt install libxss-dev -y
 install:
-  - npm install
+  - npm ci --prefer-offline --no-audit
 script:
   - npm run lint
   - npm run release
