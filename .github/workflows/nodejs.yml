@@ -25,4 +25,4 @@ jobs:
         env:
           CI: true
       - name: Publish
-        run: rpm run release
+        run: npm run release
