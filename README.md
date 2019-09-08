@@ -1,21 +1,33 @@
-# Timechart
+# timechart
 
-## Installation
+## Project setup
 
-`git clone git@github.com:Teras23/timechart.git`  
-`cd timechart`  
-`python3 -m venv venv`  
-`source venv/bin/activate`  
-`pip3 install wheel`  
-`pip3 install -r requirements.txt`  
+Windows requires `npm install --vs2015 --global windows-build-tools` in powershell with admin rights.  
+Linux requires `sudo apt install libxss-dev`.
 
-For python 3.7+  
-`cd venv/src/pyinstaller/bootloader`  
-`python3 ./waf distclean all`  
+```
+npm install
+```
 
-## Running for development
-`python3 main.py`
+### Compiles and hot-reloads for development
+```
+npm run electron:serve
+```
 
-## Building for distribution
+### Compiles and minifies for production
+```
+npm run electron:build
+```
 
-`python3 setup.py`
+### Run your tests
+```
+npm run test
+```
+
+### Lints and fixes files
+```
+npm run lint
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
