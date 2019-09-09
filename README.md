@@ -1,4 +1,4 @@
-# timechart
+# timenaut
 
 ## Project setup
 

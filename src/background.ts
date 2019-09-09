@@ -59,6 +59,7 @@ async function createWindow() {
         iconUrl = path.join(__static, 'icon.png');
     }
 
+    log.info(`App version: ${app.getVersion()}`);
     log.info(`iconUrl: ${iconUrl}`);
 
     win = new BrowserWindow({
@@ -82,6 +83,10 @@ async function createWindow() {
         // Load the index.html when not in development
         win.loadURL('app://./index.html');
     }
+
+    ipcMain.on('get-version', async (event: any, arg: any) => {
+        event.returnValue = app.getVersion();
+    });
 
     ipcMain.on('autostart-isenabled', async (event: any, arg: any) => {
         event.returnValue = await autoLauncher.isEnabled();
@@ -120,7 +125,7 @@ async function createWindow() {
             }
         },
     ]);
-    tray.setToolTip('Timechart');
+    tray.setToolTip('Timenaut');
     tray.setContextMenu(contextMenu);
 
     win.on('close', (event: Event) => {

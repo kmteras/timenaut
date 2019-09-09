@@ -19,7 +19,7 @@ export default class Database {
             // verbose: log.debug
         };
 
-        let databaseFileName = process.env.WEBPACK_DEV_SERVER_URL ? 'timechart_dev.dat' : 'timechart.dat';
+        let databaseFileName = process.env.WEBPACK_DEV_SERVER_URL ? 'timenaut_dev.dat' : 'timenaut.dat';
 
         let databaseFile = path.join(app.getPath('userData'), databaseFileName);
 

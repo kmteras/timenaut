@@ -4,8 +4,8 @@ module.exports = {
             externals: ['better-sqlite3'],
             mainProcessWatch: ['src/**/*.ts', 'src/**/*.vue'],
             builderOptions: {
-                productName: "Timechart",
-                appId: "io.timechart.timechart",
+                productName: "Timenaut",
+                appId: "io.timechart.timenaut",
                 linux: {
                     category: "Utility",
                     icon: "build/icons/",

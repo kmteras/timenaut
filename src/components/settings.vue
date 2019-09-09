@@ -8,13 +8,14 @@
                         Start on system startup
                     </label>
                 </div>
+                <span>v{{this.getVersion()}}</span>
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-    import {Provide, Inject, Component, Prop, Vue} from 'vue-property-decorator';
+    import {Component, Vue} from 'vue-property-decorator';
     import {ipcRenderer} from 'electron';
     import {Updateable} from "@/components/Updateable";
 
@@ -30,7 +31,12 @@
             return ipcRenderer.sendSync("autostart-isenabled");
         }
 
-        update(): void {}
+        update(): void {
+        }
+
+        getVersion(): string {
+            return ipcRenderer.sendSync('get-version');
+        }
     }
 </script>
 
