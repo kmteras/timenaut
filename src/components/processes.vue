@@ -2,24 +2,21 @@
     <div id="processes">
         <div class="section" id="infoSection">
             <div v-if="selectedWindow !== null">
-                <p>{{"Window: " + selectedWindow.title}}</p>
+                <p>Window: {{selectedWindow.title}}</p>
             </div>
             <div v-else-if="selectedProcess !== null">
-                <p>{{"Path: " + selectedProcess.path}}</p>
+                <p>Path: {{selectedProcess.path}}</p>
+            </div>
+
+            <div v-if="selectedProcess !== null">
+                <p>Process: {{selectedProcess.name}}</p>
             </div>
 
             <div v-if="selectedWindow !== null">
-                <p>{{"Process: " + selectedProcess.name}}</p>
+                <p>Time: {{timeAsString(selectedWindow.time)}}</p>
             </div>
             <div v-else-if="selectedProcess !== null">
-                <p>{{"Process: " + selectedProcess.name}}</p>
-            </div>
-
-            <div v-if="selectedWindow !== null">
-                <p>{{"Time: " + timeAsString(selectedWindow.time)}}</p>
-            </div>
-            <div v-else-if="selectedProcess !== null">
-                <p>{{"Time: " + timeAsString(selectedProcess.time)}}</p>
+                <p>Time: {{timeAsString(selectedProcess.time)}}</p>
             </div>
 
             <div v-if="selectedWindow !== null">
@@ -28,8 +25,8 @@
                     <option :value="selectedWindow.type" :style="{color: selectedWindow.color}">
                         {{selectedWindow.type}}
                     </option>
-                    <option v-for="(typeData, idx) in this.getTypesBesides(selectedWindow.type)"
-                            :key="idx" :value="typeData.type"
+                    <option v-for="typeData in getTypesBesides(selectedWindow.type)"
+                            :key="typeData.type" :value="typeData.type"
                             :style="{color: typeData.color}">
                         {{typeData.type}}
                     </option>
@@ -41,8 +38,8 @@
                     <option :value="selectedProcess.type" :style="{color: selectedProcess.color}">
                         {{selectedProcess.type}}
                     </option>
-                    <option v-for="(typeData, idx) in this.getTypesBesides(selectedProcess.type)"
-                            :key="idx" :value="typeData.type"
+                    <option v-for="typeData in getTypesBesides(selectedProcess.type)"
+                            :key="typeData.type" :value="typeData.type"
                             :style="{color: typeData.color}">
                         {{typeData.type}}
                     </option>
@@ -58,8 +55,8 @@
                         <th class="timeHeader">Time</th>
                     </tr>
                     </thead>
-                    <tbody v-for="(process, idx) in this.processData" :key="idx" @click="clickProcess(process)">
-                    <tr class='hover' :class="{selected: selectedProcessId === process.process_id}">
+                    <tbody v-for="process in this.processData" :key="process.id" @click="clickProcess(process)">
+                    <tr class='hover' :class="{selected: selectedProcessId === process.id}">
                         <td :style="{color: process.color}">{{process.name}}</td>
                         <td>{{timeAsString(process.time)}}</td>
                     </tr>
@@ -75,8 +72,8 @@
                         <th class="timeHeader">Time</th>
                     </tr>
                     </thead>
-                    <tbody v-for="(window, idx) in this.windowData" :key="idx" @click="clickWindow(window)">
-                    <tr class='hover' :class="{selected: selectedWindowId === window.window_id}">
+                    <tbody v-for="window in this.windowData" :key="window.id" @click="clickWindow(window)">
+                    <tr class='hover' :class="{selected: selectedWindowId === window.id}">
                         <td :style="{color: window.color}">{{window.title}}</td>
                         <td>{{timeAsString(window.time)}}</td>
                     </tr>
@@ -94,18 +91,18 @@
     import {Updateable} from "@/components/Updateable";
 
     declare interface ProcessData {
+        id: number,
         path: string,
         name: string,
         time: number,
-        process_id: number,
         type: string,
         color: string
     }
 
     declare interface WindowData {
+        id: number,
         title: string,
         time: number,
-        window_id: number,
         type: string,
         color: string
     }
@@ -117,7 +114,6 @@
 
     @Component
     export default class Processes extends Vue implements ContentPage, Updateable {
-        @Provide() message = 'message';
         selectedProcess: ProcessData | null = null;
         selectedWindow: WindowData | null = null;
         selectedProcessId: number = -1;
@@ -141,7 +137,7 @@
 
         clickProcess(process: ProcessData) {
             this.selectedProcess = process;
-            this.selectedProcessId = process.process_id;
+            this.selectedProcessId = process.id;
             this.selectedWindow = null;
             this.selectedWindowId = -1;
             this.windowData = this.getWindowData(this.selectedProcessId);
@@ -149,7 +145,7 @@
 
         clickWindow(window: WindowData) {
             this.selectedWindow = window;
-            this.selectedWindowId = window.window_id;
+            this.selectedWindowId = window.id;
         }
 
         timeAsString(time: number): string {
@@ -169,6 +165,9 @@
         update(): void {
             this.processData = this.getProcessData();
             this.windowData = this.getWindowData(this.selectedProcessId);
+
+            this.selectedProcess = this.getSelectedProcess();
+            this.selectedWindow = this.getSelectedWindow();
         }
 
         getTypesBesides(type: string): TypeData[] {
@@ -177,7 +176,13 @@
 
         async setWindowType(event: Event) {
             // @ts-ignore
-            ipcRenderer.sendSync('set-window-type', this.selectedWindowId, event.target.value);
+            let type = event.target.value;
+
+            if (type === 'unknown') {
+                type = null;
+            }
+
+            ipcRenderer.sendSync('set-window-type', this.selectedWindowId, type);
             this.update();
         }
 
@@ -185,6 +190,26 @@
             // @ts-ignore
             ipcRenderer.sendSync('set-process-type', this.selectedProcessId, event.target.value);
             this.update();
+        }
+
+        getSelectedProcess(): ProcessData | null {
+            let process = this.processData.find((process: ProcessData) => process.id == this.selectedProcessId);
+
+            if (process !== undefined) {
+                return process;
+            } else {
+                return null;
+            }
+        }
+
+        getSelectedWindow(): WindowData | null {
+            let window = this.windowData.find((window: WindowData) => window.id == this.selectedWindowId);
+
+            if (window !== undefined) {
+                return window;
+            } else {
+                return null;
+            }
         }
     }
 </script>
@@ -246,12 +271,12 @@
     }
 
     tr.hover:hover {
-        background-color: #D9D9D9;
+        background-color: #EAEAEA;
     }
 
     .selected,
     tr.hover.selected:hover {
-        background-color: #C3C3C3C3;
+        background-color: #DADADA;
     }
 
     .timeHeader {

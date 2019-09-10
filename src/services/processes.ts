@@ -34,7 +34,7 @@ export default class Processes {
             let results: any = await Database.db.all(`
                 SELECT path,
                        SUM(difference) AS time,
-                       process_id,
+                       process_id      as id,
                        pt.type,
                        pt.color
                 FROM heartbeats AS hb
@@ -79,7 +79,7 @@ export default class Processes {
     async getWindowData(processId: number) {
         try {
             let results: any = await Database.db.all(`
-                SELECT window_id,
+                SELECT window_id       as id,
                        w.title,
                        SUM(difference) AS time,
                        CASE
@@ -116,7 +116,8 @@ export default class Processes {
             let results: any = await Database.db.all(`
                 SELECT type,
                        color
-                FROM productivity_type`);
+                FROM productivity_type
+                WHERE type != 'unknown'`);
 
             return results;
         } catch (e) {

@@ -43,6 +43,7 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
     #settings {
+        display: grid;
         height: 100%;
     }
 
@@ -52,7 +53,6 @@
         border-radius: 10px;
         box-shadow: 5px 5px 5px grey;
         background-color: white;
-        height: 100%;
     }
 
     .settingsFlex {
