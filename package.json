@@ -1,6 +1,6 @@
 {
   "name": "timenaut",
-  "version": "0.0.2",
+  "version": "0.0.3-snapshot",
   "author": "Karl Martin Teras",
   "description": "Timenaut is software to monitor your computer usage and give you feedback to help you improve.",
   "private": true,
@@ -13,7 +13,7 @@
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
     "electron:generate-icons": "electron-icon-builder --input=./src/assets/icon.png --output=build --flatten",
-    "release": "vue-cli-service electron:build --publish onTagOrDraft"
+    "release": "vue-cli-service electron:build --publish always"
   },
   "main": "background.js",
   "dependencies": {
