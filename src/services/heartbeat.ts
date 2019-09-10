@@ -11,6 +11,7 @@ export default class Heartbeat {
     running: boolean;
     timeout: any;
     private win: BrowserWindow;
+    private pollTime: number = 1;
 
     constructor(window: BrowserWindow) {
         this.running = true;
@@ -25,9 +26,9 @@ export default class Heartbeat {
             log.warn(e)
         }
 
-         if (this.running) {
-             this.timeout = setTimeout(this.start.bind(this), 1000); //TODO: get interval from somewhere
-         }
+        if (this.running) {
+            this.timeout = setTimeout(this.start.bind(this), this.pollTime * 1000); //TODO: get interval from somewhere
+        }
     }
 
     async heartbeat(heartbeat: HeartbeatModel) {
@@ -56,6 +57,7 @@ export default class Heartbeat {
         }
 
         this.addHeartbeat(heartbeat, this.lastHeartbeat);
+        this.lastEndTime = heartbeat.time;
         this.lastHeartbeat = heartbeat;
         this.win.webContents.send('heartbeat');
     }
@@ -71,7 +73,14 @@ export default class Heartbeat {
         let endTime = heartbeat.time;
 
         if (lastEndTime !== undefined) {
-            endTime = Math.min(heartbeat.time, lastEndTime + 1000); // TODO: get poll time from settings
+            // TODO: get poll time from settings
+            let possibleEndTime = lastEndTime + this.pollTime;
+            if (heartbeat.time > possibleEndTime) {
+                endTime = possibleEndTime;
+
+                // Reset the last heartbeat and start again
+                this.lastHeartbeat = undefined;
+            }
         }
 
         await Database.db.run(sql, [endTime, lastHeartbeat.time]);

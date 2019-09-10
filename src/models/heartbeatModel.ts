@@ -5,6 +5,7 @@ import {powerMonitor} from "electron"
 
 
 export default class HeartbeatModel {
+    // in seconds
     time: number;
     process: ProcessModel;
     window: WindowModel;
