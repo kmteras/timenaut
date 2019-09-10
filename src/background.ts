@@ -66,9 +66,14 @@ async function createWindow() {
         width: 800, height: 600, resizable: false, webPreferences: {
             nodeIntegration: true
         },
+        fullscreen: false,
         show: !process.env.WEBPACK_DEV_SERVER_URL,
         icon: iconUrl
     });
+
+    if (!isDevelopment) {
+        win.setMenuBarVisibility(false);
+    }
 
     heartbeat = new Heartbeat(win);
     heartbeat.start();

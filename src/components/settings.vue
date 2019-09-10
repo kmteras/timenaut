@@ -8,7 +8,8 @@
                         Start on system startup
                     </label>
                 </div>
-                <span>v{{this.getVersion()}}</span>
+                <span class="settingsFill"></span>
+                <span class="settingsVersion">v{{this.getVersion()}}</span>
             </div>
         </div>
     </div>
@@ -59,9 +60,18 @@
         display: flex;
         flex-direction: column;
         text-align: left;
+        height: 100%;
+    }
+
+    .settingsFill {
+        flex-grow: 1;
     }
 
     .settingsOption {
         justify-content: flex-start;
+    }
+
+    .settingsVersion {
+        text-align: right;
     }
 </style>

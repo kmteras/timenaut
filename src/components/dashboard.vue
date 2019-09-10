@@ -83,7 +83,8 @@
     #dashboard {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        grid-template-rows: 40px 270px auto;
+        grid-template-rows: 40px 1fr 1fr;
+        height: 100%;
     }
 
     #dateSelectionSection {
