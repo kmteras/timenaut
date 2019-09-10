@@ -55,6 +55,7 @@
         height: 100%;
         overflow-x: hidden !important;
         overflow-y: hidden !important;
+        user-select: none;
     }
 
     body {
@@ -89,5 +90,13 @@
 
     #content {
         grid-column: 2 / 3;
+    }
+
+    .selectable {
+        user-select: text;
+    }
+
+    .bold {
+        font-weight: bold;
     }
 </style>
