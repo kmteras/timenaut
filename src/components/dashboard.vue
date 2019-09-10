@@ -10,11 +10,11 @@
         </div>
 
         <div class="section" id="timelineSection">
-            <timeline :height="250" :date="date" ref="timeline"/>
+            <timeline :date="date" ref="timeline"/>
         </div>
 
         <div class="section" id="pieSection">
-            <daily-pie-chart :height="220" :width="200" :date="date" ref="pieChart"/>
+            <daily-pie-chart :date="date" ref="pieChart"/>
         </div>
 
         <div class="section" id="barSection">
