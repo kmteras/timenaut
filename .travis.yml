@@ -11,4 +11,9 @@ install:
   - npm install
 script:
   - npm run lint
-  - npm run release
+deploy:
+  provider: script
+  script: npm run release
+  skip_cleanup: true
+  on:
+    tags: true
