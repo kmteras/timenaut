@@ -74,7 +74,7 @@ export default class Heartbeat {
             endTime = Math.min(heartbeat.time, lastEndTime + 1000); // TODO: get poll time from settings
         }
 
-        await Database.db.run(sql, [heartbeat.time, lastHeartbeat.time]);
+        await Database.db.run(sql, [endTime, lastHeartbeat.time]);
         return endTime;
     }
 
