@@ -19,7 +19,7 @@
   "dependencies": {
     "active-win": "^5.1.2",
     "bulma": "^0.7.5",
-    "chart.js": "^2.8.0",
+    "d3": "^5.12.0",
     "core-js": "^2.6.5",
     "material-design-icons": "^3.0.1",
     "better-sqlite3": "^5.4.2",
@@ -28,18 +28,19 @@
     "vue-class-component": "^7.0.2",
     "vue-property-decorator": "^8.1.0",
     "auto-launch": "^5.0.5",
-    "electron-updater": "^4.1.2"
+    "electron-updater": "^4.1.2",
+    "electron": "^6.0.0"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^5.4.0",
     "@types/auto-launch": "^5.0.1",
+    "@types/d3": "^5.7.2",
     "@vue/cli-plugin-babel": "^3.10.0",
     "@vue/cli-plugin-eslint": "^3.10.0",
     "@vue/cli-plugin-typescript": "^3.10.0",
     "@vue/cli-service": "^3.10.0",
     "@vue/eslint-config-typescript": "^4.0.0",
     "babel-eslint": "^10.0.1",
-    "electron": "^6.0.0",
     "electron-icon-builder": "^1.0.1",
     "electron-log": "^3.0.7",
     "eslint": "^5.16.0",
