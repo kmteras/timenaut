@@ -1,0 +1,31 @@
+name: Release
+
+on: [release]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        node-version: [10.x]
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Windows build tools
+        run: npm install --vs2015 --global windows-build-tools
+      - name: npm install, build, and test
+        run: |
+          npm ci --prefer-offline --no-audit
+          npm run build --if-present
+          npm run lint
+        env:
+          CI: true
+      - name: Publish
+        env:
+          DO_KEY_ID: ${{ secrets.DO_KEY_ID }}
+          DO_SECRET_KEY: ${{ secrets.DO_SECRET_KEY }}
+        run: npm run release
