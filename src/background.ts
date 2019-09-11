@@ -42,11 +42,13 @@ async function createWindow() {
         hidden: true
     };
 
-    if (process.env.DESKTOPINTEGRATION) {
+    // TODO: remove these hacks after electron-updater fixes appimage
+    if (process.env.DESKTOPINTEGRATION === 'AppImageLauncher') {
         autostartOptions['path'] = process.env.ARGV0;
-    } else {
-        autoUpdaterService.check(); // Do not check for update with appimage
+        process.env.APPIMAGE = process.env.ARGV0
     }
+
+    autoUpdaterService.check();
 
     autoLauncher = new AutoLaunch(autostartOptions);
 
