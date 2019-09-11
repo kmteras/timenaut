@@ -89,11 +89,13 @@
     </div>
 </template>
 
+
 <script lang="ts">
     import {Component, Provide, Vue} from 'vue-property-decorator';
     import {ipcRenderer} from 'electron';
     import ContentPage from "@/components/contentPage.vue";
     import {Updateable} from "@/components/Updateable";
+    import typeSelection from '@/components/typeSelection.vue';
 
     declare interface ProcessData {
         id: number,
