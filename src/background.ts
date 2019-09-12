@@ -57,8 +57,16 @@ async function createWindow() {
         // @ts-ignore
         iconUrl = path.join(__static, 'icon_development.png');
     } else {
+        let iconFileName = "64x64.png";
+
+        if (process.platform === 'win32') {
+            iconFileName = "32x32.png";
+        } else if (process.platform === 'darwin') {
+            iconFileName = "16x16.png";
+        }
+
         // @ts-ignore
-        iconUrl = path.join(__static, 'icon.png');
+        iconUrl = path.join(__static, iconFileName);
     }
 
     log.info(`App version: ${app.getVersion()}`);
