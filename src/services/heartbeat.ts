@@ -6,8 +6,8 @@ import BrowserWindow = Electron.BrowserWindow;
 
 // WARNING: changing this file does not restart electron properly in development mode
 export default class Heartbeat {
-    lastHeartbeat?: HeartbeatModel;
-    lastEndTime?: number;
+    lastHeartbeat: HeartbeatModel | null = null;
+    lastEndTime: number | null = null;
     running: boolean;
     timeout: any;
     private win: BrowserWindow;
@@ -46,7 +46,7 @@ export default class Heartbeat {
 
         log.debug(heartbeat.toString());
 
-        if (this.lastHeartbeat !== undefined) {
+        if (this.lastHeartbeat !== null) {
             if (process.id === this.lastHeartbeat.process.id
                 && window.id == this.lastHeartbeat.window.id
                 && heartbeat.idle == this.lastHeartbeat.idle) {
@@ -63,7 +63,7 @@ export default class Heartbeat {
     }
 
     private async updateHeartbeat(heartbeat: HeartbeatModel,
-                                  lastHeartbeat: HeartbeatModel, lastEndTime?: number): Promise<number> {
+                                  lastHeartbeat: HeartbeatModel, lastEndTime: number | null): Promise<number> {
         const sql = `
             UPDATE heartbeats
             SET end_time=?
@@ -72,14 +72,14 @@ export default class Heartbeat {
 
         let endTime = heartbeat.time;
 
-        if (lastEndTime !== undefined) {
+        if (lastEndTime !== null) {
             // TODO: get poll time from settings
             let possibleEndTime = lastEndTime + this.pollTime;
             if (heartbeat.time > possibleEndTime) {
                 endTime = possibleEndTime;
 
                 // Reset the last heartbeat and start again
-                this.lastHeartbeat = undefined;
+                this.lastHeartbeat = null;
             }
         }
 
@@ -87,9 +87,9 @@ export default class Heartbeat {
         return endTime;
     }
 
-    private async addHeartbeat(heartbeat: HeartbeatModel, lastHeartbeat?: HeartbeatModel) {
-        if (lastHeartbeat !== undefined) {
-            await this.updateHeartbeat(heartbeat, lastHeartbeat)
+    private async addHeartbeat(heartbeat: HeartbeatModel, lastHeartbeat: HeartbeatModel | null) {
+        if (lastHeartbeat !== null) {
+            await this.updateHeartbeat(heartbeat, lastHeartbeat, this.lastEndTime)
         }
 
         const sql = `
