@@ -83,6 +83,10 @@ async function createWindow() {
 
     if (!isDevelopment) {
         win.setMenuBarVisibility(false);
+
+        if (process.platform === 'darwin') {
+            app.dock.hide();
+        }
     }
 
     heartbeat = new Heartbeat(win);
