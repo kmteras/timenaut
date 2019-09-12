@@ -4,22 +4,8 @@
 <script lang="ts">
     import * as d3 from 'd3';
     import {ipcRenderer} from 'electron';
-    import {Component, Prop, Provide, Vue, Watch} from 'vue-property-decorator';
-
-    interface TimelineDataDataset {
-        backgroundColor: string,
-        label: string,
-        data: number[]
-    }
-
-    interface TimelineDataLabel {
-        time: string
-    }
-
-    interface TimelineData {
-        datasets: TimelineDataDataset[],
-        labels: TimelineDataLabel[]
-    }
+    import {Component, Prop, Vue, Watch} from 'vue-property-decorator';
+    import {TimelineData, TimelineRowData, TimelineTypeData} from "@/models/databaseModels";
 
     @Component
     export default class Timeline extends Vue {
@@ -31,7 +17,16 @@
         width: number = 0;
         height: number = 0;
 
+        svgWidth: number = 0;
+        svgHeight: number = 0;
+
         svg: any;
+        tooltip: any;
+
+        x: any;
+        y: any;
+
+        groups: any;
 
         mounted() {
             // @ts-ignore
@@ -39,69 +34,108 @@
             // @ts-ignore
             this.height = this.$refs.svg.clientHeight;
 
-            console.log(this.getTimelineData());
-
-            this.drawChart(true);
-        }
-
-        update(): any {
-            // TODO: update graph somehow so it does not refresh everything
-            // TODO: if this tab is in focus
-            // this.data = this.getTimelineData();
-            // this.drawChart(false);
-        }
-
-        drawChart(animation: boolean) {
-            let svgWidth = this.width - 2 * this.margin;
-            let svgHeight = this.height - 2 * this.margin;
-
-            let dat = this.data.datasets[0];
+            this.svgWidth = this.width - 2 * this.margin;
+            this.svgHeight = this.height - 2 * this.margin;
 
             this.svg = d3.select('#timelineSVG')
                 .append("g")
                 .attr("transform", `translate(${this.margin}, ${this.margin})`);
 
-            let x = d3.scaleTime()
-                .domain([this.startDate(), this.endDate()])
-                .range([0, svgWidth]);
+            this.createAxis();
+            this.createTooltip();
+            this.drawChart();
+        }
 
-            let y = d3.scaleLinear()
+        update(): any {
+            // TODO: update graph somehow so it does not refresh everything
+            // TODO: if this tab is in focus
+            this.data = this.getTimelineData();
+            this.groups.selectAll(".bar")
+                .remove();
+
+            this.groups.remove();
+
+            this.drawChart();
+        }
+
+        createAxis() {
+            this.x = d3.scaleBand()
+                .domain(this.data.labels)
+                .range([0, this.svgWidth])
+                .paddingInner(0.2);
+
+            this.y = d3.scaleLinear()
                 .domain([0, 600])
-                .range([svgHeight, 0]);
+                .range([this.svgHeight, 0]);
 
-            console.log(dat.data);
-
-            let histogram = d3.histogram()
-                .value((d) => {return d})(dat.data);
-
-            let xAxis = d3.axisBottom(x)
-                .ticks(24)
-                // @ts-ignore
-                .tickFormat(d3.timeFormat("%H:%M"));
+            let xAxis = d3.axisBottom(this.x)
+            // @ts-ignore
+                .tickValues(this.x.domain().filter((value: string, i: number) => {
+                    return !(i % 6)
+                }));
 
             this.svg.append("g")
-                .attr('transform', `translate(0, ${svgHeight})`)
+                .attr('transform', `translate(0, ${this.svgHeight})`)
                 .call(xAxis)
                 .selectAll("text")
-                    .attr("transform", "rotate(-45)")
-                    .attr("dx", "-2em")
-                    .attr("dy", "0.2em");
+                .attr("transform", "rotate(-45)")
+                .attr("dx", "-2em")
+                .attr("dy", "0.2em");
 
-            let yAxis = d3.axisLeft(y)
+            let yAxis = d3.axisLeft(this.y)
                 .ticks(6);
 
             this.svg.append("g")
                 .call(yAxis);
+        }
 
-            this.svg.selectAll("rect")
-                .data(histogram)
+        drawChart() {
+            this.groups = this.svg.selectAll(".type")
+                .data(this.data.types)
+                .enter()
+                .append("g")
+                .style('fill', (d: TimelineTypeData) => {
+                    return d.color
+                });
+
+            this.groups.selectAll(".bar")
+                .data((d: TimelineTypeData): TimelineRowData[] => {
+                    return d.rows
+                })
                 .enter()
                 .append("rect")
-                    .attr("x", 1)
-                    .attr('transform', (d: any, i: any) => { console.log(d, i); return `translate(${i * 30}, 0)`})
-                    .attr('width', 10)
-                    .attr('height', 100)
-                    .style('fill', this.data.datasets[0].backgroundColor);
+                .attr("x", (d: TimelineRowData) => {
+                    return this.x(d.time)
+                })
+                .attr("y", (d: TimelineRowData) => {
+                    return this.y(d.value + d.offset)
+                })
+                .attr('width', this.x.bandwidth())
+                .attr('height', (d: TimelineRowData) => {
+                    return this.svgHeight - this.y(d.value)
+                })
+                .on('mouseover', () => {
+                    this.tooltip.style('display', null)
+                });
+        }
+
+        createTooltip() {
+            this.tooltip = this.svg.append("g")
+                .attr("class", "tooltip")
+                .style("display", "none");
+
+            this.tooltip.append("rect")
+                .attr("width", 30)
+                .attr("height", 20)
+                .attr("fill", "white")
+                .style("opacity", 0.5);
+
+            this.tooltip.append("text")
+                .attr("x", 15)
+                .attr("dy", "1.2em")
+                .style("text-anchor", "middle")
+                .attr("font-size", "12px")
+                .attr("font-weight", "bold");
         }
 
         startDate() {
