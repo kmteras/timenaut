@@ -184,12 +184,12 @@ app.on('activate', async () => {
 
 const lock = app.requestSingleInstanceLock();
 
-if (!lock) {
+if (!lock && !isDevelopment) {
     app.quit()
 } else {
     // @ts-ignore
     app.on('second-instance', (event: Event, commandLine: string, workingDirectory: string) => {
-        if (win) {
+        if (win && !isDevelopment) {
             if (win.isMinimized()) {
                 win.restore();
             }
