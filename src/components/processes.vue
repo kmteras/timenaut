@@ -38,7 +38,7 @@
                 </select>
             </div>
             <div v-else-if="selectedProcess !== null">
-                <label class="bold" for="processTypeSelection">Type: </label>
+                <!--<label class="bold" for="processTypeSelection">Type: </label>
                 <select id="processTypeSelection" :style="{color: selectedProcess.color}" @change="setProcessType">
                     <option :value="selectedProcess.type" :style="{color: selectedProcess.color}">
                         {{selectedProcess.type}}
@@ -48,7 +48,8 @@
                             :style="{color: typeData.color}">
                         {{typeData.type}}
                     </option>
-                </select>
+                </select>-->
+                <type-selection></type-selection>
             </div>
         </div>
         <div class="section" id="tableSection">
@@ -119,7 +120,9 @@
         color: string
     }
 
-    @Component
+    @Component({
+        components: {typeSelection}
+    })
     export default class Processes extends Vue implements ContentPage, Updateable {
         selectedProcess: ProcessData | null = null;
         selectedWindow: WindowData | null = null;
@@ -233,6 +236,7 @@
     #infoSection {
         grid-column: 1 / 2;
         grid-row: 1 / 2;
+        display: inline-block;
     }
 
     #tableSection {

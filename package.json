@@ -18,17 +18,18 @@
   "main": "background.js",
   "dependencies": {
     "active-win": "^5.1.2",
+    "auto-launch": "^5.0.5",
+    "better-sqlite3": "^5.4.2",
     "bulma": "^0.7.5",
     "chart.js": "^2.8.0",
     "core-js": "^2.6.5",
+    "electron-updater": "^4.1.2",
     "material-design-icons": "^3.0.1",
-    "better-sqlite3": "^5.4.2",
     "vue": "^2.6.10",
     "vue-chartjs": "^3.4.2",
     "vue-class-component": "^7.0.2",
-    "vue-property-decorator": "^8.1.0",
-    "auto-launch": "^5.0.5",
-    "electron-updater": "^4.1.2"
+    "vue-clickaway": "^2.2.2",
+    "vue-property-decorator": "^8.1.0"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^5.4.0",
