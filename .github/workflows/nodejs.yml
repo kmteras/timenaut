@@ -16,7 +16,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Windows build tools
-        run: npm install --vs2015 --global windows-build-tools
+        run: |
+          npm install --vs2015 --global windows-build-tools
+          npm config set msvs_version 2015
       - name: Update node gyp
         run: |
           npm install -g node-gyp@latest
