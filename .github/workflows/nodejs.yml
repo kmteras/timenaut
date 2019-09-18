@@ -20,6 +20,7 @@ jobs:
           RUNNER_CONTEXT: ${{ toJson(runner) }}
         run: echo "$RUNNER_CONTEXT"
       - name: Windows build tools
+        if: runner.os == 'Windows'
         run: |
           npm install --vs2015 --global windows-build-tools
           npm config set msvs_version 2015
