@@ -24,12 +24,10 @@ jobs:
         run: |
           npm install --vs2015 --global windows-build-tools
           npm config set msvs_version 2015
-      - name: node-gyp fix
+      - name: npm install, build, and test
         run: |
           npm install --global node-gyp@latest
           npm prefix -g | % {npm config set node_gyp "$_\node_modules\node-gyp\bin\node-gyp.js"}
-      - name: npm install, build, and test
-        run: |
           npm ci --no-audit
           npm run build --if-present
           npm run lint
