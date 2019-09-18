@@ -21,6 +21,7 @@ jobs:
         run: |
           npm install -g node-gyp@latest
           npm config set npm_config_node_gyp "node C:\npm\prefix\node_modules\node-gyp\bin\node-gyp.js"
+          npm config set node_gyp "C:\npm\prefix\node_modules\node-gyp\bin\node-gyp.js"
       - name: npm install, build, and test
         run: |
           npm ci --prefer-offline --no-audit
