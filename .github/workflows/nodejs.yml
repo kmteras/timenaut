@@ -28,3 +28,7 @@ jobs:
         run: npm run lint
       - name: npm build
         run: npm run build
+      - name: Release
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: npm run release
