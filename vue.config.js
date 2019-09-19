@@ -5,7 +5,7 @@ module.exports = {
             mainProcessWatch: ['src/**/*.ts', 'src/**/*.vue'],
             builderOptions: {
                 productName: "Timenaut",
-                appId: "io.timechart.timenaut",
+                appId: "app.timenaut.timenaut",
                 linux: {
                     category: "Utility",
                     icon: "build/icons/",
