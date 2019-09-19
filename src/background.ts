@@ -57,8 +57,16 @@ async function createWindow() {
         // @ts-ignore
         iconUrl = path.join(__static, 'icon_development.png');
     } else {
+        let iconFileName = "64x64.png";
+
+        if (process.platform === 'win32') {
+            iconFileName = "32x32.png";
+        } else if (process.platform === 'darwin') {
+            iconFileName = "16x16.png";
+        }
+
         // @ts-ignore
-        iconUrl = path.join(__static, 'icon.png');
+        iconUrl = path.join(__static, iconFileName);
     }
 
     log.info(`App version: ${app.getVersion()}`);
@@ -75,6 +83,10 @@ async function createWindow() {
 
     if (!isDevelopment) {
         win.setMenuBarVisibility(false);
+
+        if (process.platform === 'darwin') {
+            app.dock.hide();
+        }
     }
 
     heartbeat = new Heartbeat(win);
@@ -172,12 +184,12 @@ app.on('activate', async () => {
 
 const lock = app.requestSingleInstanceLock();
 
-if (!lock) {
+if (!lock && !isDevelopment) {
     app.quit()
 } else {
     // @ts-ignore
     app.on('second-instance', (event: Event, commandLine: string, workingDirectory: string) => {
-        if (win) {
+        if (win && !isDevelopment) {
             if (win.isMinimized()) {
                 win.restore();
             }
