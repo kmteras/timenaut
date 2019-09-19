@@ -21,10 +21,9 @@ module.exports = {
                     confinement: "classic"
                 },
                 publish: {
-                    provider: "spaces",
-                    name: "timenaut",
-                    region: "fra1",
-                    path: "timenaut"
+                    provider: "github",
+                    owner: "kmteras",
+                    repo: "timenaut"
                 }
             }
         }
