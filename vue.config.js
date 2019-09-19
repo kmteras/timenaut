@@ -23,7 +23,8 @@ module.exports = {
                 publish: {
                     provider: "github",
                     owner: "kmteras",
-                    repo: "timenaut"
+                    repo: "timenaut",
+                    vPrefixedTagName: true
                 }
             }
         }
