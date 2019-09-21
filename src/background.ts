@@ -1,11 +1,11 @@
 import {app, BrowserWindow, ipcMain, Menu, protocol, Tray} from 'electron'
 import {createProtocol, installVueDevtools} from 'vue-cli-plugin-electron-builder/lib'
-import Database from "./models/database";
-import Timeline from "./services/timeline";
-import Processes from "./services/processes";
-import DailyPieChart from "./services/dailyPieChart";
-import Heartbeat from "./services/heartbeat";
-import AutoUpdater from "./services/autoUpdater";
+import Database from "@/services/database";
+import Timeline from "@/services/timeline";
+import Processes from "@/services/processes";
+import DailyPieChart from "@/services/dailyPieChart";
+import Heartbeat from "@/services/heartbeat";
+import AutoUpdater from "@/services/autoUpdater";
 import AutoLaunch from 'auto-launch';
 import path from 'path';
 import log from 'electron-log'

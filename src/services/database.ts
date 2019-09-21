@@ -2,7 +2,7 @@ import Sqlite from 'better-sqlite3';
 import {app} from 'electron'
 import * as path from 'path';
 import log from 'electron-log';
-import databaseInit from './databaseInit';
+import databaseInit from '@/services/databaseInit';
 
 type ParamTypes = number | string | Buffer | boolean | null | undefined;
 

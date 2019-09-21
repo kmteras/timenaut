@@ -1,4 +1,4 @@
-import Database from "@/models/database";
+import Database from "@/services/database";
 import {ipcMain} from 'electron'
 import log from 'electron-log'
 

@@ -25,9 +25,9 @@
 
 <script lang="ts">
     import {Component, Provide, Vue} from 'vue-property-decorator';
-    import Timeline from '@/components/timelineChart.vue';
-    import DailyPieChart from '@/components/dailyPieChart.vue';
-    import {Updateable} from "@/components/Updateable";
+    import Timeline from '@/components/fragments/timelineChart.vue';
+    import DailyPieChart from '@/components/fragments/dailyPieChart.vue';
+    import Updatable from "@/components/updatable";
 
     @Component({
         components: {
@@ -35,7 +35,7 @@
             DailyPieChart
         }
     })
-    export default class Dashboard extends Vue implements Updateable {
+    export default class Dashboard extends Vue implements Updatable {
         @Provide() date: Date = this.getToday();
 
         prevDate() {

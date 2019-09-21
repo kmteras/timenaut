@@ -7,15 +7,15 @@
 
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
-    import AppContent from './components/content.vue';
-    import Navigation from './components/navigation.vue';
+    import AppContent from '@/components/fragments/content.vue';
+    import Navigation from '@/components/fragments/navigation.vue';
     import Dashboard from "@/components/dashboard.vue";
     import Processes from "@/components/processes.vue";
     import Settings from "@/components/settings.vue";
-    import {Updateable} from "@/components/Updateable";
+    import Updatable from "@/components/updatable";
 
     interface PageComponent {
-        new (): Updateable;
+        new (): Updatable;
     }
 
     type NavigationItem = {

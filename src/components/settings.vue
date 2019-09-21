@@ -31,11 +31,11 @@
 
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
-    import {ipcRenderer} from 'electron';
-    import {Updateable} from "@/components/Updateable";
+    import ipcRenderer from '@/components/ipcRenderer';
+    import Updatable from "@/components/updatable";
 
     @Component
-    export default class Settings extends Vue implements Updateable {
+    export default class Settings extends Vue implements Updatable {
         autoStartup: boolean = this.hasAutoStart();
 
         protected toggleAutostart() {
