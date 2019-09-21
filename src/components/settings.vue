@@ -47,7 +47,7 @@
         }
 
         protected changeIdleTime(event: any) {
-            this.setSetting('changeIdleTime', event.target.value);
+            this.setSetting('heartbeatIdleTime', event.target.value);
         }
 
         private hasAutoStart(): boolean {

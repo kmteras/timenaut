@@ -80,7 +80,7 @@ export default class Heartbeat {
         let endTime = heartbeat.time;
 
         if (lastEndTime !== null) {
-            let possibleEndTime = lastEndTime + Settings.getPollTime();
+            let possibleEndTime = lastEndTime + Settings.getPollTime() + 1;
             if (heartbeat.time > possibleEndTime) {
                 endTime = possibleEndTime;
 
