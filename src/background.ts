@@ -21,6 +21,9 @@ let tray: Tray;
 let heartbeat: Heartbeat;
 let autoLauncher: AutoLaunch;
 
+let iconUrl: string;
+let pauseIconUrl: string;
+
 let timelineService = new Timeline();
 let dailyPieChartService = new DailyPieChart();
 let processesService = new Processes();
@@ -30,6 +33,77 @@ let autoUpdaterService = new AutoUpdater();
 protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: {secure: true, standard: true}}]);
 
 // process.env.TMPDIR = `$XDG_RUNTIME_DIR`;
+
+let menuItems = [
+    {
+        label: 'Show/Hide',
+        click() {
+            if (win.isVisible()) {
+                win.hide();
+            } else {
+                win.show();
+            }
+        }
+    },
+    {},
+    {
+        type: 'separator'
+    },
+    {
+        label: 'Quit',
+        click() {
+            // @ts-ignore
+            app.close = true;
+            log.info("Closing app from quit");
+            app.quit();
+        }
+    },
+];
+
+const pauseMenu = {
+    label: 'Pause tracking',
+    submenu: [
+        {
+            label: "For 10 minutes",
+            click() {
+                heartbeat.pause(10 * 60, resume);
+                switchMenu(menuItems, resumeMenu);
+                tray.setImage(pauseIconUrl);
+            }
+        },
+        {
+            label: "For 30 minutes",
+            click() {
+                heartbeat.pause(30 * 60, resume);
+                switchMenu(menuItems, resumeMenu);
+                tray.setImage(pauseIconUrl);
+            }
+        },
+        {
+            label: "For 1 hour",
+            click() {
+                heartbeat.pause(60 * 60, resume);
+                switchMenu(menuItems, resumeMenu);
+                tray.setImage(pauseIconUrl);
+            }
+        },
+        {
+            label: "Until I turn it back on",
+            click() {
+                heartbeat.pause(null, resume);
+                switchMenu(menuItems, resumeMenu);
+                tray.setImage(pauseIconUrl);
+            }
+        }
+    ]
+};
+
+const resumeMenu = {
+    label: "Resume tracking",
+    click() {
+        heartbeat.resume(resume);
+    }
+};
 
 async function createWindow() {
     // Create the browser window.
@@ -52,22 +126,35 @@ async function createWindow() {
 
     autoLauncher = new AutoLaunch(autostartOptions);
 
-    let iconUrl = null;
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // @ts-ignore
         iconUrl = path.join(__static, 'icon_development.png');
     } else {
-        let iconFileName = "64x64.png";
+        let iconFileName;
 
         if (process.platform === 'win32') {
             iconFileName = "32x32.png";
         } else if (process.platform === 'darwin') {
             iconFileName = "16x16.png";
+        } else {
+            iconFileName = "64x64.png"
         }
 
         // @ts-ignore
         iconUrl = path.join(__static, iconFileName);
     }
+
+    let pauseIconFileName;
+    if (process.platform === 'win32') {
+        pauseIconFileName = "32x32_pause.png";
+    } else if (process.platform === 'darwin') {
+        pauseIconFileName = "16x16_pause.png";
+    } else {
+        pauseIconFileName = "64x64_pause.png";
+    }
+
+    // @ts-ignore
+    pauseIconUrl = path.join(__static, pauseIconFileName);
 
     log.info(`App version: ${app.getVersion()}`);
     log.info(`iconUrl: ${iconUrl}`);
@@ -81,12 +168,20 @@ async function createWindow() {
         icon: iconUrl
     });
 
+
     if (!isDevelopment) {
         win.setMenuBarVisibility(false);
+
+        // TODO: Make production logging level configurable
+        log.transports.file.level = 'info';
+        log.transports.console.level = false;
 
         if (process.platform === 'darwin') {
             app.dock.hide();
         }
+    } else {
+        // No file logging for development
+        log.transports.file.level = false;
     }
 
     heartbeat = new Heartbeat(win);
@@ -124,28 +219,9 @@ async function createWindow() {
     });
 
     tray = new Tray(iconUrl); // TODO: Tray icon is still broken with snap
-    const contextMenu = Menu.buildFromTemplate([
-        {
-            label: 'Show/Hide', click() {
-                if (win.isVisible()) {
-                    win.hide();
-                } else {
-                    win.show();
-                }
-            }
-        },
-        {type: 'separator'},
-        {
-            label: 'Quit', click() {
-                // @ts-ignore
-                app.close = true;
-                log.info("Closing app from quit");
-                app.quit();
-            }
-        },
-    ]);
+
     tray.setToolTip('Timenaut');
-    tray.setContextMenu(contextMenu);
+    switchMenu(menuItems, pauseMenu);
 
     win.on('close', (event: Event) => {
         if (!isDevelopment) { // Overcome vue development hotreloading not closing window
@@ -226,4 +302,15 @@ if (isDevelopment) {
             app.quit()
         })
     }
+}
+
+function switchMenu(menuItems: any, menu: any) {
+    menuItems[1] = menu;
+    tray.setContextMenu(Menu.buildFromTemplate(menuItems));
+}
+
+function resume() {
+    log.info("Resumed tracking");
+    switchMenu(menuItems, pauseMenu);
+    tray.setImage(iconUrl);
 }

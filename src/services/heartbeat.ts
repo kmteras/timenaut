@@ -6,15 +6,18 @@ import BrowserWindow = Electron.BrowserWindow;
 
 // WARNING: changing this file does not restart electron properly in development mode
 export default class Heartbeat {
-    lastHeartbeat: HeartbeatModel | null = null;
-    lastEndTime: number | null = null;
+    private lastHeartbeat: HeartbeatModel | null = null;
+    private lastEndTime: number | null = null;
     running: boolean;
-    timeout: any;
+    private paused: boolean;
+    private timeout: any;
     private win: BrowserWindow;
     private pollTime: number = 1;
+    private pauseTimeout: any = null;
 
     constructor(window: BrowserWindow) {
         this.running = true;
+        this.paused = false;
         this.win = window;
     }
 
@@ -23,7 +26,7 @@ export default class Heartbeat {
             this.heartbeat(new HeartbeatModel(BigInt(0))).then();
         } catch (e) {
             // Tough shit, cant really do anything - not a severe problem
-            log.warn(e)
+            log.debug(e)
         }
 
         if (this.running) {
@@ -31,7 +34,11 @@ export default class Heartbeat {
         }
     }
 
-    async heartbeat(heartbeat: HeartbeatModel) {
+    private async heartbeat(heartbeat: HeartbeatModel) {
+        if (this.paused) {
+            return;
+        }
+
         let process = await heartbeat.process.find();
 
         if (process == null) {
@@ -98,5 +105,23 @@ export default class Heartbeat {
         `;
         await Database.db.run(sql,
             [heartbeat.process.id, heartbeat.window.id, heartbeat.time, heartbeat.time, heartbeat.idle])
+    }
+
+    public pause(time: number | null, resumeCallback: () => void) {
+        log.info(`Paused tracking for ${time} seconds`);
+        this.paused = true;
+        if (time !== null) {
+            this.pauseTimeout = setTimeout(() => {
+                this.resume(resumeCallback)
+            }, time * 1000);
+        }
+    }
+
+    public resume(resumeCallback: () => void) {
+        if (this.pauseTimeout != null) {
+            clearTimeout(this.pauseTimeout)
+        }
+        this.paused = false;
+        resumeCallback();
     }
 }
