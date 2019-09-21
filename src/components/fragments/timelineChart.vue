@@ -3,7 +3,7 @@
 </template>
 <script lang="ts">
     import * as d3 from 'd3';
-    import {ipcRenderer} from 'electron';
+    import ipcRenderer from '@/components/ipcRenderer';
     import {Component, Prop, Vue, Watch} from 'vue-property-decorator';
     import {TimelineData, TimelineRowData, TimelineTypeData} from "@/models/databaseModels";
 

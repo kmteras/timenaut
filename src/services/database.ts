@@ -2,7 +2,7 @@ import Sqlite from 'better-sqlite3';
 import {app} from 'electron'
 import * as path from 'path';
 import log from 'electron-log';
-import databaseInit from './databaseInit';
+import databaseInit from '@/services/databaseInit';
 
 type ParamTypes = number | string | Buffer | boolean | null | undefined;
 
@@ -72,8 +72,12 @@ export default class Database {
 
         params = this.convertTypes(params);
 
-        let statement: Sqlite.Statement = this.db.prepare(sql);
-        statement.run(params);
+        try {
+            let statement: Sqlite.Statement = this.db.prepare(sql);
+            statement.run(params);
+        } catch (e) {
+            log.error(e);
+        }
     }
 
     private convertTypes(params?: ParamTypes[]): ParamTypes[] | undefined {

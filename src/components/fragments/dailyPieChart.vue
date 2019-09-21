@@ -6,7 +6,7 @@
     </svg>
 </template>
 <script lang="ts">
-    import {ipcRenderer} from 'electron';
+    import ipcRenderer from '@/components/ipcRenderer';
     import {Component, Prop, Provide, Vue, Watch} from 'vue-property-decorator';
 
     @Component

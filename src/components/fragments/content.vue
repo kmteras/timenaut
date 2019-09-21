@@ -6,8 +6,7 @@
 
 <script lang="ts">
     import {Component, Prop, Vue} from 'vue-property-decorator';
-    import {ipcRenderer} from 'electron';
-
+    import ipcRenderer from '@/components/ipcRenderer';
 
     @Component
     export default class AppContent extends Vue {

@@ -1,4 +1,4 @@
-import Database from "../models/database";
+import Database from "@/services/database";
 
 
 export default class ProcessModel {

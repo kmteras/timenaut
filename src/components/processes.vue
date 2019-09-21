@@ -2,25 +2,30 @@
     <div id="processes">
         <div class="section" id="infoSection">
             <div v-if="selectedWindow !== null">
-                <p>Window: {{selectedWindow.title}}</p>
+                <span class="bold">Window: </span>
+                <span class="selectable">{{selectedWindow.title}}</span>
             </div>
             <div v-else-if="selectedProcess !== null">
-                <p>Path: {{selectedProcess.path}}</p>
+                <span class="bold">Path: </span>
+                <span class="selectable">{{selectedProcess.path}}</span>
             </div>
 
             <div v-if="selectedProcess !== null">
-                <p>Process: {{selectedProcess.name}}</p>
+                <span class="bold">Process: </span>
+                <span class="selectable">{{selectedProcess.name}}</span>
             </div>
 
             <div v-if="selectedWindow !== null">
-                <p>Time: {{timeAsString(selectedWindow.time)}}</p>
+                <span class="bold">Time: </span>
+                <span>{{timeAsString(selectedWindow.time)}}</span>
             </div>
             <div v-else-if="selectedProcess !== null">
-                <p>Time: {{timeAsString(selectedProcess.time)}}</p>
+                <span class="bold">Time: </span>
+                <span>{{timeAsString(selectedProcess.time)}}</span>
             </div>
 
             <div v-if="selectedWindow !== null">
-                <label for="windowTypeSelection">Type</label>
+                <label class="bold" for="windowTypeSelection">Type: </label>
                 <select id="windowTypeSelection" :style="{color: selectedWindow.color}" @change="setWindowType">
                     <option :value="selectedWindow.type" :style="{color: selectedWindow.color}">
                         {{selectedWindow.type}}
@@ -33,7 +38,7 @@
                 </select>
             </div>
             <div v-else-if="selectedProcess !== null">
-                <label for="processTypeSelection">Type</label>
+                <label class="bold" for="processTypeSelection">Type: </label>
                 <select id="processTypeSelection" :style="{color: selectedProcess.color}" @change="setProcessType">
                     <option :value="selectedProcess.type" :style="{color: selectedProcess.color}">
                         {{selectedProcess.type}}
@@ -85,10 +90,10 @@
 </template>
 
 <script lang="ts">
-    import {Component, Provide, Vue} from 'vue-property-decorator';
-    import {ipcRenderer} from 'electron';
+    import {Component, Vue} from 'vue-property-decorator';
+    import ipcRenderer from '@/components/ipcRenderer';
     import ContentPage from "@/components/contentPage.vue";
-    import {Updateable} from "@/components/Updateable";
+    import Updatable from "@/components/updatable";
 
     declare interface ProcessData {
         id: number,
@@ -113,7 +118,7 @@
     }
 
     @Component
-    export default class Processes extends Vue implements ContentPage, Updateable {
+    export default class Processes extends Vue implements ContentPage, Updatable {
         selectedProcess: ProcessData | null = null;
         selectedWindow: WindowData | null = null;
         selectedProcessId: number = -1;

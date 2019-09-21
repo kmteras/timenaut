@@ -10,8 +10,8 @@
 
 <script lang="ts">
     import {Component, Prop, Vue} from 'vue-property-decorator';
-    import NavigationLogo from "@/components/navigationLogo.vue";
-    import NavigationItem from "@/components/navigationItem.vue";
+    import NavigationLogo from "@/components/fragments/navigationLogo.vue";
+    import NavigationItem from "@/components/fragments/navigationItem.vue";
 
     @Component({
         components: {NavigationItem, NavigationLogo}

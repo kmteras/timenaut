@@ -1,25 +1,28 @@
 import {app, BrowserWindow, ipcMain, Menu, protocol, Tray} from 'electron'
 import {createProtocol, installVueDevtools} from 'vue-cli-plugin-electron-builder/lib'
-import Database from "./models/database";
-import Timeline from "./services/timeline";
-import Processes from "./services/processes";
-import DailyPieChart from "./services/dailyPieChart";
-import Heartbeat from "./services/heartbeat";
-import AutoUpdater from "./services/autoUpdater";
+import Database from "@/services/database";
+import Timeline from "@/services/timeline";
+import Processes from "@/services/processes";
+import DailyPieChart from "@/services/dailyPieChart";
+import Heartbeat from "@/services/heartbeat";
+import AutoUpdater from "@/services/autoUpdater";
 import AutoLaunch from 'auto-launch';
 import path from 'path';
 import log from 'electron-log'
-
+import Settings from "@/services/settings";
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win: any;
-let db: Database;
+let db = new Database();
 let tray: Tray;
 let heartbeat: Heartbeat;
 let autoLauncher: AutoLaunch;
+
+let iconUrl: string;
+let pauseIconUrl: string;
 
 let timelineService = new Timeline();
 let dailyPieChartService = new DailyPieChart();
@@ -31,35 +34,131 @@ protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: {secure: true,
 
 // process.env.TMPDIR = `$XDG_RUNTIME_DIR`;
 
-async function createWindow() {
-    // Create the browser window.
-    db = new Database();
-    await db.connect();
-    await db.update();
+let menuItems = [
+    {
+        label: 'Show/Hide',
+        click() {
+            if (win.isVisible()) {
+                win.hide();
+            } else {
+                win.show();
+            }
+        }
+    },
+    {},
+    {
+        type: 'separator'
+    },
+    {
+        label: 'Quit',
+        click() {
+            // @ts-ignore
+            app.close = true;
+            log.info("Closing app from quit");
+            app.quit();
+        }
+    },
+];
 
+const pauseMenu = {
+    label: 'Pause tracking',
+    submenu: [
+        {
+            label: "For 10 minutes",
+            click() {
+                heartbeat.pause(10 * 60, resume);
+                switchMenu(menuItems, resumeMenu);
+                tray.setImage(pauseIconUrl);
+            }
+        },
+        {
+            label: "For 30 minutes",
+            click() {
+                heartbeat.pause(30 * 60, resume);
+                switchMenu(menuItems, resumeMenu);
+                tray.setImage(pauseIconUrl);
+            }
+        },
+        {
+            label: "For 1 hour",
+            click() {
+                heartbeat.pause(60 * 60, resume);
+                switchMenu(menuItems, resumeMenu);
+                tray.setImage(pauseIconUrl);
+            }
+        },
+        {
+            label: "Until I turn it back on",
+            click() {
+                heartbeat.pause(null, resume);
+                switchMenu(menuItems, resumeMenu);
+                tray.setImage(pauseIconUrl);
+            }
+        }
+    ]
+};
+
+const resumeMenu = {
+    label: "Resume tracking",
+    click() {
+        heartbeat.resume(resume);
+    }
+};
+
+async function createWindow() {
+    log.info(`App version: ${app.getVersion()}`);
+
+    // Create the browser window.
     let autostartOptions: any = {
         name: "timechart",
         hidden: true
     };
 
-    if (process.env.DESKTOPINTEGRATION) {
+    await db.connect();
+    await db.update();
+
+    await Settings.init();
+
+    // TODO: remove these hacks after electron-updater fixes appimage
+    if (process.env.DESKTOPINTEGRATION === 'AppImageLauncher') {
         autostartOptions['path'] = process.env.ARGV0;
-    } else {
-        autoUpdaterService.check(); // Do not check for update with appimage
+        process.env.APPIMAGE = process.env.ARGV0
     }
+
+    autoUpdaterService.check();
 
     autoLauncher = new AutoLaunch(autostartOptions);
 
-    let iconUrl = null;
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // @ts-ignore
         iconUrl = path.join(__static, 'icon_development.png');
     } else {
+        let iconFileName;
+
+        if (process.platform === 'win32') {
+            iconFileName = "32x32.png";
+        } else if (process.platform === 'darwin') {
+            iconFileName = "16x16.png";
+        } else {
+            iconFileName = "64x64.png"
+        }
+
         // @ts-ignore
-        iconUrl = path.join(__static, 'icon.png');
+        iconUrl = path.join(__static, iconFileName);
     }
 
-    log.info(`App version: ${app.getVersion()}`);
+    let pauseIconFileName;
+    if (process.platform === 'win32') {
+        pauseIconFileName = "32x32_pause.png";
+    } else if (process.platform === 'darwin') {
+        pauseIconFileName = "16x16_pause.png";
+    } else {
+        pauseIconFileName = "64x64_pause.png";
+    }
+
+    // @ts-ignore
+    pauseIconUrl = path.join(__static, pauseIconFileName);
+
     log.info(`iconUrl: ${iconUrl}`);
 
     win = new BrowserWindow({
@@ -71,8 +170,20 @@ async function createWindow() {
         icon: iconUrl
     });
 
+
     if (!isDevelopment) {
         win.setMenuBarVisibility(false);
+
+        // TODO: Make production logging level configurable
+        log.transports.file.level = 'info';
+        log.transports.console.level = false;
+
+        if (process.platform === 'darwin') {
+            app.dock.hide();
+        }
+    } else {
+        // No file logging for development
+        log.transports.file.level = false;
     }
 
     heartbeat = new Heartbeat(win);
@@ -110,28 +221,9 @@ async function createWindow() {
     });
 
     tray = new Tray(iconUrl); // TODO: Tray icon is still broken with snap
-    const contextMenu = Menu.buildFromTemplate([
-        {
-            label: 'Show/Hide', click() {
-                if (win.isVisible()) {
-                    win.hide();
-                } else {
-                    win.show();
-                }
-            }
-        },
-        {type: 'separator'},
-        {
-            label: 'Quit', click() {
-                // @ts-ignore
-                app.close = true;
-                log.info("Closing app from quit");
-                app.quit();
-            }
-        },
-    ]);
+
     tray.setToolTip('Timenaut');
-    tray.setContextMenu(contextMenu);
+    switchMenu(menuItems, pauseMenu);
 
     win.on('close', (event: Event) => {
         if (!isDevelopment) { // Overcome vue development hotreloading not closing window
@@ -170,12 +262,12 @@ app.on('activate', async () => {
 
 const lock = app.requestSingleInstanceLock();
 
-if (!lock) {
+if (!lock && !isDevelopment) {
     app.quit()
 } else {
     // @ts-ignore
     app.on('second-instance', (event: Event, commandLine: string, workingDirectory: string) => {
-        if (win) {
+        if (win && !isDevelopment) {
             if (win.isMinimized()) {
                 win.restore();
             }
@@ -212,4 +304,15 @@ if (isDevelopment) {
             app.quit()
         })
     }
+}
+
+function switchMenu(menuItems: any, menu: any) {
+    menuItems[1] = menu;
+    tray.setContextMenu(Menu.buildFromTemplate(menuItems));
+}
+
+function resume() {
+    log.info("Resumed tracking");
+    switchMenu(menuItems, pauseMenu);
+    tray.setImage(iconUrl);
 }

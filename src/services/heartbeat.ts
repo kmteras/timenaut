@@ -1,19 +1,23 @@
-import HeartbeatModel from "../models/heartbeatModel";
-import Database from "../models/database";
+import HeartbeatModel from "@/models/heartbeatModel";
+import Database from "@/services/database";
 import log from 'electron-log'
 import BrowserWindow = Electron.BrowserWindow;
+import Settings from "@/services/settings";
 
 
 // WARNING: changing this file does not restart electron properly in development mode
 export default class Heartbeat {
-    lastHeartbeat?: HeartbeatModel;
-    lastEndTime?: number;
+    private lastHeartbeat: HeartbeatModel | null = null;
+    private lastEndTime: number | null = null;
     running: boolean;
-    timeout: any;
+    private paused: boolean;
+    private timeout: any;
     private win: BrowserWindow;
+    private pauseTimeout: any = null;
 
     constructor(window: BrowserWindow) {
         this.running = true;
+        this.paused = false;
         this.win = window;
     }
 
@@ -22,15 +26,19 @@ export default class Heartbeat {
             this.heartbeat(new HeartbeatModel(BigInt(0))).then();
         } catch (e) {
             // Tough shit, cant really do anything - not a severe problem
-            log.warn(e)
+            log.debug(e)
         }
 
-         if (this.running) {
-             this.timeout = setTimeout(this.start.bind(this), 1000); //TODO: get interval from somewhere
-         }
+        if (this.running) {
+            this.timeout = setTimeout(this.start.bind(this), Settings.getPollTime() * 1000);
+        }
     }
 
-    async heartbeat(heartbeat: HeartbeatModel) {
+    private async heartbeat(heartbeat: HeartbeatModel) {
+        if (this.paused) {
+            return;
+        }
+
         let process = await heartbeat.process.find();
 
         if (process == null) {
@@ -45,7 +53,7 @@ export default class Heartbeat {
 
         log.debug(heartbeat.toString());
 
-        if (this.lastHeartbeat !== undefined) {
+        if (this.lastHeartbeat !== null) {
             if (process.id === this.lastHeartbeat.process.id
                 && window.id == this.lastHeartbeat.window.id
                 && heartbeat.idle == this.lastHeartbeat.idle) {
@@ -56,12 +64,13 @@ export default class Heartbeat {
         }
 
         this.addHeartbeat(heartbeat, this.lastHeartbeat);
+        this.lastEndTime = heartbeat.time;
         this.lastHeartbeat = heartbeat;
         this.win.webContents.send('heartbeat');
     }
 
     private async updateHeartbeat(heartbeat: HeartbeatModel,
-                                  lastHeartbeat: HeartbeatModel, lastEndTime?: number): Promise<number> {
+                                  lastHeartbeat: HeartbeatModel, lastEndTime: number | null): Promise<number> {
         const sql = `
             UPDATE heartbeats
             SET end_time=?
@@ -70,17 +79,23 @@ export default class Heartbeat {
 
         let endTime = heartbeat.time;
 
-        if (lastEndTime !== undefined) {
-            endTime = Math.min(heartbeat.time, lastEndTime + 1000); // TODO: get poll time from settings
+        if (lastEndTime !== null) {
+            let possibleEndTime = lastEndTime + Settings.getPollTime();
+            if (heartbeat.time > possibleEndTime) {
+                endTime = possibleEndTime;
+
+                // Reset the last heartbeat and start again
+                this.lastHeartbeat = null;
+            }
         }
 
         await Database.db.run(sql, [endTime, lastHeartbeat.time]);
         return endTime;
     }
 
-    private async addHeartbeat(heartbeat: HeartbeatModel, lastHeartbeat?: HeartbeatModel) {
-        if (lastHeartbeat !== undefined) {
-            await this.updateHeartbeat(heartbeat, lastHeartbeat)
+    private async addHeartbeat(heartbeat: HeartbeatModel, lastHeartbeat: HeartbeatModel | null) {
+        if (lastHeartbeat !== null) {
+            await this.updateHeartbeat(heartbeat, lastHeartbeat, this.lastEndTime)
         }
 
         const sql = `
@@ -89,5 +104,23 @@ export default class Heartbeat {
         `;
         await Database.db.run(sql,
             [heartbeat.process.id, heartbeat.window.id, heartbeat.time, heartbeat.time, heartbeat.idle])
+    }
+
+    public pause(time: number | null, resumeCallback: () => void) {
+        log.info(`Paused tracking for ${time} seconds`);
+        this.paused = true;
+        if (time !== null) {
+            this.pauseTimeout = setTimeout(() => {
+                this.resume(resumeCallback)
+            }, time * 1000);
+        }
+    }
+
+    public resume(resumeCallback: () => void) {
+        if (this.pauseTimeout != null) {
+            clearTimeout(this.pauseTimeout)
+        }
+        this.paused = false;
+        resumeCallback();
     }
 }
