@@ -37,18 +37,40 @@ export default `
         UNIQUE (type)
     );
 
+    CREATE TABLE IF NOT EXISTS settings
+    (
+        'key'    TEXT NOT NULL PRIMARY KEY,
+        value    TEXT NOT NULL,
+        metadata BOOLEAN DEFAULT FALSE NOT NULL
+    );
+
     INSERT OR
     REPLACE
     INTO productivity_type
     VALUES ('unknown', '#808585', 'false');
 
-    INSERT OR REPLACE INTO productivity_type VALUES ('work', '#84ba5b', 'false');
+    INSERT OR
+    REPLACE
+    INTO productivity_type
+    VALUES ('work', '#84ba5b', 'false');
 
-    INSERT OR REPLACE INTO productivity_type VALUES ('unproductive', '#d35e60', 'false');
+    INSERT OR
+    REPLACE
+    INTO productivity_type
+    VALUES ('unproductive', '#d35e60', 'false');
 
-    INSERT OR REPLACE INTO productivity_type VALUES ('games', '#9067a7', 'false');
+    INSERT OR
+    REPLACE
+    INTO productivity_type
+    VALUES ('games', '#9067a7', 'false');
 
-    INSERT OR REPLACE INTO productivity_type VALUES ('social', '#7293cb', 'false');
+    INSERT OR
+    REPLACE
+    INTO productivity_type
+    VALUES ('social', '#7293cb', 'false');
 
-    INSERT OR REPLACE INTO productivity_type VALUES ('other', '#b4ba5b', 'false');
+    INSERT OR
+    REPLACE
+    INTO productivity_type
+    VALUES ('other', '#b4ba5b', 'false');
 `;

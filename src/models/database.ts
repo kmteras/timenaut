@@ -72,8 +72,12 @@ export default class Database {
 
         params = this.convertTypes(params);
 
-        let statement: Sqlite.Statement = this.db.prepare(sql);
-        statement.run(params);
+        try {
+            let statement: Sqlite.Statement = this.db.prepare(sql);
+            statement.run(params);
+        } catch (e) {
+            log.error(e);
+        }
     }
 
     private convertTypes(params?: ParamTypes[]): ParamTypes[] | undefined {

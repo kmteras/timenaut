@@ -2,6 +2,7 @@ import HeartbeatModel from "../models/heartbeatModel";
 import Database from "../models/database";
 import log from 'electron-log'
 import BrowserWindow = Electron.BrowserWindow;
+import Settings from "@/services/settings";
 
 
 // WARNING: changing this file does not restart electron properly in development mode
@@ -12,7 +13,6 @@ export default class Heartbeat {
     private paused: boolean;
     private timeout: any;
     private win: BrowserWindow;
-    private pollTime: number = 1;
     private pauseTimeout: any = null;
 
     constructor(window: BrowserWindow) {
@@ -30,7 +30,7 @@ export default class Heartbeat {
         }
 
         if (this.running) {
-            this.timeout = setTimeout(this.start.bind(this), this.pollTime * 1000); //TODO: get interval from somewhere
+            this.timeout = setTimeout(this.start.bind(this), Settings.getPollTime() * 1000);
         }
     }
 
@@ -80,8 +80,7 @@ export default class Heartbeat {
         let endTime = heartbeat.time;
 
         if (lastEndTime !== null) {
-            // TODO: get poll time from settings
-            let possibleEndTime = lastEndTime + this.pollTime;
+            let possibleEndTime = lastEndTime + Settings.getPollTime();
             if (heartbeat.time > possibleEndTime) {
                 endTime = possibleEndTime;
 

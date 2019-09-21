@@ -3,9 +3,23 @@
         <div class="section">
             <div class="settingsFlex">
                 <div class="settingsOption">
-                    <label class="checkbox">
-                        <input type="checkbox" @change="toggleAutostart(event)" :checked="this.autoStartup">
+                    <label>
+                        <input type="checkbox" @change="toggleAutostart" :checked="this.autoStartup">
                         Start on system startup
+                    </label>
+                </div>
+                <div class="settingsOption">
+                    <label>
+                        <input type="number" min="1" max="300" @change="changePollTime"
+                               :value="this.getSetting('heartbeatPollTime')">
+                        Poll time in seconds
+                    </label>
+                </div>
+                <div class="settingsOption">
+                    <label>
+                        <input type="number" min="10" max="3600" @change="changeIdleTime"
+                               :value="this.getSetting('heartbeatIdleTime')">
+                        Idle time in seconds
                     </label>
                 </div>
                 <span class="settingsFill"></span>
@@ -24,8 +38,16 @@
     export default class Settings extends Vue implements Updateable {
         autoStartup: boolean = this.hasAutoStart();
 
-        toggleAutostart() {
+        protected toggleAutostart() {
             this.autoStartup = ipcRenderer.sendSync("autostart-toggle", !this.autoStartup);
+        }
+
+        protected changePollTime(event: any) {
+            this.setSetting('heartbeatPollTime', event.target.value);
+        }
+
+        protected changeIdleTime(event: any) {
+            this.setSetting('changeIdleTime', event.target.value);
         }
 
         private hasAutoStart(): boolean {
@@ -35,8 +57,16 @@
         update(): void {
         }
 
-        getVersion(): string {
+        protected getVersion(): string {
             return ipcRenderer.sendSync('get-version');
+        }
+
+        protected getSetting(key: string): string {
+            return ipcRenderer.sendSync('get-setting', key);
+        }
+
+        protected setSetting(key: string, value: string) {
+            return ipcRenderer.sendSync('set-setting', key, value);
         }
     }
 </script>
@@ -69,6 +99,7 @@
 
     .settingsOption {
         justify-content: flex-start;
+        margin-bottom: 10px;
     }
 
     .settingsVersion {

@@ -9,14 +9,14 @@ import AutoUpdater from "./services/autoUpdater";
 import AutoLaunch from 'auto-launch';
 import path from 'path';
 import log from 'electron-log'
-
+import Settings from "@/services/settings";
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win: any;
-let db: Database;
+let db = new Database();
 let tray: Tray;
 let heartbeat: Heartbeat;
 let autoLauncher: AutoLaunch;
@@ -106,15 +106,18 @@ const resumeMenu = {
 };
 
 async function createWindow() {
-    // Create the browser window.
-    db = new Database();
-    await db.connect();
-    await db.update();
+    log.info(`App version: ${app.getVersion()}`);
 
+    // Create the browser window.
     let autostartOptions: any = {
         name: "timechart",
         hidden: true
     };
+
+    await db.connect();
+    await db.update();
+
+    await Settings.init();
 
     // TODO: remove these hacks after electron-updater fixes appimage
     if (process.env.DESKTOPINTEGRATION === 'AppImageLauncher') {
@@ -156,7 +159,6 @@ async function createWindow() {
     // @ts-ignore
     pauseIconUrl = path.join(__static, pauseIconFileName);
 
-    log.info(`App version: ${app.getVersion()}`);
     log.info(`iconUrl: ${iconUrl}`);
 
     win = new BrowserWindow({
