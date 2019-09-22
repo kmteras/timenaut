@@ -1,6 +1,6 @@
 <script lang="ts">
     import {Doughnut} from 'vue-chartjs';
-    import {ipcRenderer} from 'electron';
+    import ipcRenderer from '@/components/ipcRenderer';
 
     import {Component, Mixins, Prop, Provide, Watch} from 'vue-property-decorator';
 

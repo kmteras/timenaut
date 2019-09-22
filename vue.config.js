@@ -1,6 +1,9 @@
+const path = require('path');
+
 module.exports = {
     pluginOptions: {
         electronBuilder: {
+            chainWebpackMainProcess: chainWebpackMainProcess,
             externals: ['better-sqlite3'],
             mainProcessWatch: ['src/**/*.ts', 'src/**/*.vue'],
             builderOptions: {
@@ -30,3 +33,7 @@ module.exports = {
         }
     }
 };
+
+function chainWebpackMainProcess(config) {
+    config.resolve.alias.set('@', path.join(__dirname, 'src'))
+}

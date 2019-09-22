@@ -1,7 +1,8 @@
 import activeWin from "active-win";
-import ProcessModel from "./processModel";
-import WindowModel from "./windowModel";
+import ProcessModel from "@/models/processModel";
+import WindowModel from "@/models/windowModel";
 import {powerMonitor} from "electron"
+import Settings from "@/services/settings";
 
 
 export default class HeartbeatModel {
@@ -15,7 +16,7 @@ export default class HeartbeatModel {
         this.time = Math.floor(new Date().getTime() / 1000);
         const windowInfo = activeWin.sync();
 
-        this.idle = powerMonitor.getSystemIdleTime() > 300; // TODO get idle time from settings
+        this.idle = powerMonitor.getSystemIdleTime() > Settings.getIdleTime();
 
         if (windowInfo !== undefined) {
             this.process = new ProcessModel(windowInfo.owner.path, windowInfo.owner.name);

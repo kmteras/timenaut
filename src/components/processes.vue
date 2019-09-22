@@ -90,10 +90,10 @@
 </template>
 
 <script lang="ts">
-    import {Component, Provide, Vue} from 'vue-property-decorator';
-    import {ipcRenderer} from 'electron';
+    import {Component, Vue} from 'vue-property-decorator';
+    import ipcRenderer from '@/components/ipcRenderer';
     import ContentPage from "@/components/contentPage.vue";
-    import {Updateable} from "@/components/Updateable";
+    import Updatable from "@/components/updatable";
 
     declare interface ProcessData {
         id: number,
@@ -118,7 +118,7 @@
     }
 
     @Component
-    export default class Processes extends Vue implements ContentPage, Updateable {
+    export default class Processes extends Vue implements ContentPage, Updatable {
         selectedProcess: ProcessData | null = null;
         selectedWindow: WindowData | null = null;
         selectedProcessId: number = -1;

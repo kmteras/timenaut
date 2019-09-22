@@ -1,6 +1,6 @@
 <template>
     <div class="navigationItem">
-        <img alt="Timechart logo" src="../assets/icon.png">
+        <img alt="Timechart logo" src="../../assets/icon.png">
     </div>
 </template>
 

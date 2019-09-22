@@ -1,20 +1,23 @@
-import HeartbeatModel from "../models/heartbeatModel";
-import Database from "../models/database";
+import HeartbeatModel from "@/models/heartbeatModel";
+import Database from "@/services/database";
 import log from 'electron-log'
 import BrowserWindow = Electron.BrowserWindow;
+import Settings from "@/services/settings";
 
 
 // WARNING: changing this file does not restart electron properly in development mode
 export default class Heartbeat {
-    lastHeartbeat: HeartbeatModel | null = null;
-    lastEndTime: number | null = null;
+    private lastHeartbeat: HeartbeatModel | null = null;
+    private lastEndTime: number | null = null;
     running: boolean;
-    timeout: any;
+    private paused: boolean;
+    private timeout: any;
     private win: BrowserWindow;
-    private pollTime: number = 1;
+    private pauseTimeout: any = null;
 
     constructor(window: BrowserWindow) {
         this.running = true;
+        this.paused = false;
         this.win = window;
     }
 
@@ -23,15 +26,19 @@ export default class Heartbeat {
             this.heartbeat(new HeartbeatModel(BigInt(0))).then();
         } catch (e) {
             // Tough shit, cant really do anything - not a severe problem
-            log.warn(e)
+            log.debug(e)
         }
 
         if (this.running) {
-            this.timeout = setTimeout(this.start.bind(this), this.pollTime * 1000); //TODO: get interval from somewhere
+            this.timeout = setTimeout(this.start.bind(this), Settings.getPollTime() * 1000);
         }
     }
 
-    async heartbeat(heartbeat: HeartbeatModel) {
+    private async heartbeat(heartbeat: HeartbeatModel) {
+        if (this.paused) {
+            return;
+        }
+
         let process = await heartbeat.process.find();
 
         if (process == null) {
@@ -73,8 +80,7 @@ export default class Heartbeat {
         let endTime = heartbeat.time;
 
         if (lastEndTime !== null) {
-            // TODO: get poll time from settings
-            let possibleEndTime = lastEndTime + this.pollTime;
+            let possibleEndTime = lastEndTime + Settings.getPollTime() + 1;
             if (heartbeat.time > possibleEndTime) {
                 endTime = possibleEndTime;
 
@@ -98,5 +104,23 @@ export default class Heartbeat {
         `;
         await Database.db.run(sql,
             [heartbeat.process.id, heartbeat.window.id, heartbeat.time, heartbeat.time, heartbeat.idle])
+    }
+
+    public pause(time: number | null, resumeCallback: () => void) {
+        log.info(`Paused tracking for ${time} seconds`);
+        this.paused = true;
+        if (time !== null) {
+            this.pauseTimeout = setTimeout(() => {
+                this.resume(resumeCallback)
+            }, time * 1000);
+        }
+    }
+
+    public resume(resumeCallback: () => void) {
+        if (this.pauseTimeout != null) {
+            clearTimeout(this.pauseTimeout)
+        }
+        this.paused = false;
+        resumeCallback();
     }
 }
