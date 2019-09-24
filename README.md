@@ -1,5 +1,9 @@
 # timenaut
 
+## Downloading  
+
+The latest version is downloadable on [GitHub](https://github.com/kmteras/timenaut/releases/latest) or on the [website](https://timenaut.app).
+
 ## Installing
 
 For the optimal user experience with Linux using [AppImageLauncher](https://github.com/TheAssassin/AppImageLauncher) is the preferred way to install the AppImage.
