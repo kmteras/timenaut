@@ -1,5 +1,9 @@
 # timenaut
 
+![dashboard](/docs/dashboard.png)
+
+![processes](/docs/processes.png)
+
 ## Downloading  
 
 The latest version is downloadable on [GitHub](https://github.com/kmteras/timenaut/releases/latest) or on the [website](https://timenaut.app).
