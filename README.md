@@ -1,4 +1,4 @@
-# timenaut
+# Timenaut
 
 ![dashboard](/docs/dashboard.png)
 
