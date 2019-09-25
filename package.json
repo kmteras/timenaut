@@ -1,6 +1,6 @@
 {
   "name": "timenaut",
-  "version": "0.0.9-snapshot",
+  "version": "0.0.10-snapshot",
   "author": "Karl Martin Teras",
   "description": "Timenaut is software to monitor your computer usage and give you feedback to help you improve.",
   "private": true,
