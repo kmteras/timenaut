@@ -26,7 +26,7 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           npm install -g node-gyp@5.0.3
-          ; set npm_config_node_gyp=C:\npm\prefix\node_modules\node-gyp\bin\node-gyp.js
+          & set npm_config_node_gyp=C:\npm\prefix\node_modules\node-gyp\bin\node-gyp.js
       - name: npm install
         run: npm ci --prefer-offline --no-audit
       - name: npm lint
