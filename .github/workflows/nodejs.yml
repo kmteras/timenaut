@@ -20,11 +20,11 @@ jobs:
           RUNNER_CONTEXT: ${{ toJson(runner) }}
         run: echo "$RUNNER_CONTEXT"
       - name: Windows build tools
-        if: runner.os == 'Windows DISABLE'
-        run: npm install --vs2015 --global windows-build-tools
-      - name: Download working node gyp
         if: runner.os == 'Windows'
-        run: npm install node-gyp@5.0.3
+        run: npm install --vs2015 --global windows-build-tools
+      - name: Download newer npm
+        if: runner.os == 'Windows'
+        run: npm install npm@next -g
       - name: npm install
         run: npm ci --prefer-offline --no-audit
       - name: npm lint
