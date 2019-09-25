@@ -14,7 +14,7 @@
         </div>
 
         <div class="section" id="pieSection">
-            <daily-pie-chart :height="220" :width="200" :date="date" ref="pieChart"/>
+            <daily-pie-chart :height="200" :width="200" :date="date" ref="pieChart"/>
         </div>
 
         <div class="section" id="barSection">
@@ -83,8 +83,9 @@
     #dashboard {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        grid-template-rows: 40px 1fr 1fr;
+        grid-template-rows: 40px 52% 40%;
         height: 100%;
+        margin-left: 10px;
     }
 
     #dateSelectionSection {
@@ -109,15 +110,15 @@
     }
 
     .section {
-        padding: 10px;
-        margin: 10px;
+        padding: 10px 10px 0 10px;
+        margin: 0 10px 10px 0;
         border-radius: 10px;
         box-shadow: 5px 5px 5px grey;
         background-color: white;
     }
 
     .topSection {
-        margin: 5px 10px 5px 10px;
+        margin: 10px 10px 10px 10px;
     }
 
     .is-vertical-center {
