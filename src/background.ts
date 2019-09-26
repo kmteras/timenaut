@@ -10,6 +10,7 @@ import AutoLaunch from 'auto-launch';
 import path from 'path';
 import log from 'electron-log'
 import Settings from "@/services/settings";
+import {scheduleJob} from 'node-schedule'
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -48,6 +49,12 @@ let menuItems = [
     {},
     {
         type: 'separator'
+    },
+    {
+        label: "Check for updates",
+        click() {
+            autoUpdaterService.check();
+        }
     },
     {
         label: 'Quit',
@@ -126,6 +133,8 @@ async function createWindow() {
     }
 
     autoUpdaterService.check();
+
+    scheduleJob("* * 14 * *", autoUpdaterService.check);
 
     autoLauncher = new AutoLaunch(autostartOptions);
 
