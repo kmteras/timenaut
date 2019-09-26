@@ -1,6 +1,9 @@
 name: Mac release
 
-on: [release]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   build:
