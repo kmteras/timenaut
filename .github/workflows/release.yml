@@ -1,0 +1,41 @@
+name: Mac release
+
+on: [release]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest]
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js 10.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 10.x
+      - name: Dump runner context
+        env:
+          RUNNER_CONTEXT: ${{ toJson(runner) }}
+        run: echo "$RUNNER_CONTEXT"
+      - name: Windows build tools
+        if: runner.os == 'Windows'
+        run: npm install --vs2015 --global windows-build-tools
+      - name: Download newer npm
+        if: runner.os == 'Windows'
+        run: npm install npm@next -g
+      - name: npm install
+        run: npm ci --prefer-offline --no-audit
+      - name: npm lint
+        run: npm run lint
+      - name: npm build
+        run: npm run build
+      - name: Release
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+          CSC_LINK: ${{ secrets.CSC_LINK_MAC }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD_MAC }}
+        run: npm run release
