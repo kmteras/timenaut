@@ -9,10 +9,15 @@ module.exports = {
             builderOptions: {
                 productName: "Timenaut",
                 appId: "app.timenaut.timenaut",
+                afterSign: "build/afterSignHook.js",
                 linux: {
                     category: "Utility",
                     icon: "build/icons/",
                     target: ["AppImage"]
+                },
+                mac: {
+                    hardenedRuntime: true,
+                    entitlements: "build/timenaut.entitlements"
                 },
                 fileAssociations: [
                     {
