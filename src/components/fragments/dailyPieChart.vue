@@ -1,6 +1,7 @@
 <script lang="ts">
     import {Doughnut} from 'vue-chartjs';
     import ipcRenderer from '@/components/ipcRenderer';
+    import {DateRange} from "v-calendar";
 
     import {Component, Mixins, Prop, Provide, Watch} from 'vue-property-decorator';
 
@@ -8,6 +9,7 @@
     export default class DailyPieChart extends Mixins(Doughnut) {
         @Provide() data: { datasets: {}, labels: {} } = this.getData();
         @Prop() date?: Date;
+        @Prop() range?: DateRange;
 
         mounted() {
             this.drawChart(true);
@@ -77,10 +79,10 @@
         }
 
         getData() {
-            return ipcRenderer.sendSync('get-pie-data', this.date!.getTime());
+            return ipcRenderer.sendSync('get-pie-data', this.range!.start.getTime(), this.range!.end.getTime());
         }
 
-        @Watch("date")
+        @Watch("range")
         onDateChange() {
             this.update()
         }

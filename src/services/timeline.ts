@@ -47,8 +47,8 @@ export default class Timeline {
                   AND hb.end_time < ?
                 GROUP BY ROUND(hb.start_time / (60 * 10), 0) * (60 * 10),
                          type_`, [
-                date.getTime() / 1000 + date.getTimezoneOffset() * 60 * 60, // TODO: ugh
-                date.getTime() / 1000 + 24 * 60 * 60  // TODO: fix time
+                date.getTime() / 1000,
+                date.getTime() / 1000 + 24 * 60 * 60
             ]);
 
             let labels = [];
@@ -64,7 +64,7 @@ export default class Timeline {
 
             let leftoverTime: { [id: string]: number } = {};
 
-            const today = date.toISOString().substr(0, 10);
+            const today = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
 
             // TODO: fix all this shit
 

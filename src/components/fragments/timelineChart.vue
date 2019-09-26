@@ -1,6 +1,7 @@
 <script lang="ts">
     import {Bar} from 'vue-chartjs';
     import ipcRenderer from '@/components/ipcRenderer';
+    import {DateRange} from "v-calendar";
 
     import {Component, Mixins, Prop, Provide, Watch} from 'vue-property-decorator';
 
@@ -8,6 +9,7 @@
     export default class Timeline extends Mixins(Bar) {
         @Provide() data: object = this.getTimelineData();
         @Prop() date?: Date;
+        @Prop() range?: DateRange;
 
         mounted() {
             this.drawChart(true);
@@ -50,10 +52,10 @@
         }
 
         getTimelineData() {
-            return ipcRenderer.sendSync('get-timeline-data', this.date!.getTime());
+            return ipcRenderer.sendSync('get-timeline-data', this.range!.start.getTime());
         }
 
-        @Watch("date")
+        @Watch("range")
         onDateChange() {
             this.update()
         }

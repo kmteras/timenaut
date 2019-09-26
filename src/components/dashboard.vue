@@ -1,20 +1,28 @@
 <template>
     <div id="dashboard">
         <div id="dateSelectionSection" class="topSection is-vertical-center">
-            <span class="is-pulled-left">{{date.toDateString()}}</span>
-            <div class="is-pulled-right">
-                <button class="button" v-on:click="prevDate">&#8592;</button>
-                <button class="button" v-on:click="today">Today</button>
-                <button class="button" :class="{'hidden': hasNextDate()}" v-on:click="nextDate">&#8594;</button>
+            <div class="is-pulled-left">
+                <button class="button is-pulled-left" @click="shiftRangeLeft">&#8592;</button>
+                <date-picker
+                        class="is-pulled-left"
+                        mode="range"
+                        v-model="range"
+                        :value="new Date()"
+                        :first-day-of-week="2"
+                        :max-date="getMaxDate()"
+                />
+                <button class="button" :class="{'hidden': hasNextDate()}" @click="shiftRangeRight">&#8594;</button>
             </div>
+
+            <button class="is-pulled-right button" @click="today">Today</button>
         </div>
 
         <div class="section" id="timelineSection">
-            <timeline :height="250" :date="date" ref="timeline"/>
+            <timeline :height="250" :range="range" ref="timeline"/>
         </div>
 
         <div class="section" id="pieSection">
-            <daily-pie-chart :height="200" :width="200" :date="date" ref="pieChart"/>
+            <daily-pie-chart :height="200" :width="200" :range="range" ref="pieChart"/>
         </div>
 
         <div class="section" id="barSection">
@@ -28,45 +36,50 @@
     import Timeline from '@/components/fragments/timelineChart.vue';
     import DailyPieChart from '@/components/fragments/dailyPieChart.vue';
     import Updatable from "@/components/updatable";
+    import {Calendar, DatePicker, DateRange} from "v-calendar";
+    import {getNextDate, getPrevDate, getToday} from '@/util/timeUtil'
 
     @Component({
         components: {
             Timeline,
-            DailyPieChart
+            DailyPieChart,
+            Calendar,
+            DatePicker
         }
     })
     export default class Dashboard extends Vue implements Updatable {
-        @Provide() date: Date = this.getToday();
+        @Provide() range: DateRange = {
+            start: getToday(),
+            end: getToday()
+        };
 
-        prevDate() {
-            this.date = this.getPrevDate();
+        shiftRangeLeft() {
+            this.range = {
+                start: getPrevDate(this.range.start),
+                end: getPrevDate(this.range.end)
+            };
         }
 
         today() {
-            this.date = this.getToday();
+            this.range = {
+                start: getToday(),
+                end: getToday()
+            };
         }
 
-        nextDate() {
-            this.date = this.getNextDate();
+        shiftRangeRight() {
+            this.range = {
+                start: getNextDate(this.range.start),
+                end: getNextDate(this.range.end)
+            };
         }
 
         hasNextDate(): boolean {
-            return this.getNextDate() > this.getToday();
+            return getNextDate(this.range.end) > getToday();
         }
 
-        // TODO: get prev matching date from databse
-        private getPrevDate(): Date {
-            return new Date(this.date.getTime() - 24 * 60 * 60 * 1000);
-        }
-
-        private getToday(): Date {
-            let date: Date = new Date();
-            return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-        }
-
-        // TODO: get next matching date from databse
-        private getNextDate(): Date {
-            return new Date(this.date.getTime() + 24 * 60 * 60 * 1000);
+        getMaxDate(): Date {
+            return getToday();
         }
 
         update(): void {
@@ -118,7 +131,7 @@
     }
 
     .topSection {
-        margin: 10px 10px 10px 10px;
+        margin: 10px 10px 10px 0;
     }
 
     .is-vertical-center {
@@ -129,5 +142,9 @@
 
     .hidden {
         visibility: hidden;
+    }
+
+    button {
+        height: 38px;
     }
 </style>
