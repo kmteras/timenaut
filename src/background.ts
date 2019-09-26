@@ -51,6 +51,12 @@ let menuItems = [
         type: 'separator'
     },
     {
+        label: "Check for updates",
+        click() {
+            autoUpdaterService.check();
+        }
+    },
+    {
         label: 'Quit',
         click() {
             // @ts-ignore
