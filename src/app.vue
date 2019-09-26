@@ -15,7 +15,7 @@
     import Updatable from "@/components/updatable";
 
     interface PageComponent {
-        new (): Updatable;
+        new(): Updatable;
     }
 
     type NavigationItem = {
@@ -99,4 +99,33 @@
     .bold {
         font-weight: bold;
     }
+
+    input[type=text],
+    input[type=number],
+    input[type=password]
+    {
+        padding-top: 8px;
+        padding-bottom: 8px;
+        border-width: 1px;
+        border-radius: 4px;
+        border-color: #cbd5e0;
+        border-style: solid;
+        line-height: 1.25;
+        color: #2d3748;
+        font-size: 16px;
+        padding-left: 12px;
+        padding-right: 12px;
+        margin-left: 10px;
+        box-shadow: 0 1px 3px 0 rgba(0,0,0,.1), 0 1px 2px 0 rgba(0,0,0,.06);
+        height: 35px;
+    }
+
+    input[type=checkbox]{
+        margin-left: 12px;
+        position: absolute;
+        cursor: pointer;
+        width: 18px;
+        height: 18px;
+    }
+
 </style>

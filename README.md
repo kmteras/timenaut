@@ -1,4 +1,8 @@
-# timenaut
+# Timenaut
+
+![dashboard](/docs/dashboard.png)
+
+![processes](/docs/processes.png)
 
 ## Downloading  
 
