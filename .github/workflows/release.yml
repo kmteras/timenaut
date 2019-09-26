@@ -1,6 +1,6 @@
-name: Node CI
+name: Mac release
 
-on: [release]
+on: [psuh]
 
 jobs:
   build:
