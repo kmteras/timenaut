@@ -12,3 +12,7 @@ export function getToday(): Date {
     date.setHours(0);
     return date;
 }
+
+export function getDayLength(): number {
+    return 24 * 60 * 60;
+}

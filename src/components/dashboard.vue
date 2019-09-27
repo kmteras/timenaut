@@ -1,20 +1,10 @@
 <template>
     <div id="dashboard">
         <div id="dateSelectionSection" class="topSection is-vertical-center">
-            <div class="is-pulled-left">
-                <button class="button is-pulled-left" @click="shiftRangeLeft">&#8592;</button>
-                <date-picker
-                        class="is-pulled-left"
-                        mode="range"
-                        v-model="range"
-                        :value="new Date()"
-                        :first-day-of-week="2"
-                        :max-date="getMaxDate()"
-                />
-                <button class="button" :class="{'hidden': hasNextDate()}" @click="shiftRangeRight">&#8594;</button>
-            </div>
-
-            <button class="is-pulled-right button" @click="today">Today</button>
+            <date-selection
+                    :range="range"
+                    @updateRange="updateRange"
+            />
         </div>
 
         <div class="section" id="timelineSection">
@@ -32,54 +22,27 @@
 </template>
 
 <script lang="ts">
-    import {Component, Provide, Vue} from 'vue-property-decorator';
+    import {Component, Prop, Vue} from 'vue-property-decorator';
     import Timeline from '@/components/fragments/timelineChart.vue';
     import DailyPieChart from '@/components/fragments/dailyPieChart.vue';
+    import DateSelection from '@/components/fragments/dateSelection.vue';
     import Updatable from "@/components/updatable";
     import {Calendar, DatePicker, DateRange} from "v-calendar";
-    import {getNextDate, getPrevDate, getToday} from '@/util/timeUtil'
 
     @Component({
         components: {
             Timeline,
             DailyPieChart,
+            DateSelection,
             Calendar,
             DatePicker
         }
     })
     export default class Dashboard extends Vue implements Updatable {
-        @Provide() range: DateRange = {
-            start: getToday(),
-            end: getToday()
-        };
+        @Prop() range?: DateRange;
 
-        shiftRangeLeft() {
-            this.range = {
-                start: getPrevDate(this.range.start),
-                end: getPrevDate(this.range.end)
-            };
-        }
-
-        today() {
-            this.range = {
-                start: getToday(),
-                end: getToday()
-            };
-        }
-
-        shiftRangeRight() {
-            this.range = {
-                start: getNextDate(this.range.start),
-                end: getNextDate(this.range.end)
-            };
-        }
-
-        hasNextDate(): boolean {
-            return getNextDate(this.range.end) > getToday();
-        }
-
-        getMaxDate(): Date {
-            return getToday();
+        updateRange(range: DateRange) {
+            this.$emit('updateRange', range);
         }
 
         update(): void {
