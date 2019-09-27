@@ -1,7 +1,8 @@
 <template>
     <div class="date-selection">
         <div class="is-pulled-left">
-            <button class="button is-pulled-left" @click="shiftRangeLeft">&#8592;</button>
+            <button class="button is-pulled-left" :class="{'hidden': hasPrevDate()}" @click="shiftRangeLeft">&#8592;
+            </button>
             <date-picker
                     class="is-pulled-left"
                     mode="range"
@@ -55,6 +56,10 @@
 
         updateParent(range: DateRange) {
             this.$emit('updateRange', range);
+        }
+
+        hasPrevDate(): boolean {
+            return this.range!.start <= this.getFirstDate();
         }
 
         hasNextDate(): boolean {
