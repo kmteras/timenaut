@@ -4,10 +4,16 @@ import log from 'electron-log'
 
 
 export default class Timeline {
+    private number: number | null = null;
+
     constructor() {
         ipcMain.on('get-timeline-data', async (event: any, time: number) => {
             event.returnValue = await this.getData(new Date(time));
-        })
+        });
+
+        ipcMain.on('get-first-date', async (event: any) => {
+            event.returnValue = await this.getFirstDate();
+        });
     }
 
     private static valuesSum(values: { [id: string]: number }): number {
@@ -16,6 +22,14 @@ export default class Timeline {
             total += values[key];
         }
         return total;
+    }
+
+    async getFirstDate(): Promise<number | null> {
+        if (this.number === null) {
+            this.number = await Database.db.one(`SELECT MIN(start_time) as start_time
+                                                 FROM heartbeats`)['start_time']
+        }
+        return this.number;
     }
 
     async getData(date: Date) {

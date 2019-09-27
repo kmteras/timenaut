@@ -8,6 +8,7 @@
                     @input="updateParent"
                     :value="range"
                     :first-day-of-week="2"
+                    :min-date="getFirstDate()"
                     :max-date="getMaxDate()"
             />
             <button class="button" :class="{'hidden': hasNextDate()}" @click="shiftRangeRight">&#8594;</button>
@@ -18,6 +19,7 @@
 
 <script lang="ts">
     import {Component, Prop, Vue} from 'vue-property-decorator';
+    import ipcRenderer from '@/components/ipcRenderer';
     import {Calendar, DatePicker, DateRange} from "v-calendar";
     import {getNextDate, getPrevDate, getToday} from '@/util/timeUtil'
 
@@ -61,6 +63,14 @@
 
         getMaxDate(): Date {
             return getToday();
+        }
+
+        getFirstDate(): Date {
+            let time = ipcRenderer.sendSync('get-first-date');
+            if (time === null) {
+                return getToday();
+            }
+            return new Date(time * 1000);
         }
     }
 </script>
