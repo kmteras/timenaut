@@ -60,7 +60,7 @@ export default class ProcessGraph {
                 }
 
                 if (result.path.search(regex) < 0) {
-                    log.warn(result.path);
+                    log.warn(`Could not regex process name from ${result.path}`);
                     continue;
                 }
 
