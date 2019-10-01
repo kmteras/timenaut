@@ -126,7 +126,7 @@ export default class ProcessGraph {
             });
 
             return {
-                labels: Array.from(labels).slice(0, 10),
+                labels: Array.from(labels).slice(0, 8),
                 datasets: datasets
             };
         } catch (e) {
