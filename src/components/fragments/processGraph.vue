@@ -41,6 +41,7 @@
                         xAxes: [{
                             ticks: {
                                 min: 0,
+                                stepSize: 600,
                                 callback: function(value: number) {
                                     return formatSeconds(value);
                                 }
