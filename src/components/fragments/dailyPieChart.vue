@@ -1,13 +1,16 @@
 <script lang="ts">
     import {Doughnut} from 'vue-chartjs';
     import ipcRenderer from '@/components/ipcRenderer';
+    import {DateRange} from "v-calendar";
 
     import {Component, Mixins, Prop, Provide, Watch} from 'vue-property-decorator';
+    import {formatSeconds} from "@/util/timeUtil";
 
     @Component
     export default class DailyPieChart extends Mixins(Doughnut) {
         @Provide() data: { datasets: {}, labels: {} } = this.getData();
         @Prop() date?: Date;
+        @Prop() range?: DateRange;
 
         mounted() {
             this.drawChart(true);
@@ -59,17 +62,7 @@
                         callbacks: {
                             label: (t: any, d: any) => {
                                 let totalSeconds = d.datasets[t.datasetIndex].data[t.index];
-                                let hours = Math.floor(totalSeconds / 60 / 60);
-                                let minutes = Math.floor((totalSeconds - hours * 60 * 60) / 60);
-                                let seconds = totalSeconds - hours * 60 * 60 - minutes * 60;
-
-                                if (hours > 0) {
-                                    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
-                                } else if (minutes > 0) {
-                                    return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
-                                } else {
-                                    return `${seconds.toString().padStart(2, "0")}`
-                                }
+                                return formatSeconds(totalSeconds);
                             }
                         }
                     }
@@ -77,10 +70,10 @@
         }
 
         getData() {
-            return ipcRenderer.sendSync('get-pie-data', this.date!.getTime());
+            return ipcRenderer.sendSync('get-pie-data', this.range!.start.getTime(), this.range!.end.getTime());
         }
 
-        @Watch("date")
+        @Watch("range")
         onDateChange() {
             this.update()
         }

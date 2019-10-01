@@ -1,12 +1,13 @@
 <script lang="ts">
-    import {Bar} from 'vue-chartjs';
+    import {Line} from 'vue-chartjs';
     import ipcRenderer from '@/components/ipcRenderer';
     import {DateRange} from "v-calendar";
 
     import {Component, Mixins, Prop, Provide, Watch} from 'vue-property-decorator';
+    import {formatSeconds} from "@/util/timeUtil";
 
     @Component
-    export default class Timeline extends Mixins(Bar) {
+    export default class LongTimeline extends Mixins(Line) {
         @Provide() data: object = this.getTimelineData();
         @Prop() date?: Date;
         @Prop() range?: DateRange;
@@ -34,25 +35,34 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        xAxes: [{
-                            stacked: true,
-                            ticks: {
-                                maxTicksLimit: 25
-                            }
-                        }],
                         yAxes: [{
                             stacked: true,
                             ticks: {
                                 min: 0,
-                                max: 600
+                                maxTicksLimit: 3600,
+                                callback: function(value: number) {
+                                    return formatSeconds(value);
+                                }
                             }
                         }]
+                    },
+                    tooltips: {
+                        callbacks: {
+                            label: (t: any, d: any) => {
+                                let totalSeconds = d.datasets[t.datasetIndex].data[t.index];
+                                if (totalSeconds == 0) {
+                                    return null;
+                                }
+
+                                return formatSeconds(totalSeconds);
+                            }
+                        }
                     }
                 });
         }
 
         getTimelineData() {
-            return ipcRenderer.sendSync('get-timeline-data', this.range!.start.getTime());
+            return ipcRenderer.sendSync('get-daily-timeline-data', this.range!.start.getTime(), this.range!.end.getTime());
         }
 
         @Watch("range")

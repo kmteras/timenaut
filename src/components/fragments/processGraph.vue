@@ -1,12 +1,13 @@
 <script lang="ts">
-    import {Bar} from 'vue-chartjs';
+    import {HorizontalBar} from 'vue-chartjs';
     import ipcRenderer from '@/components/ipcRenderer';
     import {DateRange} from "v-calendar";
 
     import {Component, Mixins, Prop, Provide, Watch} from 'vue-property-decorator';
+    import {formatSeconds} from "@/util/timeUtil";
 
     @Component
-    export default class Timeline extends Mixins(Bar) {
+    export default class ProcessGraph extends Mixins(HorizontalBar) {
         @Provide() data: object = this.getTimelineData();
         @Prop() date?: Date;
         @Prop() range?: DateRange;
@@ -29,30 +30,45 @@
                         duration: animation ? 1000 : 0
                     },
                     hover: {
+                        mode: 'nearest',
+                        intersect: true,
                         animationDuration: animation ? 400 : 0
                     },
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        xAxes: [{
-                            stacked: true,
-                            ticks: {
-                                maxTicksLimit: 25
-                            }
-                        }],
                         yAxes: [{
-                            stacked: true,
+                            stacked: true
+                        }],
+                        xAxes: [{
                             ticks: {
                                 min: 0,
-                                max: 600
+                                stepSize: 600,
+                                callback: function(value: number) {
+                                    return formatSeconds(value);
+                                }
                             }
                         }]
+                    },
+                    tooltips: {
+                        callbacks: {
+                            label: (t: any, d: any) => {
+                                let totalSeconds = d.datasets[t.datasetIndex].data[t.index];
+                                if (totalSeconds == 0) {
+                                    return null;
+                                }
+
+                                return formatSeconds(totalSeconds);
+                            }
+                        }
                     }
                 });
         }
 
         getTimelineData() {
-            return ipcRenderer.sendSync('get-timeline-data', this.range!.start.getTime());
+            return ipcRenderer.sendSync('get-process-graph-data',
+                this.range!.start.getTime(),
+                this.range!.end.getTime());
         }
 
         @Watch("range")

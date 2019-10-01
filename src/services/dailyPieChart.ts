@@ -5,12 +5,12 @@ import log from "electron-log";
 
 export default class DailyPieChart {
     constructor() {
-        ipcMain.on('get-pie-data', async (event: any, time: number, ...args: any) => {
-            event.returnValue = await this.getData(new Date(time));
+        ipcMain.on('get-pie-data', async (event: any, startTime: number, endTime) => {
+            event.returnValue = await this.getData(startTime, endTime);
         })
     }
 
-    async getData(date: Date) {
+    async getData(startTime: number, endTime: number) {
         try {
             let results: any = await Database.db.all(`
                 SELECT SUM(difference) as total_time,
@@ -41,8 +41,8 @@ export default class DailyPieChart {
                 GROUP BY _type
                 ORDER BY SUM(difference) DESC
             `, [
-                date.getTime() / 1000 + date.getTimezoneOffset() * 60,
-                date.getTime() / 1000 + 24 * 60 * 60 + date.getTimezoneOffset() * 60
+                startTime / 1000,
+                endTime / 1000 + 24 * 60 * 60
             ]);
 
             return {
