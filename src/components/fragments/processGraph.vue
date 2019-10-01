@@ -4,6 +4,7 @@
     import {DateRange} from "v-calendar";
 
     import {Component, Mixins, Prop, Provide, Watch} from 'vue-property-decorator';
+    import {formatSeconds} from "@/util/timeUtil";
 
     @Component
     export default class ProcessGraph extends Mixins(HorizontalBar) {
@@ -36,7 +37,27 @@
                     scales: {
                         yAxes: [{
                             stacked: true
+                        }],
+                        xAxes: [{
+                            ticks: {
+                                min: 0,
+                                callback: function(value: number) {
+                                    return formatSeconds(value);
+                                }
+                            }
                         }]
+                    },
+                    tooltips: {
+                        callbacks: {
+                            label: (t: any, d: any) => {
+                                let totalSeconds = d.datasets[t.datasetIndex].data[t.index];
+                                if (totalSeconds == 0) {
+                                    return null;
+                                }
+
+                                return formatSeconds(totalSeconds);
+                            }
+                        }
                     }
                 });
         }

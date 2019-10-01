@@ -102,6 +102,7 @@
     import DateSelection from '@/components/fragments/dateSelection.vue';
     import Updatable from "@/components/updatable";
     import {DateRange} from "v-calendar";
+    import {formatSeconds} from "@/util/timeUtil";
 
     declare interface ProcessData {
         id: number,
@@ -142,6 +143,14 @@
         processData: ProcessData[] = this.getProcessData();
         windowData: WindowData[] = this.getWindowData(this.selectedProcessId);
 
+        mounted() {
+            if (this.processData.length > 0) {
+                this.selectedProcess = this.processData[0];
+                this.selectedProcessId = this.selectedProcess.id;
+                this.windowData = this.getWindowData(this.selectedProcessId);
+            }
+        }
+
         getTypeDatas(): TypeData[] {
             return ipcRenderer.sendSync('get-type-data');
         }
@@ -170,17 +179,7 @@
         }
 
         timeAsString(time: number): string {
-            let hours = Math.floor(time / 60 / 60);
-            let minutes = Math.floor((time - hours * 60 * 60) / 60);
-            let seconds = time - hours * 60 * 60 - minutes * 60;
-
-            if (hours > 0) {
-                return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
-            } else if (minutes > 0) {
-                return `${minutes}:${seconds.toString().padStart(2, "0")}`
-            } else {
-                return `${seconds}`
-            }
+            return formatSeconds(time);
         }
 
         update(): void {
@@ -311,13 +310,12 @@
         overflow: hidden;
     }
 
-    tr.hover:hover {
-        background-color: #EAEAEA;
+    .selected {
+        background-color: #F1F1F1;
     }
 
-    .selected,
-    tr.hover.selected:hover {
-        background-color: #DADADA;
+    tr.hover:hover {
+        background-color: #EAEAEA;
     }
 
     .timeHeader {

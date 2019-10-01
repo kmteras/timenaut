@@ -45,10 +45,10 @@ export default class ProcessGraph {
                 endTime / 1000 + 24 * 60 * 60
             ]);
 
-            log.debug(results);
-
             let labels: Set<string> = new Set();
-            let values: Map<string, { type: string, time: number }[]> = new Map();
+            let values: Map<string, Map<string, number>> = new Map();
+
+            let types: Map<string, string> = new Map();
 
             // Group the data
             for (let result of results) {
@@ -68,15 +68,16 @@ export default class ProcessGraph {
 
                 labels.add(name);
 
+                types.set(result.type_, result.type_color);
+
                 if (values.has(result.path)) {
-                    let processValues = values.get(result.path);
-                    processValues!.push({type: result.type_, time: result.spent_time});
-                    values.set(result.path, processValues!);
+                    let typesMap = values.get(result.path)!;
+                    typesMap.set(result.type_, result.spent_time);
+                    values.set(result.path, typesMap);
                 } else {
-                    values.set(result.path, [{
-                        type: result.type_,
-                        time: result.spent_time
-                    }]);
+                    let typesMap = new Map();
+                    typesMap.set(result.type_, result.spent_time);
+                    values.set(result.path, typesMap);
                 }
             }
 
@@ -87,13 +88,46 @@ export default class ProcessGraph {
                 data: number[]
             };
 
-            console.log(values);
-
             let datasets: Dataset[] = [];
 
+            // Initialize datasets with eatch type
+            for (let [key, value] of types.entries()) {
+                datasets.push({
+                   label: key,
+                   backgroundColor: value,
+                   data: []
+                });
+            }
+
+            // Give datasets the spent type of each type or 0 if the process does not have that type
+            let i = 0;
+            for (let type of types.keys()) {
+                for (let typeTimes of values.values()) {
+                    if (typeTimes.has(type)) {
+                        datasets[i].data.push(typeTimes.get(type)!)
+                    } else {
+                        datasets[i].data.push(0);
+                    }
+                }
+                i++;
+            }
+
+            // Sort the datasets
+            datasets = datasets.sort((a: Dataset, b: Dataset) => {
+                let aSum = a.data.reduce((x, y) => x + y, 0);
+                let bSum = b.data.reduce((x, y) => x + y, 0);
+                if (aSum > bSum) {
+                    return -1;
+                } else if (bSum > aSum) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            });
+
             return {
-                labels: Array.from(labels),
-                datasets: Array.from(datasets.values())
+                labels: Array.from(labels).slice(0, 10),
+                datasets: datasets
             };
         } catch (e) {
             log.error(e);
