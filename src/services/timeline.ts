@@ -11,6 +11,10 @@ export default class Timeline {
             event.returnValue = await this.getData(new Date(time));
         });
 
+        ipcMain.on('get-daily-timeline-data', async (event: any, startTime: number, endTime) => {
+            event.returnValue = await this.getDailyData(startTime, endTime);
+        });
+
         ipcMain.on('get-first-date', async (event: any) => {
             event.returnValue = await this.getFirstDate();
         });
@@ -147,6 +151,48 @@ export default class Timeline {
                 labels: labels,
                 datasets: datasets
             }
+        } catch (e) {
+            log.error(e);
+        }
+    }
+
+    async getDailyData(startTime: number, endTime: number) {
+        try {
+            let results: any = await Database.db.all(`
+                SELECT CASE
+                           WHEN w.type_str IS NULL
+                               THEN p.type_str
+                           ELSE w.type_str
+                           END                          AS type_,
+                       SUM(hb.end_time - hb.start_time) AS spent_time,
+                       datetime(
+                                   ROUND(
+                                           hb.start_time / (60 * 60 * 24), 0) * (60 * 60 * 24), 'unixepoch',
+                                   'localtime')         AS timeframe,
+                       CASE
+                           WHEN w.type_str IS NULL
+                               THEN pt.color
+                           ELSE wt.color
+                           END                          AS type_color
+                FROM heartbeats AS hb
+                         LEFT JOIN
+                     windows w ON hb.window_id = w.id
+                         LEFT JOIN
+                     processes p ON p.id = w.process_id
+                         LEFT JOIN
+                     productivity_type pt on p.type_str = pt.type
+                         LEFT JOIN
+                     productivity_type wt on w.type_str = wt.type
+                WHERE hb.idle = FALSE
+                  AND hb.start_time > ?
+                  AND hb.end_time < ?
+                GROUP BY ROUND(hb.start_time / (60 * 10), 0) * (60 * 10),
+                         type_`, [
+                startTime / 1000,
+                endTime / 1000 + 24 * 60 * 60
+            ]);
+
+            log.debug(results);
         } catch (e) {
             log.error(e);
         }

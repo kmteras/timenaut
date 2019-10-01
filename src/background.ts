@@ -3,6 +3,7 @@ import {createProtocol, installVueDevtools} from 'vue-cli-plugin-electron-builde
 import Database from "@/services/database";
 import Timeline from "@/services/timeline";
 import Processes from "@/services/processes";
+import ProcessGraph from "@/services/processGraph";
 import DailyPieChart from "@/services/dailyPieChart";
 import Heartbeat from "@/services/heartbeat";
 import AutoUpdater from "@/services/autoUpdater";
@@ -29,6 +30,7 @@ let timelineService = new Timeline();
 let dailyPieChartService = new DailyPieChart();
 let processesService = new Processes();
 let autoUpdaterService = new AutoUpdater();
+let processGraph = new ProcessGraph();
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: {secure: true, standard: true}}]);

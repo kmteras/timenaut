@@ -16,7 +16,7 @@
         </div>
 
         <div class="section" id="barSection">
-            <!--<daily-pie-chart />-->
+            <process-graph :height="200" :width="200" :range="range" ref="processChart"/>
         </div>
     </div>
 </template>
@@ -28,9 +28,11 @@
     import DateSelection from '@/components/fragments/dateSelection.vue';
     import Updatable from "@/components/updatable";
     import {Calendar, DatePicker, DateRange} from "v-calendar";
+    import ProcessGraph from "@/components/fragments/processGraph.vue";
 
     @Component({
         components: {
+            ProcessGraph,
             Timeline,
             DailyPieChart,
             DateSelection,
@@ -50,6 +52,8 @@
             this.$refs.timeline.update();
             // @ts-ignore
             this.$refs.pieChart.update();
+            // @ts-ignore
+            this.$refs.processChart.update();
         }
     }
 </script>
