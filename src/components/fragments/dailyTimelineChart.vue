@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {HorizontalBar} from 'vue-chartjs';
+    import {Line} from 'vue-chartjs';
     import ipcRenderer from '@/components/ipcRenderer';
     import {DateRange} from "v-calendar";
 
@@ -7,7 +7,7 @@
     import {formatSeconds} from "@/util/timeUtil";
 
     @Component
-    export default class ProcessGraph extends Mixins(HorizontalBar) {
+    export default class LongTimeline extends Mixins(Line) {
         @Provide() data: object = this.getTimelineData();
         @Prop() date?: Date;
         @Prop() range?: DateRange;
@@ -30,20 +30,16 @@
                         duration: animation ? 1000 : 0
                     },
                     hover: {
-                        mode: 'nearest',
-                        intersect: true,
                         animationDuration: animation ? 400 : 0
                     },
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
                         yAxes: [{
-                            stacked: true
-                        }],
-                        xAxes: [{
+                            stacked: true,
                             ticks: {
                                 min: 0,
-                                stepSize: 600,
+                                maxTicksLimit: 3600,
                                 callback: function(value: number) {
                                     return formatSeconds(value);
                                 }
@@ -66,9 +62,7 @@
         }
 
         getTimelineData() {
-            return ipcRenderer.sendSync('get-process-graph-data',
-                this.range!.start.getTime(),
-                this.range!.end.getTime());
+            return ipcRenderer.sendSync('get-daily-timeline-data', this.range!.start.getTime(), this.range!.end.getTime());
         }
 
         @Watch("range")

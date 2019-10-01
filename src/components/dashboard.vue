@@ -8,7 +8,8 @@
         </div>
 
         <div class="section" id="timelineSection">
-            <timeline :height="250" :range="range" ref="timeline"/>
+            <timeline :height="250" :range="range" ref="timeline" :class="{'hidden': !showDailyTimeline()}"/>
+            <daily-timeline :height="250" :range="range" ref="timeline" :class="{'hidden': showDailyTimeline()}"/>
         </div>
 
         <div class="section" id="pieSection">
@@ -29,11 +30,13 @@
     import Updatable from "@/components/updatable";
     import {Calendar, DatePicker, DateRange} from "v-calendar";
     import ProcessGraph from "@/components/fragments/processGraph.vue";
+    import DailyTimeline from "@/components/fragments/dailyTimelineChart.vue";
 
     @Component({
         components: {
             ProcessGraph,
             Timeline,
+            DailyTimeline,
             DailyPieChart,
             DateSelection,
             Calendar,
@@ -41,10 +44,14 @@
         }
     })
     export default class Dashboard extends Vue implements Updatable {
-        @Prop() range?: DateRange;
+        @Prop() range!: DateRange;
 
         updateRange(range: DateRange) {
             this.$emit('updateRange', range);
+        }
+
+        showDailyTimeline(): boolean {
+            return this.range.start.getTime() === this.range.end.getTime();
         }
 
         update(): void {
@@ -108,7 +115,7 @@
     }
 
     .hidden {
-        visibility: hidden;
+        display: none;
     }
 
     button {

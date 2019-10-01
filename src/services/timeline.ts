@@ -168,7 +168,7 @@ export default class Timeline {
                        datetime(
                                    ROUND(
                                            hb.start_time / (60 * 60 * 24), 0) * (60 * 60 * 24), 'unixepoch',
-                                   'localtime')         AS timeframe,
+                                   'localtime')         AS date,
                        CASE
                            WHEN w.type_str IS NULL
                                THEN pt.color
@@ -186,13 +186,70 @@ export default class Timeline {
                 WHERE hb.idle = FALSE
                   AND hb.start_time > ?
                   AND hb.end_time < ?
-                GROUP BY ROUND(hb.start_time / (60 * 10), 0) * (60 * 10),
+                GROUP BY ROUND(hb.start_time / (60 * 60 * 24), 0) * (60 * 60 * 24),
                          type_`, [
                 startTime / 1000,
                 endTime / 1000 + 24 * 60 * 60
             ]);
 
-            log.debug(results);
+            let labels: Set<string> = new Set();
+            let types: Map<string, string> = new Map();
+            let values: Map<string, Map<string, number>> = new Map();
+
+            // TODO: add empty values
+
+            // Group the data
+            for (let result of results) {
+                let date = result.date.substr(0, 10);
+                labels.add(date);
+                types.set(result.type_, result.type_color);
+
+                if (values.has(date)) {
+                    let typesMap = values.get(date)!;
+                    typesMap.set(result.type_, result.spent_time);
+                    values.set(date, typesMap);
+                } else {
+                    let typesMap = new Map();
+                    typesMap.set(result.type_, result.spent_time);
+                    values.set(date, typesMap);
+                }
+            }
+
+            // Prepare data for graph
+            type Dataset = {
+                label: string,
+                backgroundColor: string,
+                data: number[]
+            };
+
+            let datasets: Dataset[] = [];
+
+            // Initialize datasets with eatch type
+            for (let [key, value] of types.entries()) {
+                datasets.push({
+                    label: key,
+                    backgroundColor: value,
+                    data: []
+                });
+            }
+
+            // Give datasets the spent type of each type or 0 if the process does not have that type
+            let i = 0;
+            for (let type of types.keys()) {
+                for (let typeTimes of values.values()) {
+                    if (typeTimes.has(type)) {
+                        datasets[i].data.push(typeTimes.get(type)!)
+                    } else {
+                        datasets[i].data.push(0);
+                    }
+                }
+                i++;
+            }
+
+            return {
+                labels: Array.from(labels),
+                datasets: datasets
+            }
         } catch (e) {
             log.error(e);
         }
