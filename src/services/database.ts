@@ -62,7 +62,11 @@ export default class Database {
         params = this.convertTypes(params);
 
         let statement: Sqlite.Statement = this.db.prepare(sql);
-        return statement.get(params);
+        if (params) {
+            return statement.get(params);
+        } else {
+            return statement.get();
+        }
     }
 
     run(sql: string, params?: ParamTypes[]): void {

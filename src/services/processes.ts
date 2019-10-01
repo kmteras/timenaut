@@ -1,17 +1,18 @@
 import Database from "@/services/database";
 import {ipcMain} from 'electron'
 import log from 'electron-log'
+import {getDayLength} from "@/util/timeUtil";
 
 
 export default class Processes {
 
     constructor() {
-        ipcMain.on('get-processes-data', async (event: Event) => {
-            event.returnValue = await this.getProcessesData();
+        ipcMain.on('get-processes-data', async (event: Event, startTime: number, endTime: number) => {
+            event.returnValue = await this.getProcessesData(startTime, endTime);
         });
 
-        ipcMain.on('get-windows-data', async (event: Event, processId: number) => {
-            event.returnValue = await this.getWindowData(processId);
+        ipcMain.on('get-windows-data', async (event: Event, startTime: number, endTime: number, processId: number) => {
+            event.returnValue = await this.getWindowData(startTime, endTime, processId);
         });
 
         ipcMain.on('get-type-data', async (event: Event) => {
@@ -29,7 +30,7 @@ export default class Processes {
         });
     }
 
-    async getProcessesData() {
+    async getProcessesData(startTime: number, endTime: number) {
         try {
             let results: any = await Database.db.all(`
                 SELECT path,
@@ -39,7 +40,11 @@ export default class Processes {
                        pt.color
                 FROM heartbeats AS hb
                          JOIN
-                     (SELECT start_time, end_time - start_time AS difference FROM heartbeats WHERE IDLE = FALSE) d
+                     (SELECT start_time, end_time - start_time AS difference
+                      FROM heartbeats hb
+                      WHERE hb.IDLE = FALSE
+                        AND hb.start_time > ?
+                        AND hb.end_time < ?) d
                      ON
                          d.start_time = hb.start_time
                          LEFT JOIN
@@ -50,7 +55,7 @@ export default class Processes {
                   AND path <> ''
                 GROUP BY process_id
                 HAVING time > 0
-                ORDER BY SUM(difference) DESC`);
+                ORDER BY SUM(difference) DESC`, [startTime / 1000, endTime / 1000 + getDayLength()]);
 
             for (let result of results) {
                 if (result.name == undefined) {
@@ -62,7 +67,7 @@ export default class Processes {
                     }
 
                     if (result.path.search(regex) < 0) {
-                        log.warn(result.path);
+                        log.warn(`Could not regex process name from ${result.path}`);
                         continue;
                     }
 
@@ -76,7 +81,7 @@ export default class Processes {
         }
     }
 
-    async getWindowData(processId: number) {
+    async getWindowData(startTime: number, endTime: number, processId: number) {
         try {
             let results: any = await Database.db.all(`
                 SELECT window_id       as id,
@@ -94,7 +99,11 @@ export default class Processes {
                            END         AS color
                 FROM heartbeats AS hb
                          JOIN
-                     (SELECT start_time, end_time - start_time AS difference FROM heartbeats WHERE idle = FALSE) d
+                     (SELECT start_time, end_time - start_time AS difference
+                      FROM heartbeats hb
+                      WHERE hb.idle = FALSE
+                        AND hb.start_time > ?
+                        AND hb.end_time < ?) d
                      ON d.start_time = hb.start_time
                          LEFT JOIN windows w ON hb.window_id = w.id
                          LEFT JOIN processes p ON p.id = w.process_id
@@ -103,7 +112,7 @@ export default class Processes {
                 WHERE w.process_id = ?
                 GROUP BY window_id
                 HAVING time > 0
-                ORDER BY SUM(difference) DESC`, [processId]);
+                ORDER BY SUM(difference) DESC`, [startTime / 1000, endTime / 1000 + getDayLength(), processId]);
 
             return results;
         } catch (e) {

@@ -1,72 +1,57 @@
 <template>
     <div id="dashboard">
         <div id="dateSelectionSection" class="topSection is-vertical-center">
-            <span class="is-pulled-left">{{date.toDateString()}}</span>
-            <div class="is-pulled-right">
-                <button class="button" v-on:click="prevDate">&#8592;</button>
-                <button class="button" v-on:click="today">Today</button>
-                <button class="button" :class="{'hidden': hasNextDate()}" v-on:click="nextDate">&#8594;</button>
-            </div>
+            <date-selection
+                    :range="range"
+                    @updateRange="updateRange"
+            />
         </div>
 
         <div class="section" id="timelineSection">
-            <timeline :height="250" :date="date" ref="timeline"/>
+            <timeline :height="250" :range="range" ref="timeline" :class="{'hidden': !showDailyTimeline()}"/>
+            <daily-timeline :height="250" :range="range" ref="timeline" :class="{'hidden': showDailyTimeline()}"/>
         </div>
 
         <div class="section" id="pieSection">
-            <daily-pie-chart :height="200" :width="200" :date="date" ref="pieChart"/>
+            <daily-pie-chart :height="200" :width="200" :range="range" ref="pieChart"/>
         </div>
 
         <div class="section" id="barSection">
-            <!--<daily-pie-chart />-->
+            <process-graph :height="200" :width="200" :range="range" ref="processChart"/>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-    import {Component, Provide, Vue} from 'vue-property-decorator';
+    import {Component, Prop, Vue} from 'vue-property-decorator';
     import Timeline from '@/components/fragments/timelineChart.vue';
     import DailyPieChart from '@/components/fragments/dailyPieChart.vue';
+    import DateSelection from '@/components/fragments/dateSelection.vue';
     import Updatable from "@/components/updatable";
+    import {Calendar, DatePicker, DateRange} from "v-calendar";
+    import ProcessGraph from "@/components/fragments/processGraph.vue";
+    import DailyTimeline from "@/components/fragments/dailyTimelineChart.vue";
 
     @Component({
         components: {
+            ProcessGraph,
             Timeline,
-            DailyPieChart
+            DailyTimeline,
+            DailyPieChart,
+            DateSelection,
+            Calendar,
+            DatePicker
         }
     })
     export default class Dashboard extends Vue implements Updatable {
-        @Provide() date: Date = this.getToday();
+        @Prop() range!: DateRange;
 
-        prevDate() {
-            this.date = this.getPrevDate();
+        updateRange(range: DateRange) {
+            this.$emit('updateRange', range);
         }
 
-        today() {
-            this.date = this.getToday();
-        }
-
-        nextDate() {
-            this.date = this.getNextDate();
-        }
-
-        hasNextDate(): boolean {
-            return this.getNextDate() > this.getToday();
-        }
-
-        // TODO: get prev matching date from databse
-        private getPrevDate(): Date {
-            return new Date(this.date.getTime() - 24 * 60 * 60 * 1000);
-        }
-
-        private getToday(): Date {
-            let date: Date = new Date();
-            return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-        }
-
-        // TODO: get next matching date from databse
-        private getNextDate(): Date {
-            return new Date(this.date.getTime() + 24 * 60 * 60 * 1000);
+        showDailyTimeline(): boolean {
+            return this.range.start.getTime() === this.range.end.getTime();
         }
 
         update(): void {
@@ -74,6 +59,8 @@
             this.$refs.timeline.update();
             // @ts-ignore
             this.$refs.pieChart.update();
+            // @ts-ignore
+            this.$refs.processChart.update();
         }
     }
 </script>
@@ -118,7 +105,7 @@
     }
 
     .topSection {
-        margin: 10px 10px 10px 10px;
+        margin: 10px 10px 10px 0;
     }
 
     .is-vertical-center {
@@ -128,6 +115,10 @@
     }
 
     .hidden {
-        visibility: hidden;
+        display: none;
+    }
+
+    button {
+        height: 38px;
     }
 </style>
