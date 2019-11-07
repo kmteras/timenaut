@@ -25,6 +25,9 @@ jobs:
       - name: Download newer npm
         if: runner.os == 'Windows'
         run: npm install npm@next -g
+      - name: Download newest node-gyp
+        if: runner.os = 'Windows'
+        run: npm install node-gyp@latest -g
       - name: npm install
         run: npm ci --prefer-offline --no-audit
       - name: npm lint
