@@ -14,16 +14,23 @@ export default class Database {
         Database.db = this;
     }
 
-    async connect() {
+    async connect(test: boolean = false) {
         let option = {
+            memory: false
             // verbose: log.debug
         };
 
         let databaseFileName = process.env.WEBPACK_DEV_SERVER_URL ? 'timenaut_dev.dat' : 'timenaut.dat';
 
-        let databaseFile = path.join(app.getPath('userData'), databaseFileName);
+        let databaseFile = "timenaut.db";
 
-        log.info(`Opening database at ${databaseFile}`);
+        if (test) {
+            option.memory = true;
+        } else {
+            databaseFile = path.join(app.getPath('userData'), databaseFileName);
+            log.info(`Opening database at ${databaseFile}`);
+        }
+
         this.db = await new Sqlite(databaseFile, option);
         this.db.pragma('journal_mode = WAL');
         this.db.pragma('synchronous = 1');
