@@ -17,7 +17,7 @@ jobs:
       - name: Use Node.js 10.x
         uses: actions/setup-node@v1
         with:
-          node-version: 10.x
+          node-version: 12.x
       - name: Dump runner context
         env:
           RUNNER_CONTEXT: ${{ toJson(runner) }}
