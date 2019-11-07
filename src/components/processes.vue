@@ -97,12 +97,12 @@
 
 <script lang="ts">
     import {Component, Prop, Watch, Vue} from 'vue-property-decorator';
-    import ipcRenderer from '@/components/ipcRenderer';
+    import ipcRenderer from '@/components/ipc_renderer';
     import ContentPage from "@/components/contentPage.vue";
-    import DateSelection from '@/components/fragments/dateSelection.vue';
+    import DateSelection from '@/components/fragments/date_selection.vue';
     import Updatable from "@/components/updatable";
     import {DateRange} from "v-calendar";
-    import {formatSeconds} from "@/util/timeUtil";
+    import {formatSeconds} from "@/util/time_util";
 
     declare interface ProcessData {
         id: number,

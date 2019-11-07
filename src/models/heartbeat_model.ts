@@ -1,6 +1,6 @@
 import activeWin from "active-win";
-import ProcessModel from "@/models/processModel";
-import WindowModel from "@/models/windowModel";
+import ProcessModel from "@/models/process_model";
+import WindowModel from "@/models/window_model";
 import {powerMonitor} from "electron"
 import Settings from "@/services/settings";
 

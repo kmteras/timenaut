@@ -1,7 +1,7 @@
 import Database from "@/services/database";
 import {ipcMain} from 'electron'
 import log from 'electron-log'
-import {getDayLength} from "@/util/timeUtil";
+import {getDayLength} from "@/util/time_util";
 
 
 export default class Processes {

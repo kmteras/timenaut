@@ -1,4 +1,4 @@
-import HeartbeatModel from "@/models/heartbeatModel";
+import HeartbeatModel from "@/models/heartbeat_model";
 import Database from "@/services/database";
 import log from 'electron-log'
 import BrowserWindow = Electron.BrowserWindow;

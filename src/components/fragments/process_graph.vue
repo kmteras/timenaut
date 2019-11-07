@@ -1,13 +1,13 @@
 <script lang="ts">
-    import {Line} from 'vue-chartjs';
-    import ipcRenderer from '@/components/ipcRenderer';
+    import {HorizontalBar} from 'vue-chartjs';
+    import ipcRenderer from '@/components/ipc_renderer';
     import {DateRange} from "v-calendar";
 
     import {Component, Mixins, Prop, Provide, Watch} from 'vue-property-decorator';
-    import {formatSeconds} from "@/util/timeUtil";
+    import {formatSeconds} from "@/util/time_util";
 
     @Component
-    export default class LongTimeline extends Mixins(Line) {
+    export default class ProcessGraph extends Mixins(HorizontalBar) {
         @Provide() data: object = this.getTimelineData();
         @Prop() date?: Date;
         @Prop() range?: DateRange;
@@ -30,16 +30,20 @@
                         duration: animation ? 1000 : 0
                     },
                     hover: {
+                        mode: 'nearest',
+                        intersect: true,
                         animationDuration: animation ? 400 : 0
                     },
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
                         yAxes: [{
-                            stacked: true,
+                            stacked: true
+                        }],
+                        xAxes: [{
                             ticks: {
                                 min: 0,
-                                maxTicksLimit: 3600,
+                                stepSize: 600,
                                 callback: function(value: number) {
                                     return formatSeconds(value);
                                 }
@@ -62,7 +66,9 @@
         }
 
         getTimelineData() {
-            return ipcRenderer.sendSync('get-daily-timeline-data', this.range!.start.getTime(), this.range!.end.getTime());
+            return ipcRenderer.sendSync('get-process-graph-data',
+                this.range!.start.getTime(),
+                this.range!.end.getTime());
         }
 
         @Watch("range")

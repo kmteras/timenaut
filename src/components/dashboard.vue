@@ -24,13 +24,13 @@
 
 <script lang="ts">
     import {Component, Prop, Vue} from 'vue-property-decorator';
-    import Timeline from '@/components/fragments/timelineChart.vue';
-    import DailyPieChart from '@/components/fragments/dailyPieChart.vue';
-    import DateSelection from '@/components/fragments/dateSelection.vue';
+    import Timeline from '@/components/fragments/timeline_chart.vue';
+    import DailyPieChart from '@/components/fragments/daily_pie_chart.vue';
+    import DateSelection from '@/components/fragments/date_selection.vue';
     import Updatable from "@/components/updatable";
     import {Calendar, DatePicker, DateRange} from "v-calendar";
-    import ProcessGraph from "@/components/fragments/processGraph.vue";
-    import DailyTimeline from "@/components/fragments/dailyTimelineChart.vue";
+    import ProcessGraph from "@/components/fragments/process_graph.vue";
+    import DailyTimeline from "@/components/fragments/daily_timeline_chart.vue";
 
     @Component({
         components: {
