@@ -78,5 +78,8 @@
   "browserslist": [
     "> 1%",
     "last 2 versions"
-  ]
+  ],
+  "resolutions": {
+    "node-gyp": "6.9.0"
+  }
 }
