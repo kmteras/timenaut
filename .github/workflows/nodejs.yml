@@ -19,18 +19,24 @@ jobs:
         env:
           RUNNER_CONTEXT: ${{ toJson(runner) }}
         run: echo "$RUNNER_CONTEXT"
+      - name: Show node-gyp version
+        run: npm -v node-gyp
       - name: Windows build tools
         if: runner.os == 'Windows'
         run: npm install --vs2015 --global windows-build-tools
       - name: Download newer npm
         if: runner.os == 'Windows'
         run: npm install npm@next -g
+      - name: Show node-gyp version
+        run: npm -v node-gyp
       - name: Download newest node-gyp
         if: runner.os == 'Windows'
         run: npm install node-gyp@latest -g
       - name: Set newest node-gyp
         if: runner.os == 'Windows'
         run: set npm_config_node_gyp=
+      - name: Show node-gyp version
+        run: npm -v node-gyp
       - name: npm install
         run: npm ci --prefer-offline --no-audit
       - name: npm lint
