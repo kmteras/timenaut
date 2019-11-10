@@ -26,7 +26,7 @@ jobs:
         run: npm install --vs2015 --global windows-build-tools
       - name: Download newer npm
         if: runner.os == 'Windows'
-        run: npm install npm@next -g
+        run: npm install npm@6.11.3 -g
       - name: Show node-gyp version
         run: npm -v node-gyp
       - name: Download newest node-gyp
