@@ -23,7 +23,7 @@ export default class Heartbeat {
 
     start() {
         try {
-            this.heartbeat(new HeartbeatModel(BigInt(0))).then();
+            this.heartbeat(new HeartbeatModel()).then();
         } catch (e) {
             // Tough shit, cant really do anything - not a severe problem
             log.debug(e)
