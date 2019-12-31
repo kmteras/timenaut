@@ -43,6 +43,8 @@ export default class Heartbeat {
 
         if (process == null) {
             process = await heartbeat.process.save();
+        } else {
+            heartbeat.window.process = process;
         }
 
         let window = await heartbeat.window.find();

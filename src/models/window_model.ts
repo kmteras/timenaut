@@ -32,7 +32,8 @@ export default class WindowModel {
             SELECT *
             FROM windows
             WHERE title = ?
-        `, [this.title]) as WindowModel;
+              AND process_id = ?
+        `, [this.title, this.process.id]) as WindowModel;
 
         if (response !== undefined) {
             this.id = response.id;
