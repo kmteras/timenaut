@@ -3,10 +3,10 @@ import {createProtocol, installVueDevtools} from 'vue-cli-plugin-electron-builde
 import Database from "@/services/database";
 import Timeline from "@/services/timeline";
 import Processes from "@/services/processes";
-import ProcessGraph from "@/services/processGraph";
-import DailyPieChart from "@/services/dailyPieChart";
+import ProcessGraph from "@/services/process_graph";
+import DailyPieChart from "@/services/daily_pie_chart";
 import Heartbeat from "@/services/heartbeat";
-import AutoUpdater from "@/services/autoUpdater";
+import AutoUpdater from "@/services/auto_updater";
 import AutoLaunch from 'auto-launch';
 import path from 'path';
 import log from 'electron-log'

@@ -1,5 +1,5 @@
 import Database from "@/services/database";
-import ProcessModel from "@/models/processModel";
+import ProcessModel from "@/models/process_model";
 
 export default class WindowModel {
     id?: number;

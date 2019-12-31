@@ -1,14 +1,14 @@
 <script lang="ts">
-    import {Doughnut} from 'vue-chartjs';
-    import ipcRenderer from '@/components/ipcRenderer';
+    import {Line} from 'vue-chartjs';
+    import ipcRenderer from '@/components/ipc_renderer';
     import {DateRange} from "v-calendar";
 
     import {Component, Mixins, Prop, Provide, Watch} from 'vue-property-decorator';
-    import {formatSeconds} from "@/util/timeUtil";
+    import {formatSeconds} from "@/util/time_util";
 
     @Component
-    export default class DailyPieChart extends Mixins(Doughnut) {
-        @Provide() data: { datasets: {}, labels: {} } = this.getData();
+    export default class LongTimeline extends Mixins(Line) {
+        @Provide() data: object = this.getTimelineData();
         @Prop() date?: Date;
         @Prop() range?: DateRange;
 
@@ -19,7 +19,7 @@
         update(): any {
             // TODO: update graph somehow so it does not refresh everything
             // TODO: if this tab is in focus
-            this.data = this.getData();
+            this.data = this.getTimelineData();
             this.drawChart(false);
         }
 
@@ -34,27 +34,15 @@
                     },
                     responsive: true,
                     maintainAspectRatio: false,
-                    legend: {
-                        position: "right",
-                        align: "center"
-                    },
                     scales: {
-                        xAxes: [{
-                            gridLines: {
-                                display: false,
-                                drawBorder: false
-                            },
-                            ticks: {
-                                display: false
-                            }
-                        }],
                         yAxes: [{
-                            gridLines: {
-                                display: false,
-                                drawBorder: false
-                            },
+                            stacked: true,
                             ticks: {
-                                display: false
+                                min: 0,
+                                maxTicksLimit: 3600,
+                                callback: function(value: number) {
+                                    return formatSeconds(value);
+                                }
                             }
                         }]
                     },
@@ -62,6 +50,10 @@
                         callbacks: {
                             label: (t: any, d: any) => {
                                 let totalSeconds = d.datasets[t.datasetIndex].data[t.index];
+                                if (totalSeconds == 0) {
+                                    return null;
+                                }
+
                                 return formatSeconds(totalSeconds);
                             }
                         }
@@ -69,8 +61,8 @@
                 });
         }
 
-        getData() {
-            return ipcRenderer.sendSync('get-pie-data', this.range!.start.getTime(), this.range!.end.getTime());
+        getTimelineData() {
+            return ipcRenderer.sendSync('get-daily-timeline-data', this.range!.start.getTime(), this.range!.end.getTime());
         }
 
         @Watch("range")

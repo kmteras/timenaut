@@ -1,7 +1,7 @@
 import Database from "@/services/database";
 import {ipcMain} from 'electron'
 import log from 'electron-log'
-import {getDayLength} from "@/util/timeUtil";
+import {getDayLength} from "@/util/time_util";
 
 
 export default class Processes {
@@ -68,6 +68,7 @@ export default class Processes {
 
                     if (result.path.search(regex) < 0) {
                         log.warn(`Could not regex process name from ${result.path}`);
+                        result.name = result.path;
                         continue;
                     }
 

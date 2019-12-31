@@ -39,7 +39,7 @@
 
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
-    import ipcRenderer from '@/components/ipcRenderer';
+    import ipcRenderer from '@/components/ipc_renderer';
     import Updatable from "@/components/updatable";
     import {shell} from 'electron';
 

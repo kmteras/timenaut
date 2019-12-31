@@ -23,9 +23,9 @@
 
 <script lang="ts">
     import {Component, Prop, Vue} from 'vue-property-decorator';
-    import ipcRenderer from '@/components/ipcRenderer';
+    import ipcRenderer from '@/components/ipc_renderer';
     import {Calendar, DatePicker, DateRange} from "v-calendar";
-    import {getDayLength, getNextDate, getPrevDate, getToday} from '@/util/timeUtil'
+    import {getDayLength, getNextDate, getPrevDate, getToday} from '@/util/time_util'
 
     @Component({
         components: {

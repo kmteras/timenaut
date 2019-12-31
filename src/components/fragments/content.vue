@@ -6,9 +6,9 @@
 
 <script lang="ts">
     import {Component, Prop, Provide, Vue} from 'vue-property-decorator';
-    import ipcRenderer from '@/components/ipcRenderer';
+    import ipcRenderer from '@/components/ipc_renderer';
     import {DateRange} from "v-calendar";
-    import {getToday} from "@/util/timeUtil";
+    import {getToday} from "@/util/time_util";
 
     @Component
     export default class AppContent extends Vue {
