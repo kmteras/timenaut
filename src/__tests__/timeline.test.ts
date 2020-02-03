@@ -2,9 +2,9 @@ import Database from "@/services/database";
 import Timeline from "@/services/timeline";
 import HeartbeatMock from "@/test/heartbeat_mock";
 
+const db = Database.db;
+
 async function setup(): Promise<HeartbeatMock> {
-    const db = new Database();
-    await db.connect(true);
     await db.update();
     return new HeartbeatMock();
 }
