@@ -41,6 +41,8 @@ jobs:
         run: npm ci --prefer-offline --no-audit
       - name: npm lint
         run: npm run lint
+      - name: npm test
+        run: npm run test
       - name: npm build
         run: npm run build
       - name: Release
