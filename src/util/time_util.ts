@@ -30,3 +30,8 @@ export function formatSeconds(totalSeconds: number): string {
         return `00:${seconds.toString().padStart(2, "0")}`
     }
 }
+
+export function getDateWithNoTime(date: Date): Date {
+    // Simplest but hacky way
+    return new Date(date.toISOString().substr(0, 11) + "00:00:00.000Z");
+}

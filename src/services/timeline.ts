@@ -7,6 +7,10 @@ export default class Timeline {
     private number: number | null = null;
 
     constructor() {
+
+    }
+
+    public registerEvents(): void {
         ipcMain.on('get-timeline-data', async (event: any, time: number) => {
             event.returnValue = await this.getData(new Date(time));
         });
@@ -38,7 +42,7 @@ export default class Timeline {
 
     async getData(date: Date) {
         try {
-            let results: any = await Database.db.all(`
+            let results: any[] = await Database.db.all(`
                 SELECT CASE
                            WHEN w.type_str IS NULL
                                THEN p.type_str
@@ -61,11 +65,13 @@ export default class Timeline {
                          LEFT JOIN
                      productivity_type wt on w.type_str = wt.type
                 WHERE hb.idle = FALSE
-                  AND hb.start_time > ?
-                  AND hb.end_time < ?
+                  AND (hb.start_time >= ? OR hb.end_time >= ?)
+                  AND (hb.end_time < ? OR hb.start_time < ?)
                 GROUP BY ROUND(hb.start_time / (60 * 10), 0) * (60 * 10),
                          type_`, [
                 date.getTime() / 1000,
+                date.getTime() / 1000,
+                date.getTime() / 1000 + 24 * 60 * 60,
                 date.getTime() / 1000 + 24 * 60 * 60
             ]);
 
@@ -83,6 +89,23 @@ export default class Timeline {
             let leftoverTime: { [id: string]: number } = {};
 
             const today = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
+
+            // If we have time from a heartbeat that started on the previous day, give the time of this day to this day
+            for (let value of results) {
+                if (value.timeframe.substr(0, 10) !== today.substr(0, 10)) {
+                    // Without the 00 time it would be parsed as UTC 00:00
+                    const secondsToToday = new Date(today + " 00:00:00").getTime() / 1000 - new Date(value.timeframe).getTime() / 1000;
+
+                    if (secondsToToday > 0) {
+                        results.push({
+                            type_: value.type_,
+                            spent_time: value.spent_time - secondsToToday,
+                            timeframe: today + " 00:00:00",
+                            type_color: value.type_color
+                        })
+                    }
+                }
+            }
 
             // TODO: fix all this shit
 

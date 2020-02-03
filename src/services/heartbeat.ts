@@ -23,7 +23,7 @@ export default class Heartbeat {
 
     start() {
         try {
-            this.heartbeat(new HeartbeatModel()).then();
+            this.heartbeat(HeartbeatModel.getCurrentHeartbeat()).then();
         } catch (e) {
             // Tough shit, cant really do anything - not a severe problem
             log.debug(e)
@@ -34,7 +34,7 @@ export default class Heartbeat {
         }
     }
 
-    private async heartbeat(heartbeat: HeartbeatModel) {
+    protected async heartbeat(heartbeat: HeartbeatModel) {
         if (this.paused) {
             return;
         }

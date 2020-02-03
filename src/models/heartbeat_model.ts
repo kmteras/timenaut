@@ -13,15 +13,25 @@ export default class HeartbeatModel {
     window: WindowModel;
     idle: boolean;
 
-    constructor() {
-        this.time = Math.floor(new Date().getTime() / 1000);
+    constructor(time: number, process: ProcessModel, window: WindowModel, idle: boolean) {
+        this.time = time;
+        this.process = process;
+        this.window = window;
+        this.idle = idle;
+    }
+
+    static getCurrentHeartbeat(): HeartbeatModel {
+        const time = Math.floor(new Date().getTime() / 1000);
         const windowInfo = activeWin.sync();
 
-        this.idle = powerMonitor.getSystemIdleTime() > Settings.getIdleTime();
+        const idle = powerMonitor.getSystemIdleTime() > Settings.getIdleTime();
+
+        let processModel;
+        let windowModel;
 
         if (windowInfo !== undefined) {
-            this.process = new ProcessModel(windowInfo.owner.path, windowInfo.owner.name);
-            this.window = new WindowModel(windowInfo.title, this.process);
+            processModel = new ProcessModel(windowInfo.owner.path, windowInfo.owner.name);
+            windowModel = new WindowModel(windowInfo.title, processModel);
         } else {
             /**
              * On Linux some X11 windows do not have a PID attached to them. (Process created with another process?)
@@ -32,8 +42,8 @@ export default class HeartbeatModel {
             if (process.platform === 'linux') {
                 try {
                     const windowName = getActiveWindow();
-                    this.process = new ProcessModel("/unknown/unknown", "unknown");
-                    this.window = new WindowModel(windowName, this.process);
+                    processModel = new ProcessModel("/unknown/unknown", "unknown");
+                    windowModel = new WindowModel(windowName, processModel);
                 } catch (_) {
                     throw new Error("Could not get a active window");
                 }
@@ -41,6 +51,7 @@ export default class HeartbeatModel {
                 throw new Error("Could not get active window");
             }
         }
+        return new HeartbeatModel(time, processModel, windowModel, idle);
     }
 
     public toString(): string {

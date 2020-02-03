@@ -27,6 +27,7 @@ let iconUrl: string;
 let pauseIconUrl: string;
 
 let timelineService = new Timeline();
+timelineService.registerEvents();
 let dailyPieChartService = new DailyPieChart();
 let processesService = new Processes();
 let autoUpdaterService = new AutoUpdater();
