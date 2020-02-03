@@ -13,7 +13,6 @@ test.only("Create test database with initial tables", async () => {
         await Database.db.one('SELECT * FROM processes');
         expect(true).toBe(false);
     } catch (e) {
-        console.log(e);
         expect(e.name).toEqual("SqliteError");
     }
 
