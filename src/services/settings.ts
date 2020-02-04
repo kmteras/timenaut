@@ -30,7 +30,7 @@ export default class Settings {
                      FROM settings
                      WHERE key = ?
                        AND metadata = FALSE`;
-        let value = await Database.db.one(sql, [key]);
+        let value = await Database.one(sql, [key]);
         if (value === undefined) {
             value = null;
         } else {
@@ -47,7 +47,7 @@ export default class Settings {
                      VALUES (?, ?)
                      ON CONFLICT(key) DO UPDATE SET value=?
                      WHERE key = ?`;
-        await Database.db.run(sql, [key, value, value, key]);
+        await Database.run(sql, [key, value, value, key]);
         this.settings[key] = value;
         log.debug(`Set setting ${key} as ${value}`);
         return value;

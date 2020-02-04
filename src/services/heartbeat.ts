@@ -91,7 +91,7 @@ export default class Heartbeat {
             }
         }
 
-        await Database.db.run(sql, [endTime, lastHeartbeat.time]);
+        await Database.run(sql, [endTime, lastHeartbeat.time]);
         return endTime;
     }
 
@@ -104,7 +104,7 @@ export default class Heartbeat {
             INSERT INTO heartbeats (process_id, window_id, start_time, end_time, idle)
             VALUES (?, ?, ?, ?, ?)
         `;
-        await Database.db.run(sql,
+        await Database.run(sql,
             [heartbeat.process.id, heartbeat.window.id, heartbeat.time, heartbeat.time, heartbeat.idle])
     }
 

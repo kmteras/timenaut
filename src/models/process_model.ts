@@ -14,7 +14,7 @@ export default class ProcessModel {
     }
 
     async save(): Promise<ProcessModel> {
-        await Database.db.run(`
+        await Database.run(`
             INSERT INTO processes (path, type_str)
             VALUES (?, 'unknown')`, [this.path]);
 
@@ -28,7 +28,7 @@ export default class ProcessModel {
     }
 
     async find(): Promise<ProcessModel | undefined> {
-        let response = await Database.db.one(`
+        let response = await Database.one(`
             SELECT *
             FROM processes
             WHERE path = ?

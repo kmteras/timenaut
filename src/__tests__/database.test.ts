@@ -1,22 +1,20 @@
 import Database from "@/services/database";
 
 beforeEach(async () => {
-    const tables = await Database.db.all("SELECT name FROM sqlite_master WHERE type='table'");
-    for (let table of tables) {
-        await Database.db.run("DROP TABLE IF EXISTS ?", [table]);
-    }
+    const db = new Database();
+    await db.connect(true);
 });
 
 test.only("Create test database with initial tables", async () => {
+    expect.assertions(2);
+
     // No tables initialized
     try {
-        await Database.db.one('SELECT * FROM processes');
-        expect(true).toBe(false);
+        await Database.one('SELECT * FROM processes');
     } catch (e) {
-        expect(e.name).toEqual("SqliteError");
+        expect(e.code).toEqual("SQLITE_ERROR");
     }
 
-
     await Database.db.update();
-    expect(await Database.db.all('SELECT * FROM processes')).toEqual([]);
+    expect(await Database.all('SELECT * FROM processes')).toEqual([]);
 });

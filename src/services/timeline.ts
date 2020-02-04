@@ -34,15 +34,16 @@ export default class Timeline {
 
     async getFirstDate(): Promise<number | null> {
         if (this.number === null) {
-            this.number = await Database.db.one(`SELECT MIN(start_time) as start_time
-                                                 FROM heartbeats`)['start_time']
+            const result = await Database.one(`SELECT MIN(start_time) as start_time FROM heartbeats`);
+
+            this.number = result['start_time'];
         }
         return this.number;
     }
 
     async getData(date: Date) {
         try {
-            let results: any[] = await Database.db.all(`
+            let results: any[] = await Database.all(`
                 SELECT CASE
                            WHEN w.type_str IS NULL
                                THEN p.type_str
@@ -181,7 +182,7 @@ export default class Timeline {
 
     async getDailyData(startTime: number, endTime: number) {
         try {
-            let results: any = await Database.db.all(`
+            let results: any = await Database.all(`
                 SELECT CASE
                            WHEN w.type_str IS NULL
                                THEN p.type_str

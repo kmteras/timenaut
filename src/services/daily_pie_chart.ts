@@ -12,7 +12,7 @@ export default class DailyPieChart {
 
     async getData(startTime: number, endTime: number) {
         try {
-            let results: any = await Database.db.all(`
+            let results: any = await Database.all(`
                 SELECT SUM(difference) as total_time,
                        CASE
                            WHEN w.type_str IS NULL

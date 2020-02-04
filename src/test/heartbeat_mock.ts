@@ -10,7 +10,7 @@ export default class HeartbeatMock {
         processModel = await processModel.save();
         windowModel = await windowModel.save();
 
-        await Database.db.run(`
+        await Database.run(`
             INSERT INTO heartbeats(process_id, window_id, start_time, end_time, idle)
             VALUES (?, ?, ?, ?, ?)
         `, [processModel.id, windowModel.id, startTime / 1000, endTime / 1000, false])

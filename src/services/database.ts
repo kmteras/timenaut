@@ -1,4 +1,4 @@
-import Sqlite from 'better-sqlite3';
+import sqlite3 from 'sqlite3';
 import {app} from 'electron'
 import * as path from 'path';
 import log from 'electron-log';
@@ -7,7 +7,7 @@ import databaseInit from '@/services/database_init';
 type ParamTypes = number | string | Buffer | boolean | null | undefined;
 
 export default class Database {
-    db?: Sqlite.Database;
+    db?: sqlite3.Database;
     static db: Database;
 
     constructor() {
@@ -15,83 +15,117 @@ export default class Database {
     }
 
     async connect(test: boolean = false) {
-        let option = {
-            memory: false
-            // verbose: log.debug
-        };
-
         let databaseFileName = process.env.WEBPACK_DEV_SERVER_URL ? 'timenaut_dev.dat' : 'timenaut.dat';
 
-        let databaseFile = "timenaut.db";
+        let databaseFile;
 
         if (test) {
-            option.memory = true;
+            databaseFile = ":memory:";
+            log.info("Using memory database");
         } else {
             databaseFile = path.join(app.getPath('userData'), databaseFileName);
             log.info(`Opening database at ${databaseFile}`);
         }
 
-        this.db = await new Sqlite(databaseFile, option);
-        this.db.pragma('journal_mode = WAL');
-        this.db.pragma('synchronous = 1');
-        this.db.pragma('foreign_keys = ON');
+        this.db = await this.openDatabase(databaseFile);
+        log.info("Database opened");
+        log.debug(`Database ${this.db}`);
+        await Database.exec('PRAGMA journal_mode = WAL');
+        await Database.exec('PRAGMA synchronous = 1');
+        await Database.exec('PRAGMA foreign_keys = ON');
     }
 
-    async update() {
-        try {
-            await this.db!.exec(databaseInit);
-        } catch (e) {
-            throw e;
-        }
+    async openDatabase(databaseFile: string): Promise<sqlite3.Database> {
+        return new Promise(((resolve, reject) => {
+            const db = new sqlite3.Database(databaseFile, (err: (Error | null)) => {
+                if (err) {
+                    reject(err);
+                }
+                resolve(db);
+            });
+        }))
     }
 
-    all(sql: string, params?: ParamTypes[]): any[] {
+    async update(): Promise<void> {
+        return new Promise(((resolve, reject) => {
+            Database.db.db!.exec(databaseInit, (err: Error | null) => {
+                if (err) {
+                    reject(err)
+                }
+                resolve();
+            });
+        }));
+    }
+
+    static async all(sql: string, params?: ParamTypes[]): Promise<any[]> {
         if (this.db === undefined) {
             throw Error("Not connected to the database");
         }
 
-        params = this.convertTypes(params);
+        return new Promise(((resolve, reject) => {
+            params = this.convertTypes(params);
 
-        let statement: Sqlite.Statement = this.db.prepare(sql);
-
-        if (params) {
-            return statement.all(params);
-        } else {
-            return statement.all();
-        }
+            Database.db.db!.all(sql, params, (err: Error | null, row: any[]) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(row);
+                }
+            });
+        }));
     }
 
-    one(sql: string, params?: ParamTypes[]): any {
+    static async one(sql: string, params: ParamTypes[] = []): Promise<any> {
         if (this.db === undefined) {
             throw Error("Not connected to the database");
         }
 
-        params = this.convertTypes(params);
+        return new Promise(((resolve, reject) => {
+            params = this.convertTypes(params);
 
-        let statement: Sqlite.Statement = this.db.prepare(sql);
-        if (params) {
-            return statement.get(params);
-        } else {
-            return statement.get();
-        }
+            Database.db.db!.get(sql, params, (err: Error | null, row: any) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(row);
+                }
+            });
+        }));
     }
 
-    run(sql: string, params?: ParamTypes[]): void {
+    static async run(sql: string, params?: ParamTypes[]): Promise<void> {
         if (this.db === undefined) {
             throw Error("Not connected to the database");
         }
 
-        params = this.convertTypes(params);
+        return new Promise(((resolve, reject) => {
+            params = this.convertTypes(params);
 
-        try {
-            let statement: Sqlite.Statement = this.db.prepare(sql);
-            statement.run(params);
-        } catch (e) {
-            log.error(e);
-        }
+            Database.db.db!.run(sql, params, (err: Error | null) => {
+                if (err) {
+                    reject(err);
+                }
+                resolve();
+            });
+        }));
     }
 
-    private convertTypes(params?: ParamTypes[]): ParamTypes[] | undefined {
+    static async exec(sql: string): Promise<void> {
+        if (this.db === undefined) {
+            throw Error("Not connected to the database");
+        }
+
+        return new Promise(((resolve, reject) => {
+            Database.db.db!.exec(sql, (err: Error | null) => {
+                if (err) {
+                    reject(err);
+                }
+                resolve();
+            });
+        }));
+    }
+
+    private static convertTypes(params: ParamTypes[] = []): ParamTypes[] {
         if (params !== undefined) {
             for (let i = 0; i < params.length; i++) {
                 let param = params[i];

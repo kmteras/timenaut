@@ -14,7 +14,7 @@ export default class ProcessGraph {
 
     async getData(startTime: number, endTime: number) {
         try {
-            let results: any = await Database.db.all(`
+            let results: any = await Database.all(`
                 SELECT p.path,
                        CASE
                            WHEN w.type_str IS NULL

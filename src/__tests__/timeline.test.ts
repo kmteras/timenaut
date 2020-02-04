@@ -2,15 +2,14 @@ import Database from "@/services/database";
 import Timeline from "@/services/timeline";
 import HeartbeatMock from "@/test/heartbeat_mock";
 
-const db = Database.db;
-
-async function setup(): Promise<HeartbeatMock> {
+beforeEach(async () => {
+    const db = new Database();
+    await db.connect(true);
     await db.update();
-    return new HeartbeatMock();
-}
+});
 
 test("Test timeline calculates something", async () => {
-    const hb = await setup();
+    const hb = new HeartbeatMock();
 
     const startDate = new Date("2020-01-01T00:00:00");
 
@@ -24,7 +23,7 @@ test("Test timeline calculates something", async () => {
 
 
 test("Test process start on one day and end on the other", async () => {
-    const hb = await setup();
+    const hb = new HeartbeatMock();
 
     const startDate = new Date("2020-01-01T00:00:00");
     const startTime = new Date("2020-01-01T23:50:00");
