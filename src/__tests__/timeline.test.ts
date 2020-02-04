@@ -25,6 +25,7 @@ test("Test timeline calculates something", async () => {
 test("Test process start on one day and end on the other", async () => {
     const hb = new HeartbeatMock();
 
+    // If the start would be 55 and end 05 this test would fail TODO fix
     const startDate = new Date("2020-01-01T00:00:00");
     const startTime = new Date("2020-01-01T23:50:00");
     const endDate = new Date("2020-01-02T00:00:00");

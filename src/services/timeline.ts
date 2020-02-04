@@ -97,7 +97,7 @@ export default class Timeline {
                     // Without the 00 time it would be parsed as UTC 00:00
                     const secondsToToday = new Date(today + " 00:00:00").getTime() / 1000 - new Date(value.timeframe).getTime() / 1000;
 
-                    if (secondsToToday > 0) {
+                    if (value.spent_time - secondsToToday > 0) {
                         results.push({
                             type_: value.type_,
                             spent_time: value.spent_time - secondsToToday,
