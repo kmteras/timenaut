@@ -8,7 +8,7 @@
     "serve": "vue-cli-service electron:serve",
     "build": "vue-cli-service electron:build",
     "lint": "vue-cli-service lint",
-    "test": "ELECTRON_RUN_AS_NODE=true ./node_modules/.bin/electron ./node_modules/.bin/jest",
+    "test": "jest",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
     "generate-icons": "electron-icon-builder --input=./src/assets/icon.png --output=build --flatten",
