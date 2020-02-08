@@ -26,6 +26,9 @@
                                    :value="this.getSetting('heartbeatIdleTime')">
                         </label>
                     </div>
+                    <div class="settingsOption" v-if="isDevelopment">
+                        <button @click="convert">Convert</button>
+                    </div>
 
                 </div>
                 <div class="settingsFlexColumn" id="main2">
@@ -66,12 +69,20 @@
         update(): void {
         }
 
+        protected isDevelopment(): boolean {
+            return ipcRenderer.sendSync('is-development');
+        }
+
         protected getVersion(): string {
             return ipcRenderer.sendSync('get-version');
         }
 
         protected getSetting(key: string): string {
             return ipcRenderer.sendSync('get-setting', key);
+        }
+
+        protected convert(): void {
+            ipcRenderer.send('convert');
         }
 
         protected setSetting(key: string, value: string) {

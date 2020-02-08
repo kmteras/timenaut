@@ -12,6 +12,7 @@ import path from 'path';
 import log from 'electron-log'
 import Settings from "@/services/settings";
 import {scheduleJob} from 'node-schedule'
+import DatabaseConversionService from "@/services/database_conversion_service";
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -230,6 +231,15 @@ async function createWindow() {
             log.info("Autostart enabled");
             event.returnValue = true;
         }
+    });
+
+    ipcMain.on('is-development', (event: any) => {
+        event.returnValue = isDevelopment;
+    });
+
+    ipcMain.on('convert', () => {
+       let converter = new DatabaseConversionService();
+       converter.convert();
     });
 
     tray = new Tray(iconUrl); // TODO: Tray icon is still broken with snap
