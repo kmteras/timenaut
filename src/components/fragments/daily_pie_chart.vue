@@ -2,13 +2,14 @@
     import {Doughnut} from 'vue-chartjs';
     import ipcRenderer from '@/components/ipc_renderer';
     import {DateRange} from "v-calendar";
+    import {ChartData} from 'chart.js';
 
     import {Component, Mixins, Prop, Provide, Watch} from 'vue-property-decorator';
     import {formatSeconds} from "@/util/time_util";
 
     @Component
     export default class DailyPieChart extends Mixins(Doughnut) {
-        @Provide() data: { datasets: {}, labels: {} } = this.getData();
+        @Provide() data: ChartData = this.getData();
         @Prop() date?: Date;
         @Prop() range?: DateRange;
 

@@ -2,12 +2,13 @@
     import {Bar} from 'vue-chartjs';
     import ipcRenderer from '@/components/ipc_renderer';
     import {DateRange} from "v-calendar";
+    import {Chart, ChartData, ChartLegendLabelItem} from 'chart.js'
 
     import {Component, Mixins, Prop, Provide, Watch} from 'vue-property-decorator';
 
     @Component
     export default class Timeline extends Mixins(Bar) {
-        @Provide() data: object = this.getTimelineData();
+        @Provide() data: ChartData = this.getTimelineData();
         @Prop() date?: Date;
         @Prop() range?: DateRange;
 
@@ -47,6 +48,9 @@
                                 max: 600
                             }
                         }]
+                    },
+                    legend: {
+                        onClick: this.onLegendCallback
                     }
                 });
         }
@@ -58,6 +62,11 @@
         @Watch("range")
         onDateChange() {
             this.update()
+        }
+
+        onLegendCallback(e: MouseEvent, legend: ChartLegendLabelItem) {
+            Chart.defaults.global.legend!.onClick!.call(this.$data._chart, e, legend);
+            this.$data._chart.update();
         }
     }
 </script>
