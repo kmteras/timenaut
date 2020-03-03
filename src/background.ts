@@ -138,7 +138,7 @@ async function createWindow() {
 
     autoUpdaterService.check();
 
-    scheduleJob("* * 14 * *", autoUpdaterService.check);
+    scheduleJob("0 14 * * *", autoUpdaterService.check);
 
     autoLauncher = new AutoLaunch(autostartOptions);
 
