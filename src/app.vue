@@ -65,8 +65,11 @@
         max-height: 100%;
     }
 
+    html, body, button, input, select, textarea {
+        font-family: Montserrat, 'Avenir', Helvetica, Arial, sans-serif !important;
+    }
+
     #app {
-        font-family: Montserrat, 'Avenir', Helvetica, Arial, sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         text-align: center;
