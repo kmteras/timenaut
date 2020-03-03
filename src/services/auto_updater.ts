@@ -10,7 +10,7 @@ export default class AutoUpdater {
         autoUpdater.checkForUpdatesAndNotify()
             .then((result: UpdateCheckResult | null) => {
                 if (result) {
-                    log.info(result.versionInfo);
+                    log.info(result.updateInfo);
                 }
             });
     }
