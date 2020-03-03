@@ -129,4 +129,10 @@
         height: 18px;
     }
 
+    .section {
+        padding: 10px !important;
+        margin: 0 10px 10px 0;
+        border-radius: 10px;
+        background-color: #FEFEFE;
+    }
 </style>

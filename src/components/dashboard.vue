@@ -96,13 +96,6 @@
         grid-row: 3 / 4;
     }
 
-    .section {
-        padding: 10px 10px 0 10px;
-        margin: 0 10px 10px 0;
-        border-radius: 10px;
-        background-color: white;
-    }
-
     .topSection {
         margin: 10px 10px 10px 0;
     }

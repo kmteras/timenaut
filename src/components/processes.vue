@@ -259,13 +259,6 @@
         grid-template-rows: 1fr;
     }
 
-    .section {
-        padding: 10px;
-        margin: 0 10px 10px 0;
-        border-radius: 10px;
-        background-color: white;
-    }
-
     #processTableSection {
         margin-right: 5px;
         grid-column: 1 / 2;

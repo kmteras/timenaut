@@ -100,13 +100,8 @@
     #settings {
         display: grid;
         height: 100%;
-    }
-
-    .section {
-        padding: 10px;
-        margin: 10px;
-        border-radius: 10px;
-        background-color: white;
+        margin-left: 10px;
+        padding-top: 10px;
     }
 
     .settingsFlexColumn {
