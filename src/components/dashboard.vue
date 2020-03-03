@@ -70,7 +70,7 @@
     #dashboard {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        grid-template-rows: 40px 52% 40%;
+        grid-template-rows: 44px 52% 40%;
         height: 100%;
         margin-left: 10px;
     }

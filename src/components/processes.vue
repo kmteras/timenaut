@@ -240,7 +240,7 @@
     #processes {
         display: grid;
         grid-template-columns: 1fr;
-        grid-template-rows: 40px 2fr 5fr;
+        grid-template-rows: 44px 2fr 5fr;
         height: 100%;
         margin-left: 10px;
     }
