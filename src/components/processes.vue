@@ -263,7 +263,6 @@
         padding: 10px;
         margin: 0 10px 10px 0;
         border-radius: 10px;
-        box-shadow: 5px 5px 5px grey;
         background-color: white;
     }
 

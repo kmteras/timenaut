@@ -106,7 +106,6 @@
         padding: 10px;
         margin: 10px;
         border-radius: 10px;
-        box-shadow: 5px 5px 5px grey;
         background-color: white;
     }
 
