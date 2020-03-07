@@ -42,6 +42,7 @@
                             stacked: true
                         }],
                         xAxes: [{
+                            stacked: true,
                             ticks: {
                                 min: 0,
                                 stepSize: 600,
