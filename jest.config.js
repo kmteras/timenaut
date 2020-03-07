@@ -12,4 +12,7 @@ module.exports = {
     "transform": {
         "^.+\\.(ts|tsx)?$": "ts-jest"
     },
+    setupFiles: [
+        './src/test/setup.ts'
+    ]
 };

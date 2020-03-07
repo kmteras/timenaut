@@ -4,7 +4,7 @@
             <button class="button is-pulled-left" :class="{'disabled': hasPrevDate()}" @click="shiftRangeLeft">&#8592;
             </button>
             <date-picker
-                    class="is-pulled-left"
+                    class="is-pulled-left date-picker"
                     mode="range"
                     @input="updateParent"
                     :value="range"
@@ -105,7 +105,7 @@
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
     .date-selection {
         width: 100%;
     }
@@ -114,7 +114,7 @@
         opacity: 0.5;
     }
 
-    button {
-        height: 38px;
+    .date-picker > input {
+        height: 36px;
     }
 </style>

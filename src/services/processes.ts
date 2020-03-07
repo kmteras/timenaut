@@ -32,7 +32,7 @@ export default class Processes {
 
     async getProcessesData(startTime: number, endTime: number) {
         try {
-            let results: any = await Database.db.all(`
+            let results: any = await Database.all(`
                 SELECT path,
                        SUM(difference) AS time,
                        process_id      as id,
@@ -84,7 +84,7 @@ export default class Processes {
 
     async getWindowData(startTime: number, endTime: number, processId: number) {
         try {
-            let results: any = await Database.db.all(`
+            let results: any = await Database.all(`
                 SELECT window_id       as id,
                        w.title,
                        SUM(difference) AS time,
@@ -123,7 +123,7 @@ export default class Processes {
 
     async getTypeData() {
         try {
-            let results: any = await Database.db.all(`
+            let results: any = await Database.all(`
                 SELECT type,
                        color
                 FROM productivity_type
@@ -137,7 +137,7 @@ export default class Processes {
 
     async setProcessType(processId: number, type: string) {
         try {
-            await Database.db.run(`
+            await Database.run(`
                 UPDATE processes
                 SET type_str=?
                 WHERE id = ?
@@ -149,7 +149,7 @@ export default class Processes {
 
     async setWindowType(windowId: number, type: string) {
         try {
-            await Database.db.run(`
+            await Database.run(`
                 UPDATE windows
                 SET type_str=?
                 WHERE id = ?

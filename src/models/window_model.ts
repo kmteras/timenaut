@@ -14,7 +14,7 @@ export default class WindowModel {
     }
 
     async save(): Promise<WindowModel> {
-        await Database.db.run(`
+        await Database.run(`
             INSERT INTO windows (process_id, title)
             VALUES (?, ?)`, [this.process.id, this.title]);
 
@@ -28,11 +28,12 @@ export default class WindowModel {
     }
 
     async find(): Promise<WindowModel | undefined> {
-        let response = await Database.db.one(`
+        let response = await Database.one(`
             SELECT *
             FROM windows
             WHERE title = ?
-        `, [this.title]) as WindowModel;
+              AND process_id = ?
+        `, [this.title, this.process.id]) as WindowModel;
 
         if (response !== undefined) {
             this.id = response.id;

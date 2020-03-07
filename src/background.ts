@@ -12,6 +12,7 @@ import path from 'path';
 import log from 'electron-log'
 import Settings from "@/services/settings";
 import {scheduleJob} from 'node-schedule'
+import DatabaseConversionService from "@/services/database_conversion_service";
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -27,6 +28,7 @@ let iconUrl: string;
 let pauseIconUrl: string;
 
 let timelineService = new Timeline();
+timelineService.registerEvents();
 let dailyPieChartService = new DailyPieChart();
 let processesService = new Processes();
 let autoUpdaterService = new AutoUpdater();
@@ -136,7 +138,7 @@ async function createWindow() {
 
     autoUpdaterService.check();
 
-    scheduleJob("* * 14 * *", autoUpdaterService.check);
+    scheduleJob("0 14 * * *", autoUpdaterService.check);
 
     autoLauncher = new AutoLaunch(autostartOptions);
 
@@ -229,6 +231,15 @@ async function createWindow() {
             log.info("Autostart enabled");
             event.returnValue = true;
         }
+    });
+
+    ipcMain.on('is-development', (event: any) => {
+        event.returnValue = isDevelopment;
+    });
+
+    ipcMain.on('convert', () => {
+       let converter = new DatabaseConversionService();
+       converter.convert();
     });
 
     tray = new Tray(iconUrl); // TODO: Tray icon is still broken with snap

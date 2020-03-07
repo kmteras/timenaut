@@ -70,7 +70,7 @@
     #dashboard {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        grid-template-rows: 40px 52% 40%;
+        grid-template-rows: 44px 52% 40%;
         height: 100%;
         margin-left: 10px;
     }
@@ -94,14 +94,6 @@
     #barSection {
         grid-column: 2 / 3;
         grid-row: 3 / 4;
-    }
-
-    .section {
-        padding: 10px 10px 0 10px;
-        margin: 0 10px 10px 0;
-        border-radius: 10px;
-        box-shadow: 5px 5px 5px grey;
-        background-color: white;
     }
 
     .topSection {

@@ -23,7 +23,7 @@ export default class Heartbeat {
 
     start() {
         try {
-            this.heartbeat(new HeartbeatModel()).then();
+            this.heartbeat(HeartbeatModel.getCurrentHeartbeat()).then();
         } catch (e) {
             // Tough shit, cant really do anything - not a severe problem
             log.debug(e)
@@ -34,7 +34,7 @@ export default class Heartbeat {
         }
     }
 
-    private async heartbeat(heartbeat: HeartbeatModel) {
+    protected async heartbeat(heartbeat: HeartbeatModel) {
         if (this.paused) {
             return;
         }
@@ -43,6 +43,8 @@ export default class Heartbeat {
 
         if (process == null) {
             process = await heartbeat.process.save();
+        } else {
+            heartbeat.window.process = process;
         }
 
         let window = await heartbeat.window.find();
@@ -89,7 +91,7 @@ export default class Heartbeat {
             }
         }
 
-        await Database.db.run(sql, [endTime, lastHeartbeat.time]);
+        await Database.run(sql, [endTime, lastHeartbeat.time]);
         return endTime;
     }
 
@@ -102,7 +104,7 @@ export default class Heartbeat {
             INSERT INTO heartbeats (process_id, window_id, start_time, end_time, idle)
             VALUES (?, ?, ?, ?, ?)
         `;
-        await Database.db.run(sql,
+        await Database.run(sql,
             [heartbeat.process.id, heartbeat.window.id, heartbeat.time, heartbeat.time, heartbeat.idle])
     }
 

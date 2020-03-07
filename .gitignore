@@ -202,3 +202,6 @@ yarn-error.log*
 
 #Electron-builder output
 /dist_electron
+
+# Linux generated run files
+$XDG_RUNTIME_DIR/

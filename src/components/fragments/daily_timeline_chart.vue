@@ -2,13 +2,14 @@
     import {Line} from 'vue-chartjs';
     import ipcRenderer from '@/components/ipc_renderer';
     import {DateRange} from "v-calendar";
+    import {ChartData} from 'chart.js';
 
     import {Component, Mixins, Prop, Provide, Watch} from 'vue-property-decorator';
     import {formatSeconds} from "@/util/time_util";
 
     @Component
     export default class LongTimeline extends Mixins(Line) {
-        @Provide() data: object = this.getTimelineData();
+        @Provide() data: ChartData = this.getTimelineData();
         @Prop() date?: Date;
         @Prop() range?: DateRange;
 
@@ -40,7 +41,7 @@
                             ticks: {
                                 min: 0,
                                 maxTicksLimit: 3600,
-                                callback: function(value: number) {
+                                callback: function(value: number): string | number {
                                     return formatSeconds(value);
                                 }
                             }
@@ -48,10 +49,10 @@
                     },
                     tooltips: {
                         callbacks: {
-                            label: (t: any, d: any) => {
+                            label: (t: any, d: any): string | string[] => {
                                 let totalSeconds = d.datasets[t.datasetIndex].data[t.index];
                                 if (totalSeconds == 0) {
-                                    return null;
+                                    return "";
                                 }
 
                                 return formatSeconds(totalSeconds);

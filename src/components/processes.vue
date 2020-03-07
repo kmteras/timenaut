@@ -32,29 +32,21 @@
 
             <div v-if="selectedWindow !== null">
                 <label class="bold" for="windowTypeSelection">Type: </label>
-                <select id="windowTypeSelection" :style="{color: selectedWindow.color}" @change="setWindowType">
-                    <option :value="selectedWindow.type" :style="{color: selectedWindow.color}">
-                        {{selectedWindow.type}}
-                    </option>
-                    <option v-for="typeData in getTypesBesides(selectedWindow.type)"
-                            :key="typeData.type" :value="typeData.type"
-                            :style="{color: typeData.color}">
-                        {{typeData.type}}
-                    </option>
-                </select>
+                <tn-select id="windowTypeSelection"
+                           :elements="getTypesBesides(selectedWindow.type)"
+                           :valueKey='"type"'
+                           :colorKey='"color"'
+                           :selected="selectedWindow"
+                           :change="setWindowType"/>
             </div>
             <div v-else-if="selectedProcess !== null">
                 <label class="bold" for="processTypeSelection">Type: </label>
-                <select id="processTypeSelection" :style="{color: selectedProcess.color}" @change="setProcessType">
-                    <option :value="selectedProcess.type" :style="{color: selectedProcess.color}">
-                        {{selectedProcess.type}}
-                    </option>
-                    <option v-for="typeData in getTypesBesides(selectedProcess.type)"
-                            :key="typeData.type" :value="typeData.type"
-                            :style="{color: typeData.color}">
-                        {{typeData.type}}
-                    </option>
-                </select>
+                <tn-select id="processTypeSelection"
+                           :elements="getTypesBesides(selectedProcess.type)"
+                           :valueKey='"type"'
+                           :colorKey='"color"'
+                           :selected="selectedProcess"
+                           :change="setProcessType"/>
             </div>
         </div>
         <div class="section" id="tableSection">
@@ -96,11 +88,12 @@
 </template>
 
 <script lang="ts">
-    import {Component, Prop, Watch, Vue} from 'vue-property-decorator';
+    import {Component, Prop, Vue, Watch} from 'vue-property-decorator';
     import ipcRenderer from '@/components/ipc_renderer';
     import ContentPage from "@/components/contentPage.vue";
     import DateSelection from '@/components/fragments/date_selection.vue';
     import Updatable from "@/components/updatable";
+    import TnSelect from "@/components/fragments/form/tn_select.vue";
     import {DateRange} from "v-calendar";
     import {formatSeconds} from "@/util/time_util";
 
@@ -128,7 +121,8 @@
 
     @Component({
         components: {
-            DateSelection
+            DateSelection,
+            TnSelect
         }
     })
     export default class Processes extends Vue implements ContentPage, Updatable {
@@ -194,9 +188,8 @@
             return this.typeDatas.filter(typeData => typeData.type !== type);
         }
 
-        async setWindowType(event: Event) {
-            // @ts-ignore
-            let type = event.target.value;
+        async setWindowType(value: Event) {
+            let type: string | null = value.type;
 
             if (type === 'unknown') {
                 type = null;
@@ -206,9 +199,8 @@
             this.update();
         }
 
-        async setProcessType(event: Event) {
-            // @ts-ignore
-            ipcRenderer.sendSync('set-process-type', this.selectedProcessId, event.target.value);
+        async setProcessType(value: TypeData) {
+            ipcRenderer.sendSync('set-process-type', this.selectedProcessId, value.type);
             this.update();
         }
 
@@ -248,7 +240,7 @@
     #processes {
         display: grid;
         grid-template-columns: 1fr;
-        grid-template-rows: 40px 2fr 5fr;
+        grid-template-rows: 44px 2fr 5fr;
         height: 100%;
         margin-left: 10px;
     }
@@ -265,14 +257,6 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr;
-    }
-
-    .section {
-        padding: 10px;
-        margin: 0 10px 10px 0;
-        border-radius: 10px;
-        box-shadow: 5px 5px 5px grey;
-        background-color: white;
     }
 
     #processTableSection {

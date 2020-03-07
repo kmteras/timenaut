@@ -14,7 +14,7 @@ export default class ProcessGraph {
 
     async getData(startTime: number, endTime: number) {
         try {
-            let results: any = await Database.db.all(`
+            let results: any = await Database.all(`
                 SELECT p.path,
                        CASE
                            WHEN w.type_str IS NULL
@@ -45,29 +45,12 @@ export default class ProcessGraph {
                 endTime / 1000 + 24 * 60 * 60
             ]);
 
-            let labels: Set<string> = new Set();
             let values: Map<string, Map<string, number>> = new Map();
 
             let types: Map<string, string> = new Map();
 
             // Group the data
             for (let result of results) {
-                let regex: RegExp;
-                if (process.platform === 'win32') {
-                    regex = /\\(.+\\)*(.+)\./;
-                } else {
-                    regex = /\/(?:,+\/\/)*(.+)\/(.*)/
-                }
-
-                if (result.path.search(regex) < 0) {
-                    log.warn(`Could not regex process name from ${result.path}`);
-                    continue;
-                }
-
-                let name = result.path.match(regex)[2];
-
-                labels.add(name);
-
                 types.set(result.type_, result.type_color);
 
                 if (values.has(result.path)) {
@@ -80,6 +63,21 @@ export default class ProcessGraph {
                     values.set(result.path, typesMap);
                 }
             }
+
+            let graphValues = Array.from(values);
+
+            graphValues = graphValues.sort((a, b) => {
+                const aSum = ProcessGraph.sumIterator(a[1].values());
+                const bSum = ProcessGraph.sumIterator(b[1].values());
+
+                if (aSum > bSum) {
+                    return -1;
+                } else if (bSum > aSum) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            });
 
             // Prepare data for graph
             type Dataset = {
@@ -102,7 +100,8 @@ export default class ProcessGraph {
             // Give datasets the spent type of each type or 0 if the process does not have that type
             let i = 0;
             for (let type of types.keys()) {
-                for (let typeTimes of values.values()) {
+                for (let graphValue of graphValues.values()) {
+                    let typeTimes = graphValue[1];
                     if (typeTimes.has(type)) {
                         datasets[i].data.push(typeTimes.get(type)!)
                     } else {
@@ -125,6 +124,27 @@ export default class ProcessGraph {
                 }
             });
 
+            const labels: string[] = [];
+            for (let graphValue of graphValues) {
+                const label = graphValue[0];
+
+                let regex: RegExp;
+                if (process.platform === 'win32') {
+                    regex = /\\(.+\\)*(.+)\./;
+                } else {
+                    regex = /\/(?:,+\/\/)*(.+)\/(.*)/
+                }
+
+                if (label.search(regex) < 0) {
+                    log.warn(`Could not regex process name from ${label}`);
+                    continue;
+                }
+
+                let name = label.match(regex)![2];
+
+                labels.push(name);
+            }
+
             return {
                 labels: Array.from(labels).slice(0, 8),
                 datasets: datasets
@@ -132,5 +152,13 @@ export default class ProcessGraph {
         } catch (e) {
             log.error(e);
         }
+    }
+
+    private static sumIterator(iterable: IterableIterator<number>): number {
+        let sum = 0;
+        for (let value of iterable) {
+            sum += value;
+        }
+        return sum;
     }
 }

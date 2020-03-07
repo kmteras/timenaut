@@ -6,5 +6,6 @@ import 'bulma/css/bulma.css'
 Vue.config.productionTip = false;
 
 new Vue({
+    el: "#vue",
     render: h => h(App),
-}).$mount('#app');
+});

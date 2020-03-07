@@ -1,5 +1,6 @@
 <script lang="ts">
     import {HorizontalBar} from 'vue-chartjs';
+    import {ChartTooltipItem, ChartData} from 'chart.js'
     import ipcRenderer from '@/components/ipc_renderer';
     import {DateRange} from "v-calendar";
 
@@ -41,10 +42,11 @@
                             stacked: true
                         }],
                         xAxes: [{
+                            stacked: true,
                             ticks: {
                                 min: 0,
                                 stepSize: 600,
-                                callback: function(value: number) {
+                                callback: function(value: number): string | number {
                                     return formatSeconds(value);
                                 }
                             }
@@ -52,10 +54,11 @@
                     },
                     tooltips: {
                         callbacks: {
-                            label: (t: any, d: any) => {
-                                let totalSeconds = d.datasets[t.datasetIndex].data[t.index];
-                                if (totalSeconds == 0) {
-                                    return null;
+                            label: (t: ChartTooltipItem, d: ChartData): string | string[] => {
+                                let totalSeconds = d.datasets![t.datasetIndex!]!.data![t.index!] as number;
+
+                                if (!totalSeconds || totalSeconds == 0) {
+                                    return "";
                                 }
 
                                 return formatSeconds(totalSeconds);

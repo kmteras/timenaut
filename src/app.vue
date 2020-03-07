@@ -65,8 +65,11 @@
         max-height: 100%;
     }
 
+    html, body, button, input, select, textarea {
+        font-family: Montserrat, 'Avenir', Helvetica, Arial, sans-serif !important;
+    }
+
     #app {
-        font-family: Montserrat, 'Avenir', Helvetica, Arial, sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         text-align: center;
@@ -115,8 +118,7 @@
         padding-left: 12px;
         padding-right: 12px;
         margin-left: 10px;
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06);
-        height: 35px;
+        height: 36px;
     }
 
     input[type=checkbox] {
@@ -127,4 +129,10 @@
         height: 18px;
     }
 
+    .section {
+        padding: 10px !important;
+        margin: 0 10px 10px 0;
+        border-radius: 10px;
+        background-color: #FEFEFE;
+    }
 </style>

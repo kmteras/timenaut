@@ -4,7 +4,7 @@ module.exports = {
     pluginOptions: {
         electronBuilder: {
             chainWebpackMainProcess: chainWebpackMainProcess,
-            externals: ['better-sqlite3'],
+            externals: ['sqlite3'],
             mainProcessWatch: ['src/**/*.ts', 'src/**/*.vue'],
             builderOptions: {
                 productName: "Timenaut",
