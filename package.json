@@ -16,7 +16,7 @@
   },
   "main": "background.js",
   "dependencies": {
-    "active-win": "^5.1.3",
+    "active-win": "6.1.0",
     "auto-launch": "^5.0.5",
     "sqlite3": "^4.1.1",
     "bulma": "^0.7.5",
