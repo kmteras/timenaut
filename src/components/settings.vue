@@ -9,7 +9,6 @@
                         <label>
                             <p>Start on system startup <input type="checkbox" @change="toggleAutostart" :checked="this.autoStartup"></p>
 
-
                         </label>
                     </div>
                     <div class="settingsOption">
@@ -26,10 +25,6 @@
                                    :value="this.getSetting('heartbeatIdleTime')">
                         </label>
                     </div>
-                    <div class="settingsOption" v-if="isDevelopment">
-                        <button @click="convert">Convert</button>
-                    </div>
-
                 </div>
                 <div class="settingsFlexColumn" id="main2">
                 </div>

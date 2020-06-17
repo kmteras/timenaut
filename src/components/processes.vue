@@ -67,7 +67,7 @@
                 </table>
             </div>
 
-            <div id="windowTableSection">
+            <div id="windowTableSection" @scroll="onScroll" ref="windows">
                 <table class="table is-narrow" id="windowTable">
                     <thead>
                     <tr>
@@ -96,6 +96,7 @@
     import TnSelect from "@/components/fragments/form/tn_select.vue";
     import {DateRange} from "v-calendar";
     import {formatSeconds} from "@/util/time_util";
+    import log from "electron-log";
 
     declare interface ProcessData {
         id: number,
@@ -135,13 +136,21 @@
 
         typeDatas: TypeData[] = this.getTypeDatas();
         processData: ProcessData[] = this.getProcessData();
-        windowData: WindowData[] = this.getWindowData(this.selectedProcessId);
+        windowData: WindowData[] = [];
 
         mounted() {
             if (this.processData.length > 0) {
                 this.selectedProcess = this.processData[0];
                 this.selectedProcessId = this.selectedProcess.id;
-                this.windowData = this.getWindowData(this.selectedProcessId);
+                this.windowData = this.getWindowData(this.selectedProcessId, []);
+            }
+        }
+
+        onScroll(): void {
+            const windowsDiv = this.$refs.windows as HTMLDivElement;
+            let bottom: boolean = windowsDiv.scrollTop === (windowsDiv.scrollHeight - windowsDiv.offsetHeight);
+            if (bottom) {
+                this.windowData.push(...this.getWindowData(this.selectedProcessId, this.windowData));
             }
         }
 
@@ -154,9 +163,9 @@
                 this.range!.start.getTime(), this.range!.end.getTime());
         }
 
-        getWindowData(processId: number): WindowData[] {
+        getWindowData(processId: number, previousWindowData: WindowData[]): WindowData[] {
             return ipcRenderer.sendSync('get-windows-data',
-                this.range!.start.getTime(), this.range!.end.getTime(), processId);
+                this.range!.start.getTime(), this.range!.end.getTime(), processId, previousWindowData.length);
         }
 
         clickProcess(process: ProcessData) {
@@ -164,7 +173,7 @@
             this.selectedProcessId = process.id;
             this.selectedWindow = null;
             this.selectedWindowId = -1;
-            this.windowData = this.getWindowData(this.selectedProcessId);
+            this.windowData = this.getWindowData(this.selectedProcessId, []);
         }
 
         clickWindow(window: WindowData) {
@@ -178,7 +187,6 @@
 
         update(): void {
             this.processData = this.getProcessData();
-            this.windowData = this.getWindowData(this.selectedProcessId);
 
             this.selectedProcess = this.getSelectedProcess();
             this.selectedWindow = this.getSelectedWindow();
@@ -188,11 +196,16 @@
             return this.typeDatas.filter(typeData => typeData.type !== type);
         }
 
-        async setWindowType(value: Event) {
+        async setWindowType(value: TypeData) {
             let type: string | null = value.type;
 
             if (type === 'unknown') {
                 type = null;
+            }
+
+            if (this.selectedWindow !== null) {
+                this.selectedWindow.type = value.type;
+                this.selectedWindow.color = value.color;
             }
 
             ipcRenderer.sendSync('set-window-type', this.selectedWindowId, type);

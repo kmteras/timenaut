@@ -11,8 +11,8 @@ export default class Processes {
             event.returnValue = await this.getProcessesData(startTime, endTime);
         });
 
-        ipcMain.on('get-windows-data', async (event: Event, startTime: number, endTime: number, processId: number) => {
-            event.returnValue = await this.getWindowData(startTime, endTime, processId);
+        ipcMain.on('get-windows-data', async (event: Event, startTime: number, endTime: number, processId: number, offset: number) => {
+            event.returnValue = await this.getWindowData(startTime, endTime, processId, offset);
         });
 
         ipcMain.on('get-type-data', async (event: Event) => {
@@ -82,8 +82,9 @@ export default class Processes {
         }
     }
 
-    async getWindowData(startTime: number, endTime: number, processId: number) {
+    async getWindowData(startTime: number, endTime: number, processId: number, offset: number) {
         try {
+            let limit: number = 20;
             let results: any = await Database.all(`
                 SELECT window_id       as id,
                        w.title,
@@ -113,7 +114,8 @@ export default class Processes {
                 WHERE w.process_id = ?
                 GROUP BY window_id
                 HAVING time > 0
-                ORDER BY SUM(difference) DESC`, [startTime / 1000, endTime / 1000 + getDayLength(), processId]);
+                ORDER BY SUM(difference) DESC
+                LIMIT ? OFFSET ?`, [startTime / 1000, endTime / 1000 + getDayLength(), processId, limit, offset]);
 
             return results;
         } catch (e) {
