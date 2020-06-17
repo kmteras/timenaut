@@ -136,12 +136,6 @@ async function createWindow() {
         process.env.APPIMAGE = process.env.ARGV0
     }
 
-    autoUpdaterService.check();
-
-    scheduleJob("0 14 * * *", autoUpdaterService.check);
-
-    autoLauncher = new AutoLaunch(autostartOptions);
-
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // @ts-ignore
         iconUrl = path.join(__static, 'icon_development.png');
@@ -159,6 +153,12 @@ async function createWindow() {
         // @ts-ignore
         iconUrl = path.join(__static, iconFileName);
     }
+
+    autoUpdaterService.setIconUrl(iconUrl);
+    autoUpdaterService.check();
+
+    scheduleJob("0 14 * * *", autoUpdaterService.check);
+    autoLauncher = new AutoLaunch(autostartOptions);
 
     let pauseIconFileName;
     if (process.platform === 'win32') {

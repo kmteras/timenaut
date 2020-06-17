@@ -15,8 +15,8 @@
             <button class="button" :class="{'hidden': hasNextDate()}" @click="shiftRangeRight">&#8594;</button>
         </div>
         <button class="is-pulled-right button" @click="allTime">All time</button>
-        <button class="is-pulled-right button" @click="thisWeek">Week</button>
         <button class="is-pulled-right button" @click="thisMonth">Month</button>
+        <button class="is-pulled-right button" @click="thisWeek">Week</button>
         <button class="is-pulled-right button" @click="today">Today</button>
     </div>
 </template>
