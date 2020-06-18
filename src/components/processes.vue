@@ -187,9 +187,12 @@
 
         update(): void {
             this.processData = this.getProcessData();
-
             this.selectedProcess = this.getSelectedProcess();
             this.selectedWindow = this.getSelectedWindow();
+        }
+
+        updateData(): void {
+            this.windowData = this.getWindowData(this.selectedProcessId, []);
         }
 
         getTypesBesides(type: string): TypeData[] {
@@ -215,6 +218,7 @@
         async setProcessType(value: TypeData) {
             ipcRenderer.sendSync('set-process-type', this.selectedProcessId, value.type);
             this.update();
+            this.updateData();
         }
 
         getSelectedProcess(): ProcessData | null {
