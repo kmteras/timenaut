@@ -157,7 +157,7 @@ async function createWindow() {
     autoUpdaterService.setIconUrl(iconUrl);
     autoUpdaterService.check();
 
-    scheduleJob("0 14 * * *", autoUpdaterService.check);
+    scheduleJob("0 14 * * *", autoUpdaterService.check.bind(autoUpdaterService));
     autoLauncher = new AutoLaunch(autostartOptions);
 
     let pauseIconFileName;
