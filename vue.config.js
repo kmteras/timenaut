@@ -13,7 +13,7 @@ module.exports = {
                 linux: {
                     category: "Utility",
                     icon: "build/icons/",
-                    target: ["AppImage"]
+                    target: ["AppImage", "snap"]
                 },
                 mac: {
                     hardenedRuntime: true,
@@ -26,7 +26,10 @@ module.exports = {
                     }
                 ],
                 snap: {
-                    confinement: "classic"
+                    confinement: "classic",
+                    environment: {
+                        "TMPDIR": "$XDG_RUNTIME_DIR"
+                    }
                 },
                 publish: {
                     provider: "github",
