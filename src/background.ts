@@ -196,8 +196,8 @@ async function createWindow() {
         win.setMenuBarVisibility(false);
 
         // TODO: Make production logging level configurable
-        log.transports.file.level = 'info';
-        log.transports.console.level = false;
+        log.transports.file.level = 'verbose';
+        log.transports.console.level = 'info';
 
         if (process.platform === 'darwin') {
             app.dock.hide();

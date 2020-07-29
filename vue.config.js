@@ -13,7 +13,7 @@ module.exports = {
                 linux: {
                     category: "Utility",
                     icon: "build/icons/",
-                    target: ["AppImage", "snap"]
+                    target: ["AppImage"]
                 },
                 mac: {
                     hardenedRuntime: true,
@@ -32,10 +32,8 @@ module.exports = {
                     }
                 },
                 publish: {
-                    provider: "github",
-                    owner: "kmteras",
-                    repo: "timenaut",
-                    vPrefixedTagName: true
+                    provider: "generic",
+                    url: "https://timenaut.app/updates"
                 }
             }
         }
