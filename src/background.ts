@@ -125,6 +125,14 @@ async function createWindow() {
         hidden: true
     };
 
+    log.info(process.env);
+
+    if (process.env.SNAP_NAME === "timenaut") {
+        // For some reason the snap build does not inherit the electron config.
+        //  Set the required TMPDIR path here for icons to work properly.
+        process.env.TMPDIR = process.env.XDG_RUNTIME_DIR
+    }
+
     await db.connect();
     await db.update();
 
@@ -147,7 +155,7 @@ async function createWindow() {
         } else if (process.platform === 'darwin') {
             iconFileName = "16x16.png";
         } else {
-            iconFileName = "64x64.png"
+            iconFileName = "icon.png"
         }
 
         // @ts-ignore
@@ -188,8 +196,8 @@ async function createWindow() {
         win.setMenuBarVisibility(false);
 
         // TODO: Make production logging level configurable
-        log.transports.file.level = 'info';
-        log.transports.console.level = false;
+        log.transports.file.level = 'verbose';
+        log.transports.console.level = 'info';
 
         if (process.platform === 'darwin') {
             app.dock.hide();

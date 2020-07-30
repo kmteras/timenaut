@@ -26,13 +26,14 @@ module.exports = {
                     }
                 ],
                 snap: {
-                    confinement: "classic"
+                    confinement: "classic",
+                    environment: {
+                        "TMPDIR": "$XDG_RUNTIME_DIR"
+                    }
                 },
                 publish: {
-                    provider: "github",
-                    owner: "kmteras",
-                    repo: "timenaut",
-                    vPrefixedTagName: true
+                    provider: "generic",
+                    url: "https://timenaut.app/updates"
                 }
             }
         }
