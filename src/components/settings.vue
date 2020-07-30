@@ -29,7 +29,7 @@
                 </div>
                 <div class="settingsFlexColumn" id="main2">
                 </div>
-                <p class="settingsLink">Found a bug? <a @click="openGitHub">Let us know!</a></p>
+                <p class="settingsLink">Found a bug? <a @click="openGitLab">Let us know!</a></p>
                 <span class="settingsVersion">v{{this.getVersion()}}</span>
             </div>
         </div>
@@ -85,8 +85,8 @@
             return ipcRenderer.sendSync('set-setting', key, value);
         }
 
-        public openGitHub() {
-            shell.openExternal("https://github.com/kmteras/timenaut/issues")
+        public openGitLab() {
+            shell.openExternal("https://gitlab.com/timenaut/timenaut/-/issues")
         }
     }
 </script>
