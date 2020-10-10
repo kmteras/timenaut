@@ -1,3 +1,5 @@
+# Development of Timenaut has moved to [GitLab](https://gitlab.com/timenaut/timenaut)
+
 # Timenaut
 
 ![dashboard](/docs/dashboard.png)
