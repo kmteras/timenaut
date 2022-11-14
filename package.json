@@ -46,7 +46,7 @@
     "@vue/cli-service": "^4.2.3",
     "@vue/eslint-config-typescript": "^4.0.0",
     "babel-eslint": "^10.0.1",
-    "electron": "^6.1.0",
+    "electron": "^18.3.7",
     "electron-icon-builder": "^1.0.2",
     "electron-log": "^4.0.6",
     "electron-notarize": "^0.1.1",
